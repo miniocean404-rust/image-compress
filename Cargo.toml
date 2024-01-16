@@ -1,0 +1,8 @@
+[package]
+name = "image-compress"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+oxipng = "9.0.0"

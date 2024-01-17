@@ -1,5 +1,8 @@
 use anyhow::{Ok, Result};
-use image_compress::utils::{file::read_dir_path_buf, log::tracing::init_tracing};
+use image_compress::{
+    compress::jpg::jepg_compress,
+    utils::{file::read_dir_path_buf, log::tracing::init_tracing},
+};
 use tracing::info;
 
 fn main() -> Result<()> {
@@ -21,7 +24,7 @@ fn main() -> Result<()> {
 
 async fn async_main() -> Result<()> {
     let res = read_dir_path_buf("image").await?;
-
+    jepg_compress();
     info!(res = ?res, "读取文件夹");
     Ok(())
 }

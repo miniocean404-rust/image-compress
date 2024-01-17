@@ -1,9 +1,9 @@
 use anyhow::Result;
 
-fn jepg_compress() -> Result<()> {
+pub fn jepg_compress() -> Result<()> {
     let a = std::panic::catch_unwind(|| -> Result<Vec<u8>> {
         let d =
-            mozjpeg::Decompress::with_markers(mozjpeg::ALL_MARKERS).from_path("tests/test.jpg")?;
+            mozjpeg::Decompress::with_markers(mozjpeg::ALL_MARKERS).from_path("image/eye.jpg")?;
 
         d.width(); // FYI
         d.height();

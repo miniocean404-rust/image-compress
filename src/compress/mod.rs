@@ -1,1 +1,2 @@
-mod png;
+pub mod jpg;
+pub mod png;

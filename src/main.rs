@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{Ok, Result};
 use image_compress::utils::{file::read_dir_path_buf, log::tracing::init_tracing};
 use tracing::info;
 
@@ -21,6 +21,7 @@ fn main() -> Result<()> {
 
 async fn async_main() -> Result<()> {
     let res = read_dir_path_buf("image").await?;
+
     info!(res = ?res, "读取文件夹");
     Ok(())
 }

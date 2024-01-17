@@ -28,8 +28,11 @@ debug-assertions = false
 [dependencies]
 # 无损压缩 png
 oxipng = "9.0.0"
+# mozjpeg 是 mozjpeg-sys 的高级包装
 mozjpeg = "0.10.6"
-mozjpeg-sys = "2.0.5"
+# mozjpeg-sys = "2.0.5"
+rgb = "0.8"
+
 # gifsicle 是读取以及压缩gif的库
 gifsicle = "1.94.0"
 libwebp-sys = "0.9.4"

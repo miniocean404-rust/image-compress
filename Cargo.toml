@@ -30,12 +30,9 @@ debug-assertions = false
 oxipng = "9.0.0"
 # 有损压缩 png、gif 把 png24 压缩成 png8 的库 是 pngquant 的包装
 imagequant = "4.2.2"
-pngquant = "3.0.3"
-
-# 无损压缩 jpeg 、mozjpeg 是 mozjpeg-sys 的高级包装
-mozjpeg = "0.10.6"
+mozjpeg = "0.10.5"
 # mozjpeg-sys = "2.0.5"
-rgb = "0.8"
+rgb = "0.8.37"
 
 # gifsicle 是读取以及 有损压缩 gif 的库
 gifsicle = "1.94.0"

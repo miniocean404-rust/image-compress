@@ -23,9 +23,12 @@ fn main() -> Result<()> {
 }
 
 async fn async_main() -> Result<()> {
-    let res = read_dir_path_buf("image").await?;
+    // let path = "D:\\soft-dev\\code\\work\\davinci\\davinci-web\\assets\\image";
+    let path = "image";
+
+    let res = read_dir_path_buf(path).await?;
     info!(res = ?res, "读取文件夹");
-    let _ = jepg_compress();
+    jepg_compress().unwrap();
     Ok(())
 }
 

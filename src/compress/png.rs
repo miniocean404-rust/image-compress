@@ -19,3 +19,8 @@ pub fn lossless_png(input: &str, output: &str) -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+// pub fn lossy_png(input: &str, output: &str) -> Result<(), Box<dyn Error>> {
+// let image = imagequant::new();
+// Ok(())
+// }

@@ -1,8 +1,9 @@
 use anyhow::Result;
-use image_compress::utils::log::tracing::init_tracing;
+use image_compress::utils::{file::read_dir_path_buf, log::tracing::init_tracing};
+use tracing::info;
 
 fn main() -> Result<()> {
-    let guard = init_tracing();
+    let _guard = init_tracing();
 
     let rt = tokio::runtime::Builder::new_multi_thread()
         // 开启所有特性
@@ -19,6 +20,8 @@ fn main() -> Result<()> {
 }
 
 async fn async_main() -> Result<()> {
+    let res = read_dir_path_buf("image")?;
+    info!(res = ?res, "读取文件夹");
     Ok(())
 }
 

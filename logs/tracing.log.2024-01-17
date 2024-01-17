@@ -1,0 +1,3 @@
+2024-01-17 17:33:24.880  INFO main ThreadId(01) src/main.rs:24: 读取文件夹 res=Ok(["image/time-icon.png", "image/eye.jpg"])
+2024-01-17 17:35:15.931  INFO main ThreadId(01) src/main.rs:24: 读取文件夹 res=["image/time-icon.png", "image/eye.jpg"]
+2024-01-17 17:35:35.944  INFO main ThreadId(01) src/main.rs:24: 读取文件夹 res=["src/compress/mod.rs", "src/compress/png.rs", "src/lib.rs", "src/utils/mod.rs", "src/utils/log/time.rs", "src/utils/log/tracing.rs", "src/utils/log/mod.rs", "src/utils/file.rs", "src/main.rs"]

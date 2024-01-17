@@ -3,6 +3,27 @@ name = "image-compress"
 version = "0.1.0"
 edition = "2021"
 
+[profile.dev]
+opt-level = 0
+codegen-units = 16   # debug build will cause runtime panic if codegen-unints is default
+debug         = 2
+incremental   = true
+
+# https://doc.rust-lang.org/cargo/reference/profiles.html
+[profile.release]
+# 控制 LLVM链接时间优化,可以使用整个程序分析来生成更好的优化代码，但代价是链接时间更长
+lto = true
+# 控制一个包将被分割成多少个"代码生成单元"。更多的代码生成单元允许并行处理更多的包，可能会减少编译时间，但可能会产生较慢的代码
+codegen-units = 1
+# 决定 Rust 对程序使用哪种程度的优化，0-3 范围
+opt-level = 3
+# 删除调试信息优化打包大小
+strip = true
+# pinic: 恐慌时的操作 默认为 展开 或 中断，展开时候程序会将调用栈往回走，清理内存，中断时候会直接停止程序，需要操作系统清理内存，但是这样打出的包小
+panic = "abort"
+# 是否开启断言调试
+debug-assertions = false
+
 
 [dependencies]
 # 无损压缩 png

@@ -2,7 +2,7 @@ use std::{error::Error, path::PathBuf};
 
 use oxipng::{optimize, InFile, Options, OutFile};
 
-fn lossless_png(input: &str, output: &str) -> Result<(), Box<dyn Error>> {
+pub fn lossless_png(input: &str, output: &str) -> Result<(), Box<dyn Error>> {
     let options = Options::max_compression(); // 设置压缩级别，范围是 0 到 6
 
     let input = PathBuf::from(input);

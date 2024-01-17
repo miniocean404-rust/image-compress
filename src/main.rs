@@ -24,8 +24,8 @@ fn main() -> Result<()> {
 
 async fn async_main() -> Result<()> {
     let res = read_dir_path_buf("image").await?;
-    jepg_compress();
     info!(res = ?res, "读取文件夹");
+    let _ = jepg_compress();
     Ok(())
 }
 

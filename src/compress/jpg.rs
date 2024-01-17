@@ -1,4 +1,5 @@
 use anyhow::Result;
+use tracing::info;
 
 pub fn jepg_compress() -> Result<()> {
     let a = std::panic::catch_unwind(|| -> Result<Vec<u8>> {
@@ -18,6 +19,7 @@ pub fn jepg_compress() -> Result<()> {
 
         let pixels = image.read_scanlines()?;
         image.finish()?;
+        info!(writer = ?pixels, "压缩图片");
 
         let comp = mozjpeg::Compress::new(mozjpeg::ColorSpace::JCS_RGB);
 
@@ -26,6 +28,7 @@ pub fn jepg_compress() -> Result<()> {
         comp.write_scanlines(&pixels[..])?;
 
         let writer = comp.finish()?;
+
         Ok(writer)
     });
 

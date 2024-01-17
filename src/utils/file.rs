@@ -2,7 +2,7 @@ use std::{fs, path::PathBuf};
 
 use anyhow::Result;
 
-pub fn read_dir_path_buf(path: &str) -> Result<Vec<PathBuf>> {
+pub async fn read_dir_path_buf(path: &str) -> Result<Vec<PathBuf>> {
     fn deep_dir(p: &str) -> Result<Vec<PathBuf>> {
         let entries = fs::read_dir(p)?;
 

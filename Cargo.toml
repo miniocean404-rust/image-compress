@@ -43,6 +43,9 @@ gifsicle = "1.94.0"
 # 将图像转化为 webp
 libwebp-sys = "0.9.4"
 
+# 处理 svg
+svgtypes = "0.13.0"
+
 
 # 处理时间
 chrono = "0.4.31"

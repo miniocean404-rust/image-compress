@@ -1,41 +1,43 @@
-use std::io::Write;
-use std::{
-    fs::File,
-    io::{self, BufWriter},
-};
+use std::{fs::File, io::BufWriter};
 
 use anyhow::{Ok, Result};
 use tracing::info;
 
 pub fn jeg_compress() -> Result<()> {
-    let a = std::panic::catch_unwind(|| -> Result<()> { Ok(()) });
+    let _ = std::panic::catch_unwind(|| -> Result<()> {
+        let decode = mozjpeg::Decompress::with_markers(mozjpeg::ALL_MARKERS)
+            .from_path("image/jpg/eye.jpg")?;
 
-    let decode =
-        mozjpeg::Decompress::with_markers(mozjpeg::ALL_MARKERS).from_path("image/jpg/eye.jpg")?;
+        // for marker in d.markers() {}
 
-    decode.color_space() == mozjpeg::ColorSpace::JCS_YCbCr;
-    // for marker in d.markers() {}
+        // rgb() enables conversion
+        let mut image = decode.rgb()?;
 
-    // rgb() enables conversion
-    let mut image = decode.rgb()?;
+        let pixels = image.read_scanlines::<u8>()?;
 
-    image.color_space() == mozjpeg::ColorSpace::JCS_RGB;
+        let width = image.width();
+        let height = image.height();
 
-    let pixels = image.read_scanlines::<u8>()?;
+        // image.finish()?;
 
-    image.finish()?;
+        let mut comp = mozjpeg::Compress::new(mozjpeg::ColorSpace::JCS_RGB);
+        comp.set_scan_optimization_mode(mozjpeg::ScanMode::AllComponentsTogether);
 
-    let mut comp = mozjpeg::Compress::new(mozjpeg::ColorSpace::JCS_RGB);
-    comp.set_quality(80.0);
+        // 必须设置宽高
+        comp.set_size(width, height);
+        comp.set_quality(60.0);
 
-    let file = File::create("output.jpeg")?;
-    let writer = BufWriter::new(file);
+        let file = File::create("dist/output.jpg")?;
+        let writer = BufWriter::new(file);
 
-    let mut comp = comp.start_compress(writer)?;
+        let mut comp = comp.start_compress(writer)?;
 
-    comp.write_scanlines(&pixels)?;
+        comp.write_scanlines(&pixels)?;
 
-    let writer = comp.finish()?;
+        comp.finish()?;
+
+        Ok(())
+    });
 
     Ok(())
 }

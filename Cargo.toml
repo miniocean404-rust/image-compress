@@ -30,7 +30,7 @@ debug-assertions = false
 oxipng = "9.0.0"
 # 有损压缩 png、gif 把 png24 压缩成 png8 的库 是 pngquant 的包装
 imagequant = "4.2.2"
-mozjpeg = "0.10.5"
+mozjpeg = "0.10.6"
 # mozjpeg-sys = "2.0.5"
 rgb = "0.8.37"
 

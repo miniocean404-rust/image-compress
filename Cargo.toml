@@ -5,4 +5,25 @@ edition = "2021"
 
 
 [dependencies]
+# 无损压缩 png
 oxipng = "9.0.0"
+mozjpeg = "0.10.6"
+mozjpeg-sys = "2.0.5"
+# gifsicle 是读取以及压缩gif的库
+gifsicle = "1.94.0"
+libwebp-sys = "0.9.4"
+# png24 压缩成 png8 的库
+imagequant = "4.2.2"
+
+# 处理时间
+chrono = "0.4.31"
+
+tokio = { version = "1.33.0", features = ["full"] }
+# 处理错误
+anyhow = "1.0.75"
+# 处理错误 enum 参数
+thiserror = "1.0.50"
+# 处理日志及栈追踪
+tracing = "0.1.40"
+tracing-appender = "0.2.3"
+tracing-subscriber = "0.3.18"

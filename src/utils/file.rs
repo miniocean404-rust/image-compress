@@ -1,0 +1,26 @@
+// use std::{error::Error, fs, path::PathBuf};
+
+// pub fn read_dir_path_buf(path: &str) -> Result<Vec<PathBuf>, Box<dyn Error>> {
+//     fn deep_dir(p: &str) -> Result<Vec<PathBuf>, Box<dyn Error>> {
+//         let entries = fs::read_dir(p)?;
+
+//         let mut vec_path_buf = entries
+//             .filter_map(|entry| entry.ok())
+//             .flat_map(|entry| {
+//                 let meta = entry.metadata().ok()?;
+//                 if meta.is_file() {
+//                     Some(vec![entry.path()])
+//                 } else if meta.is_dir() {
+//                     deep_dir(entry.path().to_str().unwrap()).ok()
+//                 } else {
+//                     None
+//                 }
+//             })
+//             .flatten()
+//             .collect();
+
+//         Ok(vec_path_buf)
+//     }
+
+//     Ok(deep_dir(path))
+// }

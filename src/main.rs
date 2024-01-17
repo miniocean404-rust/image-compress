@@ -1,62 +1,27 @@
-use std::{
-    error::Error,
-    fs,
-    path::{Path, PathBuf},
-};
+use anyhow::Result;
+use image_compress::utils::log::tracing::init_tracing;
 
-use oxipng::{optimize, InFile, Options, OutFile};
+fn main() -> Result<()> {
+    let guard = init_tracing();
 
-fn main() -> Result<(), Box<dyn Error>> {
-    // let read_path = "image";
-    let read_path = "D:\\soft-dev\\code\\work\\davinci\\davinci-web\\assets\\image";
-    let out_path = "dist";
+    let rt = tokio::runtime::Builder::new_multi_thread()
+        // 开启所有特性
+        .enable_all()
+        // 监听线程停止
+        .on_thread_stop(async_thread_stop)
+        // 构建 runtime
+        .build()?;
 
-    if !Path::new(out_path).is_dir() {
-        fs::create_dir_all("dist")?;
-    }
-
-    let options = Options::max_compression(); // 设置压缩级别，范围是 0 到 6
-
-    let mut paths = fs::read_dir(read_path)?
-        .filter_map(|entry| entry.ok())
-        .filter_map(|entry| -> Option<PathBuf> {
-            let meta = entry.metadata().expect("期待元数据");
-            let path = entry.path();
-
-            if !meta.is_file() {
-                return None;
-            }
-
-            match path.extension() {
-                Some(ext) => {
-                    if ext == "png" {
-                        Some(path)
-                    } else {
-                        None
-                    }
-                }
-                None => None,
-            }
-        });
-
-    paths.try_for_each(|input| -> Result<(), Box<dyn Error>> {
-        let mut output = PathBuf::from("dist");
-
-        if let Some(filename) = input.file_name() {
-            output.push(filename)
-        }
-
-        optimize(
-            &InFile::Path(input),
-            &OutFile::Path {
-                path: Some(output),
-                preserve_attrs: true,
-            },
-            &options,
-        )?;
-
-        Ok(())
-    })?;
+    // 等价于 #[tokio::main()]
+    rt.block_on(async_main())?;
 
     Ok(())
+}
+
+async fn async_main() -> Result<()> {
+    Ok(())
+}
+
+fn async_thread_stop() {
+    // warn!("异步线程停止了");
 }

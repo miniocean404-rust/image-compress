@@ -1,12 +1,13 @@
-use std::error::Error;
+use std::path::Path;
 
+use anyhow::{Ok, Result};
 use image_compress::{
-    compress::{jpg::lossless_jpeg, png::lossy_png},
+    compress::png::lossy_png,
     utils::{file::read_dir_path_buf, log::tracing::init_tracing},
 };
 use tracing::info;
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<()> {
     let _guard = init_tracing();
 
     let rt = tokio::runtime::Builder::new_multi_thread()
@@ -25,12 +26,30 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 async fn async_main() -> anyhow::Result<()> {
     // let path = "D:\\soft-dev\\code\\work\\davinci\\davinci-web\\assets\\image";
-    let path = "image";
+    // let path = "image";
+    let path = "/Users/user/Desktop/work-code/front-end/davinci-web/assets/image";
 
     let res = read_dir_path_buf(path).await?;
-    info!(res = ?res, "读取文件夹");
+    let clone_res = res.clone();
 
-    lossy_png("image/png/time-icon.png", "dist/png/test.png")?;
+    for path_buf in clone_res {
+        match path_buf.extension() {
+            Some(ext) => {
+                if ext == "png" {
+                    tokio::spawn(async move {
+                        let path = path_buf.as_path().to_str().unwrap();
+                        let out = Path::new("./dist").join(path_buf.file_name().unwrap());
+                        let out = out.to_str().unwrap();
+
+                        lossy_png(path, out).await.unwrap();
+                    });
+                }
+            }
+            None => {
+                info!("没有后缀名的文件: {:?}", path_buf)
+            }
+        }
+    }
 
     Ok(())
 }

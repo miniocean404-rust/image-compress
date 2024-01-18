@@ -28,7 +28,7 @@ debug-assertions = false
 [dependencies]
 # 无损压缩 png (optipng、oxipng)
 oxipng = "9.0.0"
-# 有损压缩 png、gif 把 png24 压缩成 png8 的库 是 pngquant 的包装
+# 有损压缩 png 把 png24 压缩成 png8 的库 是 pngquant 的包装
 imagequant = { version = "4.2.2", default-features = true }
 # image = "0.24.8"
 lodepng = "3.9.3"

@@ -24,7 +24,7 @@ pub fn lossless_png(input: &str, output: &str) -> Result<(), Box<dyn Error>> {
 }
 
 // https://github.com/valterkraemer/imagequant-wasm/blob/main/src/lib.rs
-pub fn lossy_png(input: &str, output: &str) -> Result<()> {
+pub async fn lossy_png(input: &str, output: &str) -> Result<()> {
     let image = lodepng::decode32_file(input)?;
     let rgba = image.buffer;
     let width = image.width;

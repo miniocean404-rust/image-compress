@@ -1,6 +1,6 @@
 use anyhow::{Ok, Result};
 use image_compress::{
-    compress::jpg::jeg_compress,
+    compress::jpg::lossless_jpeg,
     utils::{file::read_dir_path_buf, log::tracing::init_tracing},
 };
 use tracing::info;
@@ -28,7 +28,7 @@ async fn async_main() -> Result<()> {
 
     let res = read_dir_path_buf(path).await?;
     info!(res = ?res, "读取文件夹");
-    jeg_compress().unwrap();
+    lossless_jpeg("image/jpg/eye.jpg", "dist/11.jpg")?;
     Ok(())
 }
 

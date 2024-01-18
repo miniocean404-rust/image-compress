@@ -1,43 +1,53 @@
-use std::{fs::File, io::BufWriter};
+use std::{
+    fs::{self, File},
+    io::{BufReader, BufWriter},
+};
 
 use anyhow::{Ok, Result};
 use tracing::info;
 
-pub fn jeg_compress() -> Result<()> {
-    let _ = std::panic::catch_unwind(|| -> Result<()> {
-        let decode = mozjpeg::Decompress::with_markers(mozjpeg::ALL_MARKERS)
-            .from_path("image/jpg/eye.jpg")?;
+pub fn lossless_jpeg(input: &str, output: &str) -> Result<()> {
+    // let _ = std::panic::catch_unwind(|| -> Result<()> { Ok(()) });
 
-        // for marker in d.markers() {}
+    let file = File::open(input)?;
+    let buf_reader = BufReader::new(file);
 
-        // rgb() enables conversion
-        let mut image = decode.rgb()?;
+    let file = File::create(output)?;
+    let writer = BufWriter::new(file);
 
-        let pixels = image.read_scanlines::<u8>()?;
+    let decode = mozjpeg::Decompress::with_markers(mozjpeg::ALL_MARKERS).from_reader(buf_reader)?;
 
-        let width = image.width();
-        let height = image.height();
+    // for marker in d.markers() {}
 
-        // image.finish()?;
+    let mut image = decode.rgb()?;
 
-        let mut comp = mozjpeg::Compress::new(mozjpeg::ColorSpace::JCS_RGB);
-        comp.set_scan_optimization_mode(mozjpeg::ScanMode::AllComponentsTogether);
+    let pixels = image.read_scanlines::<u8>()?;
 
-        // 必须设置宽高
-        comp.set_size(width, height);
-        comp.set_quality(60.0);
+    let width = image.width();
+    let height = image.height();
 
-        let file = File::create("dist/output.jpg")?;
-        let writer = BufWriter::new(file);
+    image.finish()?;
 
-        let mut comp = comp.start_compress(writer)?;
+    let mut comp = mozjpeg::Compress::new(mozjpeg::ColorSpace::JCS_RGB);
+    // 必须设置宽高
+    comp.set_size(width, height);
+    comp.set_scan_optimization_mode(mozjpeg::ScanMode::AllComponentsTogether);
+    comp.set_quality(60.0);
+    // comp.set_smoothing_factor(1); // 消除噪点，减少大小
 
-        comp.write_scanlines(&pixels)?;
+    let mut comp = comp.start_compress(writer)?;
 
-        comp.finish()?;
+    comp.write_scanlines(&pixels)?;
 
-        Ok(())
-    });
+    comp.finish()?;
+
+    // let read_metadata = fs::metadata(input)?;
+    // let out_metadata = fs::metadata(output)?;
+    // info!(
+    //     "metadata: {:?} {:?}",
+    //     out_metadata.len(),
+    //     read_metadata.len()
+    // );
 
     Ok(())
 }

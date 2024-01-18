@@ -1,6 +1,7 @@
 use anyhow::{Ok, Result};
 use libwebp_sys::{WebPDecodeRGBA, WebPEncodeRGBA, WebPGetInfo};
 
+// https://github.com/Gelbpunkt/webp/blob/943ef97363c79864f21139cc5ab81f361b3d51dc/src/lib.rs
 pub fn encode_webp(input_image: &[u8], width: i32, height: i32, quality: f32) -> Result<Vec<u8>> {
     unsafe {
         let mut out_buf = std::ptr::null_mut();

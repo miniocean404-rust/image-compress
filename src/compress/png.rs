@@ -28,22 +28,17 @@ pub fn lossless_png(input: &str, output: &str) -> Result<(), Box<dyn Error>> {
 
 // https://github.com/valterkraemer/imagequant-wasm/blob/main/src/lib.rs
 pub fn lossy_png(input: &str, output: &str) -> Result<()> {
-    let img = image::open(input)?;
-    let binding = img.to_rgba8();
-    let rgba_v8 = binding.as_rgba();
-    let (width, height) = img.dimensions();
+    let image = lodepng::decode32_file(input)?;
+    let rgba = image.buffer;
+    let width = image.width;
+    let height = image.height;
 
     let mut lib = imagequant::new();
     lib.set_speed(4)?;
     lib.set_quality(65, 80)?;
     // lib.set_max_colors(128)?;
 
-    let mut img = lib.new_image(
-        rgba_v8,
-        width.try_into().unwrap(),
-        height.try_into().unwrap(),
-        0.0,
-    )?;
+    let mut img = lib.new_image(rgba, width, height, 0.0)?;
 
     let mut res = lib.quantize(&mut img)?;
 
@@ -53,12 +48,7 @@ pub fn lossy_png(input: &str, output: &str) -> Result<()> {
 
     let mut encoder = lodepng::Encoder::new();
     encoder.set_palette(palette.as_slice())?;
-    encoder.encode_file(
-        output,
-        pixels.as_slice(),
-        width.try_into()?,
-        height.try_into()?,
-    )?;
+    encoder.encode_file(output, pixels.as_slice(), width, height)?;
 
     Ok(())
 }

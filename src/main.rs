@@ -25,9 +25,9 @@ fn main() -> Result<()> {
 }
 
 async fn async_main() -> anyhow::Result<()> {
-    // let path = "D:\\soft-dev\\code\\work\\davinci\\davinci-web\\assets\\image";
+    let path = "D:\\soft-dev\\code\\work\\davinci\\davinci-web\\assets\\image";
+    // let path = "/Users/user/Desktop/work-code/front-end/davinci-web/assets/image";
     // let path = "image";
-    let path = "/Users/user/Desktop/work-code/front-end/davinci-web/assets/image";
 
     let res = read_dir_path_buf(path).await?;
     let clone_res = res.clone();
@@ -37,8 +37,11 @@ async fn async_main() -> anyhow::Result<()> {
             if ext == "png" {
                 tokio::spawn(async move {
                     let path = path_buf.as_path().to_str().unwrap();
-                    let out = Path::new("./dist").join(path_buf.file_name().unwrap());
+                    let out = Path::new("dist").join(path_buf.file_name().unwrap());
                     let out = out.to_str().unwrap();
+
+                    info!("path :{:?}", path);
+                    info!("out :{:?}", out);
 
                     lossy_png(path, out).await.unwrap();
                 });

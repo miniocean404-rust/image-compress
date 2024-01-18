@@ -26,7 +26,7 @@ pub fn lossless_png(input: &str, output: &str) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-// https://github.com/ImageOptim/libimagequant/blob/main/examples/basic.rs
+// https://github.com/valterkraemer/imagequant-wasm/blob/main/src/lib.rs
 pub fn lossy_png(input: &str, output: &str) -> Result<()> {
     let img = image::open(input)?;
     let binding = img.to_rgba8();
@@ -36,6 +36,7 @@ pub fn lossy_png(input: &str, output: &str) -> Result<()> {
     let mut lib = imagequant::new();
     lib.set_speed(4)?;
     lib.set_quality(65, 80)?;
+    // lib.set_max_colors(128)?;
 
     let mut img = lib.new_image(
         rgba_v8,

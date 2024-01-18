@@ -29,7 +29,7 @@ async fn async_main() -> Result<()> {
     let res = read_dir_path_buf(path).await?;
     info!(res = ?res, "读取文件夹");
 
-    lossy_png("image/png/", output);
+    // lossy_png("image/png/", output);
 
     Ok(())
 }

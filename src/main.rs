@@ -1,11 +1,12 @@
-use anyhow::{Ok, Result};
+use std::error::Error;
+
 use image_compress::{
     compress::{jpg::lossless_jpeg, png::lossy_png},
     utils::{file::read_dir_path_buf, log::tracing::init_tracing},
 };
 use tracing::info;
 
-fn main() -> Result<()> {
+fn main() -> Result<(), Box<dyn Error>> {
     let _guard = init_tracing();
 
     let rt = tokio::runtime::Builder::new_multi_thread()
@@ -22,14 +23,14 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-async fn async_main() -> Result<()> {
+async fn async_main() -> anyhow::Result<()> {
     // let path = "D:\\soft-dev\\code\\work\\davinci\\davinci-web\\assets\\image";
     let path = "image";
 
     let res = read_dir_path_buf(path).await?;
     info!(res = ?res, "读取文件夹");
 
-    // lossy_png("image/png/", output);
+    lossy_png("image/png/time-icon.png", "dist/png/test.png")?;
 
     Ok(())
 }

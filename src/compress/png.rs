@@ -1,10 +1,7 @@
-use std::{error::Error, path::PathBuf, vec};
+use std::{error::Error, path::PathBuf};
 
 use anyhow::Result;
-use image::{GenericImageView, Rgba};
 use oxipng::{optimize, InFile, Options, OutFile};
-use rgb::FromSlice;
-use tracing::{error, info};
 
 pub fn lossless_png(input: &str, output: &str) -> Result<(), Box<dyn Error>> {
     let options = Options::max_compression(); // 设置压缩级别，范围是 0 到 6
@@ -41,7 +38,6 @@ pub fn lossy_png(input: &str, output: &str) -> Result<()> {
     let mut img = lib.new_image(rgba, width, height, 0.0)?;
 
     let mut res = lib.quantize(&mut img)?;
-
     res.set_dithering_level(1.0)?;
 
     let (palette, pixels) = res.remapped(&mut img)?;

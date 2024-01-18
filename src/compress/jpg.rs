@@ -4,7 +4,6 @@ use std::{
 };
 
 use anyhow::{Ok, Result};
-use tracing::info;
 
 pub fn lossless_jpeg(input: &str, output: &str) -> Result<()> {
     // let _ = std::panic::catch_unwind(|| -> Result<()> { Ok(()) });

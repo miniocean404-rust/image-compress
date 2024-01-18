@@ -33,20 +33,15 @@ async fn async_main() -> anyhow::Result<()> {
     let clone_res = res.clone();
 
     for path_buf in clone_res {
-        match path_buf.extension() {
-            Some(ext) => {
-                if ext == "png" {
-                    tokio::spawn(async move {
-                        let path = path_buf.as_path().to_str().unwrap();
-                        let out = Path::new("./dist").join(path_buf.file_name().unwrap());
-                        let out = out.to_str().unwrap();
+        if let Some(ext) = path_buf.extension() {
+            if ext == "png" {
+                tokio::spawn(async move {
+                    let path = path_buf.as_path().to_str().unwrap();
+                    let out = Path::new("./dist").join(path_buf.file_name().unwrap());
+                    let out = out.to_str().unwrap();
 
-                        lossy_png(path, out).await.unwrap();
-                    });
-                }
-            }
-            None => {
-                info!("没有后缀名的文件: {:?}", path_buf)
+                    lossy_png(path, out).await.unwrap();
+                });
             }
         }
     }

@@ -1,14 +1,13 @@
 use std::path::Path;
-use std::sync::Arc;
-use std::sync::atomic::{AtomicI32, Ordering};
 
 use anyhow::{Ok, Result};
 use tokio::task::JoinSet;
+use tracing::info;
+
 use image_compress::{
     compress::png::lossy_png,
     utils::{file::read_dir_path_buf, log::tracing::init_tracing},
 };
-use tracing::info;
 
 fn main() -> Result<()> {
     let _guard = init_tracing();
@@ -35,7 +34,7 @@ async fn async_main() -> anyhow::Result<()> {
     let res = read_dir_path_buf(path).await?.into_iter().enumerate();
     let mut set = JoinSet::new();
 
-    for (index,path_buf) in res {
+    for (index, path_buf) in res {
         if let Some(ext) = path_buf.extension() {
             if ext == "png" {
                 set.spawn(async move {

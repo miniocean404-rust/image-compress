@@ -38,7 +38,7 @@ pub async fn lossy_png(input: &str, output: &str) -> Result<()> {
     let mut img = lib.new_image(rgba, width, height, 0.0)?;
 
     let mut res = lib.quantize(&mut img)?;
-    res.set_dithering_level(1.0)?;
+    // res.set_dithering_level(1.0)?;
 
     let (palette, pixels) = res.remapped(&mut img)?;
 

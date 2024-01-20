@@ -1,6 +1,9 @@
 use std::path::Path;
+use std::sync::Arc;
+use std::sync::atomic::{AtomicI32, Ordering};
 
 use anyhow::{Ok, Result};
+use tokio::task::JoinSet;
 use image_compress::{
     compress::png::lossy_png,
     utils::{file::read_dir_path_buf, log::tracing::init_tracing},
@@ -29,25 +32,27 @@ async fn async_main() -> anyhow::Result<()> {
     // let path = "/Users/user/Desktop/work-code/front-end/davinci-web/assets/image";
     // let path = "image";
 
-    let res = read_dir_path_buf(path).await?;
-    let clone_res = res.clone();
+    let res = read_dir_path_buf(path).await?.into_iter().enumerate();
+    let mut set = JoinSet::new();
 
-    for path_buf in clone_res {
+    for (index,path_buf) in res {
         if let Some(ext) = path_buf.extension() {
             if ext == "png" {
-                tokio::spawn(async move {
+                set.spawn(async move {
                     let path = path_buf.as_path().to_str().unwrap();
                     let out = Path::new("dist").join(path_buf.file_name().unwrap());
                     let out = out.to_str().unwrap();
 
                     info!("path :{:?}", path);
                     info!("out :{:?}", out);
-
+                    info!("数量 :{:?}", index);
                     lossy_png(path, out).await.unwrap();
                 });
             }
         }
     }
+
+    while let Some(_) = set.join_next().await {}
 
     Ok(())
 }

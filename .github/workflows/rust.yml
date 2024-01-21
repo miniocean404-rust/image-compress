@@ -48,24 +48,15 @@ jobs:
 #      - name: Run tests
 #        run: cargo test --verbose --release
 
-      - name: 将 APK IPA 归并到一个目录中再准备上传 - macos
+      - name: 归并到一个目录中再准备上传 - macos
         if: matrix.os == 'macos-latest'
         run: |
           mkdir tag
-          cp target/release/image-compress tag/image-compress-mac
-
-      - name: 将 APK IPA 归并到一个目录中再准备上传 - windows
-        if: matrix.os == 'windows-latest'
-        run: |
-          mkdir tag
-          cp target/release/image-compress.exe tag/image-compress-win.exe
-
-      - name: 将 APK IPA 归并到一个目录中再准备上传 - linux
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          mkdir tag
-          cp target/release/image-compress tag/image-compress-linux
-
+          if [ ${{ runner.os }} == 'Windows' ]; then
+            cp target/release/image-compress.exe tag/image-compress.exe
+          else
+            cp target/release/image-compress tag/image-compress
+          fi
 
       - name: 分享 Release 包给其他 Job
         uses: actions/upload-artifact@v3

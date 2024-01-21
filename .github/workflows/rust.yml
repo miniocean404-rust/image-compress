@@ -81,7 +81,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: ['macos-latest']
 
     steps:
       # 接收上传的东西
@@ -103,7 +103,7 @@ jobs:
         # 403 错误 设置 Action 权限 github -> setting -> actiong -> general -> Workflow permissions
         with:
           generate_release_notes: true
-          tag_name: ${{ github.repository }}
+          tag_name: ${{ github.ref }}
           body: ${{ github.event.head_commit.message }}
           token: ${{ github.token }}
           files: |

@@ -49,7 +49,6 @@ jobs:
 #        run: cargo test --verbose --release
 
       - name: 归并到一个目录中再准备上传 - macos
-        if: matrix.os == 'macos-latest'
         run: |
           mkdir tag
           if [ ${{ runner.os }} == 'Windows' ]; then

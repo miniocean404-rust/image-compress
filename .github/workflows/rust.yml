@@ -15,6 +15,7 @@ on:
       - '**/*.jpg'
       - 'LICENSE'
       - 'NOTICE'
+      - image/**
   pull_request:
     branches: [ master ]
     paths-ignore:
@@ -29,6 +30,7 @@ on:
       - '**/*.jpg'
       - 'LICENSE'
       - 'NOTICE'
+      - image/**
 
 env:
   CARGO_TERM_COLOR: always
@@ -48,14 +50,23 @@ jobs:
 #      - name: Run tests
 #        run: cargo test --verbose --release
 
-      - name: 归并到一个目录中再准备上传 - macos
+      - name: 归并到一个目录中再准备上传 - windows
+        if: runner.os == 'Windows'
         run: |
           mkdir tag
-          if [ ${{ runner.os }} == 'Windows' ]; then
-            cp target/release/image-compress.exe tag/image-compress.exe
-          else
-            cp target/release/image-compress tag/image-compress
-          fi
+          cp target/release/image-compress.exe tag/image-compress.exe
+
+#       if [ ${{ runner.os }} == Windows ]; then
+#         cp target/release/image-compress.exe tag/image-compress.exe
+#       else
+#         cp target/release/image-compress tag/image-compress
+#       fi
+
+      - name: 归并到一个目录中再准备上传
+        if: runner.os != 'Windows'
+        run: |
+          mkdir tag
+          cp target/release/image-compress tag/image-compress
 
       - name: 分享 Release 包给其他 Job
         uses: actions/upload-artifact@v3

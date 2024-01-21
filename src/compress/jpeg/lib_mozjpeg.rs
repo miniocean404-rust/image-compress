@@ -1,11 +1,7 @@
-use std::{
-    fs::File,
-    io::{BufReader, BufWriter},
-};
+use std::fs::File;
+use std::io::{BufReader, BufWriter};
 
-use anyhow::{Ok, Result};
-
-pub fn lossless_jpeg(input: &str, output: &str) -> Result<()> {
+pub fn lossless_jpeg(input: &str, output: &str) -> anyhow::Result<()> {
     // let _ = std::panic::catch_unwind(|| -> Result<()> { Ok(()) });
 
     let file = File::open(input)?;

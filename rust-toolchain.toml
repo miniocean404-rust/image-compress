@@ -1,0 +1,13 @@
+[toolchain]
+channel = "stable"
+components = ["rustfmt", "clippy"]
+# 可用平台使用 rustup target list 查看
+# targets = ["wasm32-unknown-unknown"]
+# 工具链完整程度 minimal | default
+profile = "default"
+
+# 都是字节的 Rust 地址
+# 设置下载与 Rust 相关的静态资源的根 URL。
+RUSTUP_DIST_SERVER="https://rsproxy.cn"
+# 设置下载自我更新的根 URL。
+RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"

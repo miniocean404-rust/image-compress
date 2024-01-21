@@ -7,10 +7,11 @@ use tokio::sync::RwLock;
 use tokio::task::JoinSet;
 use tracing::{error, info};
 
-use image_compress::compress::gif::lossy_gif;
+use image_compress::compress::jpeg::lib_mozjpeg_sys::compress;
 use image_compress::compress::png::lossy_png;
 use image_compress::compress::webp::webp_compress;
 use image_compress::constant::error::Error;
+use image_compress::prop::Props;
 use image_compress::utils::file::read_dir_path_buf;
 use image_compress::utils::log::tracing::init_tracing;
 
@@ -32,11 +33,7 @@ fn main() -> Result<()> {
 }
 
 async fn async_main() -> Result<()> {
-    lossy_gif(
-        "D:\\soft-dev\\code\\rust\\image-compress\\image\\gif\\a.gif",
-        "output.gif",
-    )
-    .unwrap();
+    compress("image/jpg/eye.jpg", "output.jpg", &Props::default()).unwrap();
     Ok(())
 }
 

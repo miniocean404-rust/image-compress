@@ -26,12 +26,8 @@ pub fn init_tracing() -> WorkerGuard {
     // 如果 non_blocking 不在 main 中，需要把 guard 返回给 main
     let (_non_blocking, guard) = tracing_appender::non_blocking(file_appender);
 
-    let tty = fmt::layer()
-        .with_writer(io::stdout)
-        .event_format(get_formart(true));
-    let file = fmt::layer()
-        .with_writer(_non_blocking)
-        .event_format(get_formart(false));
+    let tty = fmt::layer().with_writer(io::stdout).event_format(get_formart(true));
+    let file = fmt::layer().with_writer(_non_blocking).event_format(get_formart(false));
 
     let registry = Registry::default().with(tty).with(file);
     registry.init();

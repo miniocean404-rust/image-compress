@@ -94,7 +94,7 @@ jobs:
         # 403 错误 设置 Action 权限 github -> setting -> actiong -> general -> Workflow permissions
         with:
           generate_release_notes: true
-          tag_name: ${{ github.ref }}
+          tag_name: ${{ github.repository }}
           body: ${{ github.event.head_commit.message }}
           token: ${{ github.token }}
           files: |

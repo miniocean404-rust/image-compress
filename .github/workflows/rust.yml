@@ -3,14 +3,39 @@ name: Rust
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+      - '.idea/**'
+      - '.gitattributes'
+      - '.github/**.json'
+      - '.gitignore'
+      - '.gitmodules'
+      - '**.md'
+      - '**/*.txt'
+      - '**/*.png'
+      - '**/*.jpg'
+      - 'LICENSE'
+      - 'NOTICE'
   pull_request:
     branches: [ master ]
+    paths-ignore:
+      - '.idea/**'
+      - '.gitattributes'
+      - '.github/**.json'
+      - '.gitignore'
+      - '.gitmodules'
+      - '**.md'
+      - '**/*.txt'
+      - '**/*.png'
+      - '**/*.jpg'
+      - 'LICENSE'
+      - 'NOTICE'
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   build:
+    name: 准备构建
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -18,7 +43,57 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Build
+      - name: 签出文件、运行打包
         run: cargo build --verbose --release
 #      - name: Run tests
 #        run: cargo test --verbose --release
+
+      - name: 将 APK IPA 归并到一个目录中再准备上传
+        run: |
+          mkdir tag
+          cp target/release/*.exe tag
+          cp target/release/image-compress tag
+
+      - name: 分享 Release 包给其他 Job
+        uses: actions/upload-artifact@v3
+        with:
+          name: rust_release_build
+          path: |
+            tag/*
+
+  publish:
+    name: 上传到 release 进行版本发布
+    # 等待某个工作完成后
+    needs: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    steps:
+      # 接收上传的东西
+      - name: 获取分享的安装包
+        uses: actions/download-artifact@v3
+        with:
+          # name 为分享 Release 包里的 name
+          name: rust_release_build
+          path: prod/package
+
+      - name: 展示下载的文件列表
+        run: |
+          pwd
+          ls -R
+        working-directory: prod/package
+
+      - name: 上传到 release 进行版本发布
+        uses: softprops/action-gh-release@v1
+        # 403 错误 设置 Action 权限 github -> setting -> actiong -> general -> Workflow permissions
+        with:
+          generate_release_notes: true
+          tag_name: ${{ github.repository }}
+          body: ${{ github.event.head_commit.message }}
+          token: ${{ github.token }}
+          files: |
+            prod/package/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.FLUTTER_SIGN_UP_CICD }}

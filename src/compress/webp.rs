@@ -1,35 +1,37 @@
+use std::fs::File;
+use std::io::{Read, Write};
+use std::ops::Deref;
+
 use anyhow::{Ok, Result};
-use libwebp_sys::{WebPDecodeRGBA, WebPEncodeRGBA, WebPGetInfo};
 
-// https://github.com/Gelbpunkt/webp/blob/943ef97363c79864f21139cc5ab81f361b3d51dc/src/lib.rs
-pub fn encode_webp(input_image: &[u8], width: i32, height: i32, quality: f32) -> Result<Vec<u8>> {
-    unsafe {
-        let mut out_buf = std::ptr::null_mut();
+use crate::constant::error::WebpError;
 
-        let stride = width * 4;
+pub fn webp_compress(input_path: &str, output_path: &str) -> Result<()> {
+    let mut input_file = File::open(input_path)?;
 
-        let len = WebPEncodeRGBA(
-            input_image.as_ptr(),
-            width,
-            height,
-            stride,
-            quality,
-            &mut out_buf,
-        );
+    let mut input_data = Vec::new();
+    input_file.read_to_end(&mut input_data)?;
 
-        Ok(std::slice::from_raw_parts(out_buf, len as usize).into())
-    }
+    let mut output_file = File::create(output_path)?;
+    let compressed_image = compress_to_mem(input_data)?;
+
+    output_file
+        .write_all(&compressed_image)
+        .map_err(|e| WebpError::WriteError(e))?;
+
+    Ok(())
 }
 
-pub fn decode_webp(buf: &[u8]) -> Result<Vec<u8>> {
-    let mut width = 0;
-    let mut height = 0;
-    let len = buf.len();
+fn compress_to_mem(in_file: Vec<u8>) -> Result<Vec<u8>> {
+    let decoder = webp::Decoder::new(&in_file);
 
-    unsafe {
-        WebPGetInfo(buf.as_ptr(), len, &mut width, &mut height);
-        let out_buf = WebPDecodeRGBA(buf.as_ptr(), len, &mut width, &mut height);
+    let input_webp = decoder.decode().ok_or(WebpError::DecodeError)?;
+    let input_image = input_webp.to_image();
 
-        Ok(std::slice::from_raw_parts(out_buf, (width * height * 4).try_into().unwrap()).into())
-    }
+    let encoder = webp::Encoder::from_image(&input_image).map_err(|_| WebpError::EncodeError)?;
+    let encode = encoder
+        .encode_simple(true, 75.0)
+        .map_err(|_| WebpError::CompressError)?;
+
+    Ok(encode.deref().to_vec())
 }

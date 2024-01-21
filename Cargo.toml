@@ -31,21 +31,21 @@ oxipng = "9.0.0"
 # 有损压缩 png 把 png24 压缩成 png8 的库 是 pngquant 的包装
 imagequant = { version = "4.2.2", default-features = true }
 # image = "0.24.8"
-lodepng = "3.9.3"
+lodepng = "3.10.0"
 
 mozjpeg = "= 0.10.6"
 # mozjpeg-sys = "2.0.5"
 rgb = "0.8.37"
 
-# gifsicle 是读取以及 有损压缩 gif 的库
+# gifsicle 是读取以及 有损及无损压缩 gif 的库
 gifsicle = "1.94.0"
+libc = "0.2.152"
 
-# 将图像转化为 webp
-libwebp-sys = "0.9.4"
+# webp 无损压缩及有损压缩
+webp = "0.2.6" # 底层使用的是 rust libwebp-sys
 
 # 处理 svg
 svgtypes = "0.13.0"
-
 
 # 处理时间
 chrono = "0.4.31"

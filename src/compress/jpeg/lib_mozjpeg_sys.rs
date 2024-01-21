@@ -46,7 +46,7 @@ unsafe fn lossless(in_file: Vec<u8>, props: &Props) -> anyhow::Result<Vec<u8>> {
     jpeg_create_decompress(&mut src_info);
     jpeg_create_compress(&mut dst_info);
 
-    jpeg_mem_src(&mut src_info, in_file.as_ptr(), in_file.len() as u32);
+    jpeg_mem_src(&mut src_info, in_file.as_ptr(), in_file.len() as c_ulong);
 
     if props.keep_metadata {
         jpeg_save_markers(&mut src_info, 0xFE, 0xFFFF);

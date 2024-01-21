@@ -52,19 +52,19 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           mkdir tag
-          cp target/release/image-compress tag
+          cp target/release/image-compress tag/image-compress-mac
 
       - name: 将 APK IPA 归并到一个目录中再准备上传 - windows
         if: matrix.os == 'windows-latest'
         run: |
           mkdir tag
-          cp target/release/image-compress.exe tag
+          cp target/release/image-compress.exe tag/image-compress-win.exe
 
       - name: 将 APK IPA 归并到一个目录中再准备上传 - linux
         if: matrix.os == 'ubuntu-latest'
         run: |
           mkdir tag
-          cp target/release/image-compress tag
+          cp target/release/image-compress tag/image-compress-linux
 
 
       - name: 分享 Release 包给其他 Job

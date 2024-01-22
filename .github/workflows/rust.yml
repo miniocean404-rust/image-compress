@@ -106,14 +106,9 @@ jobs:
               cargo build --verbose --release
               cp ./target/release/image-compress ./tag
 
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: 签出文件、运行打包
-        run: cargo build --verbose --release
 #      - name: Run tests
 #        run: cargo test --verbose --release
-
+    steps:
       - name: 输出 toolchain
         id: toolchain
         shell: bash
@@ -141,7 +136,8 @@ jobs:
         if: ${{ matrix.os.setup }}
         shell: bash
 
-      - name: 归并到一个目录中再准备上传
+      - uses: actions/checkout@v3
+      - name: 签出文件、运行打包 并 归并到一个目录中再准备上传
         shell: bash
         run: |
           mkdir tag
@@ -153,7 +149,7 @@ jobs:
       - name: 分享 Release 包给其他 Job
         uses: actions/upload-artifact@v3
         with:
-          name: rust_release_build
+          name: bindings-${{ matrix.os.target }}
           path: |
             tag/*
           # 如果没有文件就错误提示
@@ -170,7 +166,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           # name 为分享 Release 包里的 name
-          name: rust_release_build
           path: prod/package
 
       - name: 展示下载的文件列表

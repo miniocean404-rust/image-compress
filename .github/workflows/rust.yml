@@ -163,11 +163,7 @@ jobs:
     name: 上传到 release 进行版本发布
     # 等待某个工作完成后
     needs: build
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: ['macos-latest']
-
+    runs-on: ubuntu-latest
     steps:
       # 接收上传的东西
       - name: 获取分享的安装包

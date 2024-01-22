@@ -54,7 +54,7 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           mkdir tag
-          cp target/release/image-compress.exe tag/image-compress.exe
+          cp target/release/image-compress.exe tag/image-compress-${{runner.os}}.exe
 
 #       if [ ${{ runner.os }} == Windows ]; then
 #         cp target/release/image-compress.exe tag/image-compress.exe
@@ -66,7 +66,7 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           mkdir tag
-          cp target/release/image-compress tag/image-compress
+          cp target/release/image-compress tag/image-compress-${{runner.os}}
 
       - name: 分享 Release 包给其他 Job
         uses: actions/upload-artifact@v3

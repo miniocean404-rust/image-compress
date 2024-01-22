@@ -114,16 +114,10 @@ jobs:
         shell: bash
         run: echo "开始构建"
 
-      # - name: 输出 toolchain
-      #   id: toolchain
-      #   shell: bash
-      #   run: echo "version=$(cat ./rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
-
       - name: 安装 toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.os.target }}
-      #     toolchain: ${{ steps.toolchain.outputs.version }}
 
       - name: 缓存 cargo registry
         uses: actions/cache@v4
@@ -136,11 +130,6 @@ jobs:
         with:
           path: ~/.cargo/git
           key: ${{ matrix.os.target }}-cargo-index-trimmed
-
-      - name: Setup toolchain
-        run: ${{ matrix.os.setup }}
-        if: ${{ matrix.os.setup }}
-        shell: bash
 
       - name: 运行打包 并 归并到一个目录中再准备上传
         shell: bash
@@ -189,7 +178,26 @@ jobs:
         run: |
             pwd
             ls -R
-            ./script/cli.sh
+            mkdir -p ./prod_cli
+            # Naive substitution to napi artifacts for the cli binary.
+            for filename in prod/package/*/*.node
+            do
+              BINDING_NAME=${filename#*.}
+              BINDING_ABI=${BINDING_NAME%%.*}
+              CLI_BINARY_PATH=${filename%%.*}
+
+              echo "准备构建 artifacts:"
+              echo "绑定名 $BINDING_NAME"
+              echo "文件名 $filename"
+              echo "Cli 二进制路径 $CLI_BINARY_PATH"
+
+              if [ -f "$CLI_BINARY_PATH" ]; then
+                  chmod +x $CLI_BINARY_PATH
+                  mv -v $CLI_BINARY_PATH ./prod_cli/swc-$BINDING_ABI
+              elif [ -f "$CLI_BINARY_PATH.exe" ]; then
+                  mv -v $CLI_BINARY_PATH.exe ./prod_cli/swc-$BINDING_ABI.exe
+              fi
+            done
             ls -R ./prod_cli
 
       - name: 上传到 release 进行版本发布

@@ -124,14 +124,14 @@ jobs:
         with:
           targets: ${{ matrix.os.target }}
           toolchain: ${{ steps.toolchain.outputs.version }}
-      - name: Cache cargo registry
-        uses: actions/cache@v3
+      - name: 缓存 cargo registry
+        uses: actions/cache@v4
         with:
           path: ~/.cargo/registry
           key: ${{ matrix.os.target }}-cargo-registry-trimmed
 
-      - name: Cache cargo index
-        uses: actions/cache@v3
+      - name: 缓存 cargo index
+        uses: actions/cache@v4
         with:
           path: ~/.cargo/git
           key: ${{ matrix.os.target }}-cargo-index-trimmed
@@ -151,7 +151,7 @@ jobs:
           ls -R
 
       - name: 分享 Release 包给其他 Job
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: bindings-${{ matrix.os.target }}
           path: |
@@ -170,15 +170,17 @@ jobs:
 
       # 接收上传的东西
       - name: 获取分享的安装包
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          # name 为分享 Release 包里的 name
+          # name 为 actions/upload-artifact@v4 配置的 name 他是共享的上传的文件夹名称
+          # name: "xxx"
           path: prod/package
 
       - name: 展示下载的文件列表
+        shell: bash
         run: |
           pwd
-          s -R
+          ls -R
         working-directory: prod/package
 
       - name: 重命名并移动二进制文件

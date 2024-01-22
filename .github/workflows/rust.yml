@@ -179,8 +179,6 @@ jobs:
       - name: 重命名并移动二进制文件
         shell: bash
         run: |
-            pwd
-            ls -R
             ./script/ci-rename-file.sh
             ls -R ./prod_cli
 

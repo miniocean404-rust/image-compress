@@ -187,6 +187,8 @@ jobs:
       - name: 重命名并移动二进制文件
         shell: bash
         run: |
+            pwd
+            ls -R
             ./script/cli.sh
             ls -R ./prod_cli
 
@@ -200,5 +202,3 @@ jobs:
           token: ${{ github.token }}
           files: |
            prod_cli/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.FLUTTER_SIGN_UP_CICD }}

@@ -2,16 +2,17 @@
 
 mkdir -p ./prod_cli
 # Naive substitution to napi artifacts for the cli binary.
-for filename in prod/package/*/*.node
+for filename in prod/package/*/*.*
 do
-  BINDING_NAME=${filename#*.}
-  BINDING_ABI=${BINDING_NAME%%.*}
+  # 删除 prod/package/ 及其之前的部分
+  BINDING_NAME=${filename#*prod/package/}
+  BINDING_ABI=${BINDING_NAME%%/*}
   CLI_BINARY_PATH=${filename%%.*}
 
-  echo "准备构建 artifacts:"
+  echo "准备构建 图片压缩:"
   echo "绑定名 $BINDING_NAME"
   echo "文件名 $filename"
-  echo "Cli 二进制路径 $CLI_BINARY_PATH"
+  echo "二进制文件路径 $CLI_BINARY_PATH"
 
   if [ -f "$CLI_BINARY_PATH" ]; then
       chmod +x $CLI_BINARY_PATH

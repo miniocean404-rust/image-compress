@@ -137,8 +137,8 @@ jobs:
           key: ${{ matrix.os.target }}-cargo-index-trimmed
 
       - name: Setup toolchain
-        run: ${{ matrix.settings.setup }}
-        if: ${{ matrix.settings.setup }}
+        run: ${{ matrix.os.setup }}
+        if: ${{ matrix.os.setup }}
         shell: bash
 
       - name: 归并到一个目录中再准备上传

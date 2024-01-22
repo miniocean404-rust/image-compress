@@ -49,18 +49,18 @@ jobs:
               cargo build --verbose --release
               cp ./target/release/image-compress ./tag
 
-         - platform: macos-latest
-           target: aarch64-apple-darwin
-           build: |
-            cargo build --verbose --release
-            cp ./target/release/image-compress ./tag
+        #  - platform: macos-latest
+        #    target: aarch64-apple-darwin
+        #    build: |
+        #     cargo build --verbose --release
+        #     cp ./target/release/image-compress ./tag
 
 
-         - platform: windows-latest
-           target: x86_64-pc-windows-msvc
-           build: |
-              cargo build --verbose --release
-              cp ./target/release/image-compress ./tag
+        #  - platform: windows-latest
+        #    target: x86_64-pc-windows-msvc
+        #    build: |
+        #       cargo build --verbose --release
+        #       cp ./target/release/image-compress ./tag
 
         #  - platform: windows-latest
         #    target: i686-pc-windows-msvc
@@ -114,7 +114,7 @@ jobs:
         shell: bash
         run: echo "开始构建"
 
-      - name: 安装 toolchain
+      - name: 安装 rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.os.target }}
@@ -179,6 +179,7 @@ jobs:
       - name: 重命名并移动二进制文件
         shell: bash
         run: |
+            chmod +x ./script/ci-rename-file.sh
             ./script/ci-rename-file.sh
             ls -R ./prod_cli
 

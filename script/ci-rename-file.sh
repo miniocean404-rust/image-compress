@@ -10,12 +10,13 @@ do
   BINDING_ABI=${BINDING_NAME%%/*}
   BINARY_PATH=${filename%%.*}
 
-  echo "文件名 $filename"
 
-  echo "准备构建 图片压缩:"
-  echo "绑定名 $BINDING_NAME"
+  echo "-------------------开始准备变量-------------------"
   echo "文件名 $filename"
+  echo "绑定名 $BINDING_NAME"
+  echo "ABI 名称 $BINDING_NAME"
   echo "二进制文件路径 $BINARY_PATH"
+  echo "-------------------变量准备完成-------------------"
 
   if [ -f "$BINARY_PATH" ]; then
       chmod +x $BINARY_PATH

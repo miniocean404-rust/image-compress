@@ -49,62 +49,62 @@ jobs:
               cargo build --verbose --release
               cp ./target/release/image-compress ./tag
 
-        #  - platform: macos-latest
-        #    target: aarch64-apple-darwin
-        #    build: |
-        #     cargo build --verbose --release
-        #     cp ./target/release/image-compress ./tag
+         - platform: macos-latest
+           target: aarch64-apple-darwin
+           build: |
+            cargo build --verbose --release
+            cp ./target/release/image-compress ./tag
 
 
-        #  - platform: windows-latest
-        #    target: x86_64-pc-windows-msvc
-        #    build: |
-        #       cargo build --verbose --release
-        #       cp ./target/release/image-compress ./tag
+         - platform: windows-latest
+           target: x86_64-pc-windows-msvc
+           build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
 
-        #  - platform: windows-latest
-        #    target: i686-pc-windows-msvc
-        #    build: |
-        #       cargo build --verbose --release
-        #       cp ./target/release/image-compress ./tag
+         - platform: windows-latest
+           target: i686-pc-windows-msvc
+           build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
 
-        #  - platform: windows-latest
-        #    target: aarch64-pc-windows-msvc
-        #    build: |
-        #       cargo build --verbose --release
-        #       cp ./target/release/image-compress ./tag
-
-
-        #  - platform: ubuntu-latest
-        #    target: x86_64-unknown-linux-gnu
-        #    build: |
-        #       cargo build --verbose --release
-        #       cp ./target/release/image-compress ./tag
-
-        #  - platform: ubuntu-latest
-        #    target: x86_64-unknown-linux-musl
-        #    build: |
-        #       cargo build --verbose --release
-        #       cp ./target/release/image-compress ./tag
+         - platform: windows-latest
+           target: aarch64-pc-windows-msvc
+           build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
 
 
-        #  - platform: ubuntu-latest
-        #    target: aarch64-unknown-linux-gnu
-        #    build: |
-        #       cargo build --verbose --release
-        #       cp ./target/release/image-compress ./tag
+         - platform: ubuntu-latest
+           target: x86_64-unknown-linux-gnu
+           build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
 
-        #  - platform: ubuntu-latest
-        #    target: armv7-unknown-linux-gnueabihf
-        #    build: |
-        #       cargo build --verbose --release
-        #       cp ./target/release/image-compress ./tag
+         - platform: ubuntu-latest
+           target: x86_64-unknown-linux-musl
+           build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
 
-        #  - platform: ubuntu-latest
-        #    target: aarch64-unknown-linux-musl
-        #    build: |
-        #       cargo build --verbose --release
-        #       cp ./target/release/image-compress ./tag
+
+         - platform: ubuntu-latest
+           target: aarch64-unknown-linux-gnu
+           build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+
+         - platform: ubuntu-latest
+           target: armv7-unknown-linux-gnueabihf
+           build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+
+         - platform: ubuntu-latest
+           target: aarch64-unknown-linux-musl
+           build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
 
 #      - name: Run tests
 #        run: cargo test --verbose --release

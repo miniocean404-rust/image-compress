@@ -62,49 +62,49 @@ jobs:
               cargo build --verbose --release
               cp ./target/release/image-compress ./tag
 
-         - platform: windows-latest
-           target: i686-pc-windows-msvc
-           build: |
-              cargo build --verbose --release
-              cp ./target/release/image-compress ./tag
+        #  - platform: windows-latest
+        #    target: i686-pc-windows-msvc
+        #    build: |
+        #       cargo build --verbose --release
+        #       cp ./target/release/image-compress ./tag
 
-         - platform: windows-latest
-           target: aarch64-pc-windows-msvc
-           build: |
-              cargo build --verbose --release
-              cp ./target/release/image-compress ./tag
-
-
-         - platform: ubuntu-latest
-           target: x86_64-unknown-linux-gnu
-           build: |
-              cargo build --verbose --release
-              cp ./target/release/image-compress ./tag
-
-         - platform: ubuntu-latest
-           target: x86_64-unknown-linux-musl
-           build: |
-              cargo build --verbose --release
-              cp ./target/release/image-compress ./tag
+        #  - platform: windows-latest
+        #    target: aarch64-pc-windows-msvc
+        #    build: |
+        #       cargo build --verbose --release
+        #       cp ./target/release/image-compress ./tag
 
 
-         - platform: ubuntu-latest
-           target: aarch64-unknown-linux-gnu
-           build: |
-              cargo build --verbose --release
-              cp ./target/release/image-compress ./tag
+        #  - platform: ubuntu-latest
+        #    target: x86_64-unknown-linux-gnu
+        #    build: |
+        #       cargo build --verbose --release
+        #       cp ./target/release/image-compress ./tag
 
-         - platform: ubuntu-latest
-           target: armv7-unknown-linux-gnueabihf
-           build: |
-              cargo build --verbose --release
-              cp ./target/release/image-compress ./tag
+        #  - platform: ubuntu-latest
+        #    target: x86_64-unknown-linux-musl
+        #    build: |
+        #       cargo build --verbose --release
+        #       cp ./target/release/image-compress ./tag
 
-         - platform: ubuntu-latest
-           target: aarch64-unknown-linux-musl
-           build: |
-              cargo build --verbose --release
-              cp ./target/release/image-compress ./tag
+
+        #  - platform: ubuntu-latest
+        #    target: aarch64-unknown-linux-gnu
+        #    build: |
+        #       cargo build --verbose --release
+        #       cp ./target/release/image-compress ./tag
+
+        #  - platform: ubuntu-latest
+        #    target: armv7-unknown-linux-gnueabihf
+        #    build: |
+        #       cargo build --verbose --release
+        #       cp ./target/release/image-compress ./tag
+
+        #  - platform: ubuntu-latest
+        #    target: aarch64-unknown-linux-musl
+        #    build: |
+        #       cargo build --verbose --release
+        #       cp ./target/release/image-compress ./tag
 
 #      - name: Run tests
 #        run: cargo test --verbose --release
@@ -165,6 +165,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: 设置 release 名字
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
       # 接收上传的东西
       - name: 获取分享的安装包
         uses: actions/download-artifact@v3
@@ -175,8 +178,14 @@ jobs:
       - name: 展示下载的文件列表
         run: |
           pwd
-          ls -R
+          s -R
         working-directory: prod/package
+
+      - name: 重命名并移动二进制文件
+        shell: bash
+        run: |
+            ./scripts/cli.sh
+            ls -R ./prod_cli
 
       - name: 上传到 release 进行版本发布
         uses: softprops/action-gh-release@v1
@@ -187,6 +196,6 @@ jobs:
           body: ${{ github.event.head_commit.message }}
           token: ${{ github.token }}
           files: |
-            prod/package/*
+           prod_cli/*
         env:
           GITHUB_TOKEN: ${{ secrets.FLUTTER_SIGN_UP_CICD }}

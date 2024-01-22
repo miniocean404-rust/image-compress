@@ -22,8 +22,8 @@ do
 
   if [ -f "$BINARY_PATH" ]; then
       chmod +x $BINARY_PATH
-      mv -v $BINARY_PATH ./prod_cli/swc-$BINDING_ABI
+      mv -v $BINARY_PATH ./prod_cli/image-compress-$BINDING_ABI
   elif [ -f "$BINARY_PATH.exe" ]; then
-      mv -v $BINARY_PATH.exe ./prod_cli/swc-$BINDING_ABI.exe
+      mv -v $BINARY_PATH.exe ./prod_cli/image-compress-$BINDING_ABI.exe
   fi
 done

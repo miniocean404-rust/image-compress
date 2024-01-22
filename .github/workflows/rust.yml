@@ -109,6 +109,11 @@ jobs:
 #      - name: Run tests
 #        run: cargo test --verbose --release
     steps:
+      - uses: actions/checkout@v4
+      - name: 签出文件
+        shell: bash
+        run: echo "开始构建"
+
       - name: 输出 toolchain
         id: toolchain
         shell: bash
@@ -136,8 +141,7 @@ jobs:
         if: ${{ matrix.os.setup }}
         shell: bash
 
-      - uses: actions/checkout@v3
-      - name: 签出文件、运行打包 并 归并到一个目录中再准备上传
+      - name: 运行打包 并 归并到一个目录中再准备上传
         shell: bash
         run: |
           mkdir tag

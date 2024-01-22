@@ -1,5 +1,9 @@
 [toolchain]
 channel = "stable"
+# 每夜版配置
+# channel = "nightly"
+# date = "2023-11-04"
+
 components = ["rustfmt", "clippy"]
 # 可用平台使用 rustup target list 查看
 # targets = ["wasm32-unknown-unknown"]

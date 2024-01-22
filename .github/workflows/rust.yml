@@ -117,13 +117,14 @@ jobs:
       - name: 输出 toolchain
         id: toolchain
         shell: bash
-        run: echo "version=$(cat ./rust-toolchain)" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(cat ./rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
 
       - name: 安装 toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.os.target }}
-          toolchain: ${{ steps.toolchain.outputs.version }}
+      #     toolchain: ${{ steps.toolchain.outputs.version }}
+
       - name: 缓存 cargo registry
         uses: actions/cache@v4
         with:
@@ -185,6 +186,7 @@ jobs:
 
       - name: 重命名并移动二进制文件
         shell: bash
+        working-directory: /
         run: |
             ./scripts/cli.sh
             ls -R ./prod_cli

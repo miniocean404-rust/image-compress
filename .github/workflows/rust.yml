@@ -37,11 +37,75 @@ env:
 
 jobs:
   build:
-    name: 准备构建
-    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os.target }} 准备构建
+    runs-on: ${{ matrix.os.platform }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os:
+         - platform: macos-latest
+           target: x86_64-apple-darwin
+           build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+
+         - platform: macos-latest
+           target: aarch64-apple-darwin
+           build: |
+            cargo build --verbose --release
+            cp ./target/release/image-compress ./tag
+
+
+         - platform: windows-latest
+           target: x86_64-pc-windows-msvc
+           build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+
+         - platform: windows-latest
+           target: i686-pc-windows-msvc
+           build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+
+         - platform: windows-latest
+           target: aarch64-pc-windows-msvc
+           build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+
+
+         - platform: ubuntu-latest
+           target: x86_64-unknown-linux-gnu
+           build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+
+         - platform: ubuntu-latest
+           target: x86_64-unknown-linux-musl
+           build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+
+
+         - platform: ubuntu-latest
+           target: aarch64-unknown-linux-gnu
+           build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+
+         - platform: ubuntu-latest
+           target: armv7-unknown-linux-gnueabihf
+           build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+
+         - platform: ubuntu-latest
+           target: aarch64-unknown-linux-musl
+           build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+
 
     steps:
       - uses: actions/checkout@v3
@@ -50,23 +114,41 @@ jobs:
 #      - name: Run tests
 #        run: cargo test --verbose --release
 
-      - name: 归并到一个目录中再准备上传 - windows
-        if: runner.os == 'Windows'
-        run: |
-          mkdir tag
-          cp target/release/image-compress.exe tag/image-compress-${{runner.os}}.exe
+      - name: 输出 toolchain
+        id: toolchain
+        shell: bash
+        run: echo "version=$(cat ./rust-toolchain)" >> "$GITHUB_OUTPUT"
 
-#       if [ ${{ runner.os }} == Windows ]; then
-#         cp target/release/image-compress.exe tag/image-compress.exe
-#       else
-#         cp target/release/image-compress tag/image-compress
-#       fi
+      - name: 安装 toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.os.target }}
+          toolchain: ${{ steps.toolchain.outputs.version }}
+      - name: Cache cargo registry
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/registry
+          key: ${{ matrix.os.target }}-cargo-registry-trimmed
+
+      - name: Cache cargo index
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/git
+          key: ${{ matrix.os.target }}-cargo-index-trimmed
+
+      - name: Setup toolchain
+        run: ${{ matrix.settings.setup }}
+        if: ${{ matrix.settings.setup }}
+        shell: bash
 
       - name: 归并到一个目录中再准备上传
-        if: runner.os != 'Windows'
+        shell: bash
         run: |
           mkdir tag
-          cp target/release/image-compress tag/image-compress-${{runner.os}}
+          ${{matrix.os.build}}
+          cd ./target/release/
+          pwd
+          ls -R
 
       - name: 分享 Release 包给其他 Job
         uses: actions/upload-artifact@v3
@@ -74,6 +156,8 @@ jobs:
           name: rust_release_build
           path: |
             tag/*
+          # 如果没有文件就错误提示
+          if-no-files-found: error
 
   publish:
     name: 上传到 release 进行版本发布

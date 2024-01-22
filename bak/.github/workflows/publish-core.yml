@@ -141,10 +141,12 @@ jobs:
           node-version: 20
           cache: yarn
           architecture: x64
+
       - name: Output toolchain
         id: toolchain
         shell: bash
         run: echo "version=$(cat ./rust-toolchain)" >> "$GITHUB_OUTPUT"
+
       - name: Install
         uses: dtolnay/rust-toolchain@stable
         if: ${{ !matrix.settings.docker }}

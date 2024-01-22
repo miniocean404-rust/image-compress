@@ -114,10 +114,10 @@ jobs:
         shell: bash
         run: echo "开始构建"
 
-      - name: 输出 toolchain
-        id: toolchain
-        shell: bash
-        run: echo "version=$(cat ./rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
+      # - name: 输出 toolchain
+      #   id: toolchain
+      #   shell: bash
+      #   run: echo "version=$(cat ./rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
 
       - name: 安装 toolchain
         uses: dtolnay/rust-toolchain@stable

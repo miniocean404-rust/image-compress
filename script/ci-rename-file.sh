@@ -2,7 +2,7 @@
 
 mkdir -p ./prod_cli
 # Naive substitution to napi artifacts for the cli binary.
-for filename in prod/package/*/*.*
+for filename in prod/package/*/*
 do
   # 删除 prod/package/ 及其之前的部分
   BINDING_NAME=${filename#*prod/package/}

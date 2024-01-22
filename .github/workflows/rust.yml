@@ -150,7 +150,7 @@ jobs:
           if-no-files-found: error
 
   publish:
-    name: 上传到 release 进行版本发布
+    name: 上传到 Release 进行版本发布
     # 等待某个工作完成后
     needs: build
     runs-on: ubuntu-latest
@@ -158,7 +158,7 @@ jobs:
       # 检出文件以便使用 script 中的文件
       - uses: actions/checkout@v4
 
-      - name: 设置 release 名字
+      - name: 设置 Release 名字
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
       # 接收上传的东西
@@ -183,7 +183,7 @@ jobs:
             ./script/ci-rename-file.sh
             ls -R ./prod_cli
 
-      - name: 上传到 release 进行版本发布
+      - name: 开始发布
         uses: softprops/action-gh-release@v1
         # 403 错误 设置 Action 权限 github -> setting -> actiong -> general -> Workflow permissions
         with:

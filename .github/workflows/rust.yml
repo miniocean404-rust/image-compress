@@ -143,7 +143,7 @@ jobs:
       - name: 分享 Release 包给其他 Job
         uses: actions/upload-artifact@v4
         with:
-          name: bindings-${{ matrix.os.target }}
+          name: ${{ matrix.os.target }}
           path: |
             tag/*
           # 如果没有文件就错误提示
@@ -179,8 +179,9 @@ jobs:
             pwd
             ls -R
             mkdir -p ./prod_cli
+
             # Naive substitution to napi artifacts for the cli binary.
-            for filename in prod/package/*/*.node
+            for filename in prod/package/*/*
             do
               BINDING_NAME=${filename#*.}
               BINDING_ABI=${BINDING_NAME%%.*}
@@ -198,6 +199,7 @@ jobs:
                   mv -v $CLI_BINARY_PATH.exe ./prod_cli/swc-$BINDING_ABI.exe
               fi
             done
+
             ls -R ./prod_cli
 
       - name: 上传到 release 进行版本发布

@@ -3,7 +3,10 @@
 mkdir -p ./prod_cli
 # Naive substitution to napi artifacts for the cli binary.
 
-for path in prod/package/*/*
+PROJECT_NAME="image-compress"
+PROJECT_PATH_EXPRESSION="prod/package/*/*"
+
+for path in $PROJECT_PATH_EXPRESSION
 do
   # 删除 prod/package/ 及其之前的部分
   BINDING_NAME=${path#*/*/}
@@ -11,7 +14,6 @@ do
   BINDING_ABI=${BINDING_NAME%%/*}
   # 脚本原本是处理 xx.node 文件所有才会有 BINARY_PATH 这个变量扩展语法
   BINARY_PATH=${path%%.*}
-
 
   echo "-------------------开始准备变量-------------------"
   echo "文件路径 $path"
@@ -22,8 +24,8 @@ do
 
   if [ -f "$BINARY_PATH" ]; then
       chmod +x $BINARY_PATH
-      mv -v $BINARY_PATH ./prod_cli/image-compress-$BINDING_ABI
+      mv -v $BINARY_PATH ./prod_cli/$PROJECT_NAME-$BINDING_ABI
   elif [ -f "$BINARY_PATH.exe" ]; then
-      mv -v $BINARY_PATH.exe ./prod_cli/image-compress-$BINDING_ABI.exe
+      mv -v $BINARY_PATH.exe ./prod_cli/$PROJECT_NAME-$BINDING_ABI.exe
   fi
 done

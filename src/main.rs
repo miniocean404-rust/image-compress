@@ -3,6 +3,7 @@ use std::path::Path;
 use std::sync::Arc;
 
 use anyhow::Result;
+use image_compress::compress::gif::lossy_gif;
 use tokio::sync::RwLock;
 use tokio::task::JoinSet;
 use tracing::{error, info};
@@ -33,14 +34,16 @@ fn main() -> Result<()> {
 }
 
 async fn async_main() -> Result<()> {
-    compress("image/jpg/eye.jpg", "output.jpg", &Props::default()).unwrap();
+    // compress("image/jpg/eye.jpg", "output.jpg", &Props::default()).unwrap();
+
+    start_compress().await?;
     Ok(())
 }
 
 async fn start_compress() -> Result<()> {
-    let path = "D:\\soft-dev\\code\\work\\davinci\\davinci-web\\assets\\image";
+    // let path = "D:\\soft-dev\\code\\work\\davinci\\davinci-web\\assets\\image";
     // let path = "/Users/user/Desktop/work-code/front-end/davinci-web/assets/image";
-    // let path = "image";
+    let path = "image";
 
     let res = read_dir_path_buf(path).await?.into_iter().enumerate();
     let mut set = JoinSet::new();
@@ -63,7 +66,7 @@ async fn start_compress() -> Result<()> {
         let output = Arc::new(RwLock::new(output));
         let arc_output = Arc::clone(&output);
         match ext {
-            "png" => {
+            "gif" => {
                 set.spawn(async move {
                     let input = arc_input.read().await;
                     let output = arc_output.read().await;
@@ -72,21 +75,33 @@ async fn start_compress() -> Result<()> {
                     info!("out :{:?}", output);
                     info!("数量 :{:?}", index);
 
-                    lossy_png(&input, &output).await
+                    lossy_gif(&input, &output)
                 });
             }
-            "webp" => {
-                set.spawn(async move {
-                    let input = arc_input.read().await;
-                    let output = arc_output.read().await;
+            // "png" => {
+            //     set.spawn(async move {
+            //         let input = arc_input.read().await;
+            //         let output = arc_output.read().await;
 
-                    info!("path :{:?}", &input);
-                    info!("out :{:?}", output);
-                    info!("数量 :{:?}", index);
+            //         info!("path :{:?}", &input);
+            //         info!("out :{:?}", output);
+            //         info!("数量 :{:?}", index);
 
-                    webp_compress(&input, &output)
-                });
-            }
+            //         lossy_png(&input, &output).await
+            //     });
+            // }
+            // "webp" => {
+            //     set.spawn(async move {
+            //         let input = arc_input.read().await;
+            //         let output = arc_output.read().await;
+
+            //         info!("path :{:?}", &input);
+            //         info!("out :{:?}", output);
+            //         info!("数量 :{:?}", index);
+
+            //         webp_compress(&input, &output)
+            //     });
+            // }
             _ => {
                 continue;
             }

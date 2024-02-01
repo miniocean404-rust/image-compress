@@ -10,6 +10,7 @@ use std::{fs, mem, ptr};
 use anyhow::Ok;
 use libc::free;
 use mozjpeg_sys::*;
+use tracing::info;
 
 use crate::prop::{ChromaSubsampling, Props};
 
@@ -188,11 +189,12 @@ unsafe fn lossy(in_file: Vec<u8>, props: &Props) -> anyhow::Result<Vec<u8>> {
     Ok(result)
 }
 
-unsafe fn set_chroma_subsampling(subsampling: ChromaSubsampling, dst_info: &mut jpeg_compress_struct) {
+pub unsafe fn set_chroma_subsampling(subsampling: ChromaSubsampling, dst_info: &mut jpeg_compress_struct) {
     (*dst_info.comp_info.add(1)).h_samp_factor = 1;
     (*dst_info.comp_info.add(1)).v_samp_factor = 1;
     (*dst_info.comp_info.add(2)).h_samp_factor = 1;
     (*dst_info.comp_info.add(2)).v_samp_factor = 1;
+
     match subsampling {
         ChromaSubsampling::CS444 => {
             (*dst_info.comp_info.add(0)).h_samp_factor = 1;
@@ -214,7 +216,7 @@ unsafe fn set_chroma_subsampling(subsampling: ChromaSubsampling, dst_info: &mut 
     }
 }
 
-unsafe fn write_metadata(src_info: &mut jpeg_decompress_struct, dst_info: &mut jpeg_compress_struct) {
+pub unsafe fn write_metadata(src_info: &mut jpeg_decompress_struct, dst_info: &mut jpeg_compress_struct) {
     let mut marker = src_info.marker_list;
 
     while !marker.is_null() {

@@ -49,10 +49,19 @@ svgtypes = "0.13.0"
 # 推断文件类型
 infer = "0.15.0"
 
+globset = "0.4.14"
+walkdir = "2.4.0"
+
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
 # 处理时间
 chrono = "0.4.31"
 
 tokio = { version = "1.33.0", features = ["full"] }
+num_cpus = "1.16.0"
+
+
 # 处理错误
 anyhow = "1.0.75"
 # 处理错误 enum 参数
@@ -60,8 +69,11 @@ thiserror = "1.0.50"
 # 处理日志及栈追踪
 tracing = "0.1.40"
 tracing-appender = "0.2.3"
-tracing-subscriber = "0.3.18"
+tracing-subscriber = {version = "0.3.18",features = ["env-filter"]}
 
+[target.'cfg(target_os = "macos")'.dependencies]
 cocoa = { version = "0.25.0" }
+
+[target.'cfg(target_os = "windows")'.dependencies]
 winapi = "0.3.9"
 windows = "0.52.0"

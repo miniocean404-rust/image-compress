@@ -1,10 +1,5 @@
 use mozjpeg_sys::*;
 use std::{mem, ptr, slice};
-use tracing::info;
-
-use crate::prop::ChromaSubsampling;
-
-use super::lib_mozjpeg_sys::{set_chroma_subsampling, write_metadata};
 
 struct JPEGOptimizer {
     srcinfo: jpeg_decompress_struct,
@@ -75,7 +70,7 @@ pub fn optimize_lossless_jpeg(bytes: &[u8], keep_metadata: bool) -> std::thread:
     }
 }
 
-pub fn optimize_lossy_jpeg(bytes: &[u8], quality: i32, keep_metadata: bool, chroma_subsampling: ChromaSubsampling) -> std::thread::Result<&mut [u8]> {
+pub fn optimize_lossy_jpeg(bytes: &[u8], quality: i32, keep_metadata: bool) -> std::thread::Result<&mut [u8]> {
     unsafe {
         std::panic::catch_unwind(|| {
             let mut info = JPEGOptimizer::new();
@@ -120,9 +115,6 @@ pub fn optimize_lossy_jpeg(bytes: &[u8], quality: i32, keep_metadata: bool, chro
 
             // Chroma subsampling 是一种在数字图像和视频压缩中使用的技术。它涉及到减少颜色信息的采样率，以便在保持相对较高的图像质量的同时降低数据量。
             // 这种技术通常用于视频编解码和存储中，以降低文件大小并提高传输效率。Chroma subsampling 通常使用 4:4:4、4:2:2 和 4:2:0 等比例来描述不同的采样方式。
-            if input_components == 3 && chroma_subsampling != ChromaSubsampling::Auto {
-                set_chroma_subsampling(chroma_subsampling, &mut info.dstinfo);
-            }
 
             // 开始解码
             jpeg_start_decompress(&mut info.srcinfo);
@@ -190,6 +182,7 @@ unsafe fn create_error_handler() -> jpeg_error_mgr {
 extern "C-unwind" fn unwind_error_exit(cinfo: &mut jpeg_common_struct) {
     let message = unsafe {
         let err = cinfo.err.as_ref().unwrap();
+
         match err.format_message {
             Some(fmt) => {
                 let buffer = mem::zeroed();
@@ -204,3 +197,12 @@ extern "C-unwind" fn unwind_error_exit(cinfo: &mut jpeg_common_struct) {
 }
 
 extern "C-unwind" fn silence_message(_cinfo: &mut jpeg_common_struct, _level: c_int) {}
+
+pub(crate) unsafe fn write_metadata(src_info: &mut jpeg_decompress_struct, dst_info: &mut jpeg_compress_struct) {
+    let mut marker = src_info.marker_list;
+
+    while !marker.is_null() {
+        jpeg_write_marker(dst_info, (*marker).marker as i32, (*marker).data, (*marker).data_length);
+        marker = (*marker).next;
+    }
+}

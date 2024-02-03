@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::{BufReader, BufWriter};
 
-pub fn lossless_jpeg(input: &str, output: &str) -> anyhow::Result<()> {
+pub fn lossless_jpeg(input: &str, output: &str) -> Result<(), Box<dyn std::error::Error>> {
     // let _ = std::panic::catch_unwind(|| -> Result<()> { Ok(()) });
 
     let file = File::open(input)?;

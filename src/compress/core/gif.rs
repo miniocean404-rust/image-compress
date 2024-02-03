@@ -44,17 +44,14 @@ pub fn lossy_gif(input_path: &str, output_path: &str) -> Result<(), CaesiumError
                 })?
                 .as_ptr(),
         );
+
         let input_stream = gifsicle::Gif_ReadFile(input_file);
         libc::fclose(input_file);
 
         let padding: [*mut c_void; 7] = [std::ptr::null_mut(); 7];
         let loss = (100 - 30) as c_int;
 
-        let gc_info = gifsicle::Gif_CompressInfo {
-            flags: 0,
-            loss,
-            padding,
-        };
+        let gc_info = gifsicle::Gif_CompressInfo { flags: 0, loss, padding };
         let write_result = gifsicle::Gif_FullWriteFile(input_stream, &gc_info, output_file);
         libc::fclose(output_file);
 

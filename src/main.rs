@@ -1,23 +1,14 @@
-use std::io;
-use std::path::Path;
-use std::sync::Arc;
+use std::path::PathBuf;
 
-use anyhow::Result;
-use image_compress::compress::gif::lossy_gif;
-use tokio::sync::RwLock;
-use tokio::task::JoinSet;
-use tracing::{error, info};
+use image_compress::{
+    compress::{index::ImageCompression, utils::dir::glob_dir},
+    shared::error::OptionError,
+    utils::log::tracing::init_tracing,
+};
+use tracing::info;
 
-use image_compress::compress::jpeg::lib_mozjpeg_sys::compress;
-use image_compress::compress::png::lossy_png;
-use image_compress::compress::webp::webp_compress;
-use image_compress::constant::error::Error;
-use image_compress::prop::Props;
-use image_compress::utils::file::read_dir_path_buf;
-use image_compress::utils::log::tracing::init_tracing;
-
-fn main() -> Result<()> {
-    let _guard = init_tracing();
+fn main() -> anyhow::Result<()> {
+    let _guard = init_tracing("./logs");
 
     let rt = tokio::runtime::Builder::new_multi_thread()
         // 开启所有特性
@@ -33,91 +24,24 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-async fn async_main() -> Result<()> {
-    // compress("image/jpg/eye.jpg", "output.jpg", &Props::default()).unwrap();
+async fn async_main() -> anyhow::Result<()> {
+    let infos = get_compress_infos("D:\\soft-dev\\code\\rust\\image-compress\\image")?;
 
-    start_compress().await?;
-    Ok(())
+    info!("{:#?}", infos);
+
+    anyhow::Ok(())
 }
 
-async fn start_compress() -> Result<()> {
-    // let path = "D:\\soft-dev\\code\\work\\davinci\\davinci-web\\assets\\image";
-    // let path = "/Users/user/Desktop/work-code/front-end/davinci-web/assets/image";
-    let path = "image";
+fn get_compress_infos(dir: &str) -> anyhow::Result<Vec<ImageCompression>> {
+    let path = PathBuf::from(dir);
+    let files = glob_dir("*.{png,webp,gif,jpg,jpeg}", path.to_str().ok_or(OptionError::NoValue)?).map_err(|_| OptionError::NoValue)?;
 
-    let res = read_dir_path_buf(path).await?.into_iter().enumerate();
-    let mut set = JoinSet::new();
+    let infos = files
+        .into_iter()
+        .map(|file| ImageCompression::new(file, 80).unwrap())
+        .collect::<Vec<ImageCompression>>();
 
-    for (index, path_buf) in res {
-        let ext = path_buf
-            .extension()
-            .ok_or_else(|| io::Error::new(io::ErrorKind::Other, "获取扩展名错误"))?
-            .to_str()
-            .ok_or(Error::Type2Error)?;
-
-        let input = path_buf.as_path().to_string_lossy().to_string();
-        let output = Path::new("dist")
-            .join(path_buf.file_name().ok_or(Error::Type2Error)?)
-            .to_string_lossy()
-            .to_string();
-
-        let input = Arc::new(RwLock::new(input));
-        let arc_input = Arc::clone(&input);
-        let output = Arc::new(RwLock::new(output));
-        let arc_output = Arc::clone(&output);
-        match ext {
-            "gif" => {
-                set.spawn(async move {
-                    let input = arc_input.read().await;
-                    let output = arc_output.read().await;
-
-                    info!("path :{:?}", &input);
-                    info!("out :{:?}", output);
-                    info!("数量 :{:?}", index);
-
-                    lossy_gif(&input, &output)
-                });
-            }
-            // "png" => {
-            //     set.spawn(async move {
-            //         let input = arc_input.read().await;
-            //         let output = arc_output.read().await;
-
-            //         info!("path :{:?}", &input);
-            //         info!("out :{:?}", output);
-            //         info!("数量 :{:?}", index);
-
-            //         lossy_png(&input, &output).await
-            //     });
-            // }
-            // "webp" => {
-            //     set.spawn(async move {
-            //         let input = arc_input.read().await;
-            //         let output = arc_output.read().await;
-
-            //         info!("path :{:?}", &input);
-            //         info!("out :{:?}", output);
-            //         info!("数量 :{:?}", index);
-
-            //         webp_compress(&input, &output)
-            //     });
-            // }
-            _ => {
-                continue;
-            }
-        };
-    }
-
-    while let Some(thread) = set.join_next().await {
-        match thread? {
-            Ok(_) => {}
-            Err(err) => {
-                error!("线程错误 {}", err)
-            }
-        }
-    }
-
-    Ok(())
+    Ok(infos)
 }
 
 fn async_thread_stop() {

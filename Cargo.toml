@@ -2,11 +2,11 @@
 resolver = "2"
 # 设置默认执行的 workspace
 default-members=[
-    "crate/core"
+    "crates/core"
 ]
 members = [
-  "crate/core",
-  "crate/node",
+  "crates/core",
+  "crates/node",
     # "xx/*"
 ]
 

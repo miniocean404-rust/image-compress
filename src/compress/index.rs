@@ -22,6 +22,8 @@ use super::{
 pub struct ImageCompression {
     pub name: String,
 
+    pub ext: String,
+
     pub state: CompressState,
 
     #[serde(default)]
@@ -61,12 +63,19 @@ impl ImageCompression {
         let file_type = get_filetype_from_path(&path);
 
         let path_buf = PathBuf::from(&path);
-        let file_name = path_buf.file_name().ok_or(OptionError::NoValue)?.to_string_lossy().to_string();
+        let file_name = path_buf.file_name().ok_or(OptionError::NoValue)?.to_str().ok_or(OptionError::NoValue)?;
+        let ext = path_buf.extension().ok_or(OptionError::NoValue)?.to_string_lossy().to_string();
+
+        let file_name = match file_name.rfind('.') {
+            Some(index) => &file_name[..index],
+            None => file_name,
+        };
 
         let before_size = fs::metadata(&path_buf)?.len();
 
         Ok(Self {
-            name: file_name,
+            name: file_name.to_string(),
+            ext,
             file_type,
             quality,
             before_size,
@@ -126,6 +135,7 @@ impl fmt::Debug for ImageCompression {
 
         f.debug_struct("ImageCompression")
             .field("name", &self.name)
+            .field("ext", &self.ext)
             .field("state", &self.state)
             .field("path", &self.path)
             .field("mem", &self.mem.len())
@@ -145,6 +155,7 @@ impl fmt::Display for ImageCompression {
 
         f.debug_struct("ImageCompression")
             .field("name", &self.name)
+            .field("ext", &self.ext)
             .field("state", &self.state)
             .field("path", &self.path)
             .field("mem", &self.mem.len())

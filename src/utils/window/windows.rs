@@ -1,14 +1,19 @@
+#[cfg(windows)]
 extern crate winapi;
 
+use libc::c_void;
 use std::ffi::OsString;
 use std::os::windows::ffi::OsStringExt;
 use std::ptr::{self};
-use winapi::shared::minwindef::{DWORD, FALSE, LPARAM};
+use winapi::shared::minwindef::{DWORD, FALSE, LPARAM, UINT};
 use winapi::shared::windef::HWND;
+use winapi::um::combaseapi::CoCreateInstance;
 use winapi::um::processthreadsapi::OpenProcess;
+use winapi::um::shtypes::LPITEMIDLIST;
 use winapi::um::winbase::QueryFullProcessImageNameW;
-use winapi::um::winuser::{GetClassNameW, GetForegroundWindow, GetWindowThreadProcessId, SendMessageW};
+use winapi::um::winuser::{GetForegroundWindow, GetWindowThreadProcessId};
 
+#[cfg(windows)]
 pub fn get_windows_program_path() {
     unsafe {
         let hwnd = GetForegroundWindow();
@@ -29,58 +34,48 @@ pub fn get_windows_program_path() {
     }
 }
 
-pub fn get_windows_dir_path() {
-    let hwnd = unsafe { GetForegroundWindow() };
-    if hwnd.is_null() {
-        println!("Failed to get foreground window handle");
-        return;
-    }
-
-    let mut class_name: [u16; 256] = [0; 256];
-    let length = unsafe { GetClassNameW(hwnd, class_name.as_mut_ptr(), 256) };
-    if length == 0 {
-        println!("Failed to retrieve class name of the window");
-        return;
-    }
-
-    let class_name = String::from_utf16_lossy(&class_name[..length as usize]);
-
-    if class_name.contains("CabinetWClass") {
-        match get_folder_path_from_file_explorer(hwnd) {
-            Some(path) => println!("Current folder path: {}", path),
-            None => println!("Failed to retrieve current folder path"),
-        }
-    } else {
-        println!("Current foreground window is not a File Explorer window");
-    }
+// Define the ExplorerFolderInfo struct
+#[repr(C)]
+pub struct ExplorerFolderInfo {
+    hwnd: HWND,
+    pidl: LPITEMIDLIST,
 }
 
-fn get_folder_path_from_file_explorer(hwnd: HWND) -> Option<String> {
-    let child_hwnd = unsafe {
-        winapi::um::winuser::FindWindowExW(
-            hwnd,
-            ptr::null_mut(),
-            "SHELLDLL_DefView\0".encode_utf16().collect::<Vec<u16>>().as_ptr(),
-            ptr::null(),
-        )
-    };
-    if !child_hwnd.is_null() {
-        let listview_hwnd = unsafe {
-            winapi::um::winuser::FindWindowExW(
-                child_hwnd,
-                ptr::null_mut(),
-                "SysListView32\0".encode_utf16().collect::<Vec<u16>>().as_ptr(),
-                ptr::null(),
-            )
-        };
-        if !listview_hwnd.is_null() {
-            let mut path_buffer: Vec<u16> = vec![0; 260];
-            let length = unsafe { SendMessageW(listview_hwnd, 0x100C, 260, &mut path_buffer as *mut _ as LPARAM) }; // LVM_GETITEMTEXTW
-            if length > 0 {
-                let os_string = OsString::from_wide(&path_buffer[..length as usize]);
-                return Some(os_string.to_string_lossy().into_owned());
-            }
-        }
-    }
-    None
-}
+// https://pianshen.com/question/68891958968/
+// fn get_current_explorer_folders() -> Result<Vec<ExplorerFolderInfo>, String> {
+// let mut psh_windows: *mut IShellWindows = std::ptr::null_mut();
+
+// unsafe {
+// let hr = CoCreateInstance(
+//     &CLSID_ShellWindows,
+//     ptr::null_mut(),
+//     1u32,
+//     &IShellWindows::uuidof(),
+//     &mut psh_windows as *mut *mut IShellWindows as *mut *mut c_void,
+// );
+
+//     if hr < 0 {
+//         return Err(format!("Could not create instance of IShellWindows. Error code: {}", hr));
+//     }
+// }
+
+// let mut count: i32 = 0;
+// unsafe {
+//     (*psh_windows).get_Count(&mut count);
+// }
+
+// let mut result: Vec<ExplorerFolderInfo> = Vec::with_capacity(count as usize);
+
+// for i in 0..count {
+//     let mut info = ExplorerFolderInfo {
+//         hwnd: std::ptr::null_mut(),
+//         pidl: std::ptr::null_mut(),
+//     };
+
+//     // Implement the logic to retrieve information about currently open explorer windows here.
+
+//     result.push(info);
+// }
+
+// Ok(result)
+// }

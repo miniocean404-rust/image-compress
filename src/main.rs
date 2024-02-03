@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use image_compress::{
     compress::{index::ImageCompression, utils::dir::glob_dir},
     shared::error::OptionError,
-    utils::{log::tracing::init_tracing, window::windows::get_windows_dir_path},
+    utils::log::tracing::init_tracing,
 };
 
 fn main() -> anyhow::Result<()> {
@@ -24,7 +24,6 @@ fn main() -> anyhow::Result<()> {
 }
 
 async fn async_main() -> anyhow::Result<()> {
-    get_windows_dir_path();
     let _infos = get_compress_infos("D:\\soft-dev\\code\\rust\\image-compress\\image")?;
 
     // info!("{:?}", infos);

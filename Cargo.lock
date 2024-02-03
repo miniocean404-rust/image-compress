@@ -629,6 +629,7 @@ dependencies = [
  "walkdir",
  "webp",
  "winapi",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]

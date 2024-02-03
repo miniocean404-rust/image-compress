@@ -1,13 +1,14 @@
 {
     "package": "awesome-package",
     "napi": {
-        "name": "miniocean_image_compress"
+        "binaryName": "miniocean_image_compress"
     },
     "scripts": {
         "pack": "wasm-pack",
         "build:wasm": "npm-run-all \"pack -- build ./crates/wasm \" --",
-        "build": "napi build --release",
-        "build:node:dev": " napi build  --manifest-path ./Cargo.toml --platform -p node --js ./node-swc/src/binding.js --dts ./node-swc/src/binding.d.ts -o ."
+        "build:node": "napi build  --manifest-path ./Cargo.toml --platform -p node --release -o dist/node",
+        "build:node:dev": "napi build  --manifest-path ./Cargo.toml --platform -p node  -o dist/node",
+        "napi:help": "napi -h"
     },
     "devDependencies": {
         "@napi-rs/cli": "^3.0.0-alpha.22",

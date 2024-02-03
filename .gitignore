@@ -4,3 +4,4 @@ logs
 .idea
 pkg
 node_modules
+*.node

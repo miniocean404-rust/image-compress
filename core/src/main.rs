@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use image_compress::{
+use image_compress_core::{
     compress::{index::ImageCompression, utils::dir::glob_dir},
     shared::error::OptionError,
     utils::log::tracing::init_tracing,
@@ -27,7 +27,7 @@ async fn async_main() -> anyhow::Result<()> {
     let _infos = get_compress_infos("D:\\soft-dev\\code\\rust\\image-compress\\image")?;
 
     // info!("{:?}", infos);
-    // dbg!(infos);
+    dbg!(_infos);
 
     anyhow::Ok(())
 }

@@ -2,34 +2,34 @@ name: Rust
 
 on:
   push:
-    branches: [ master ]
+    # branches: [ master ]
     paths-ignore:
-      - '.idea/**'
-      - '.gitattributes'
-      - '.github/**.json'
-      - '.gitignore'
-      - '.gitmodules'
-      - '**.md'
-      - '**/*.txt'
-      - '**/*.png'
-      - '**/*.jpg'
-      - 'LICENSE'
-      - 'NOTICE'
+      - ".idea/**"
+      - ".gitattributes"
+      - ".github/**.json"
+      - ".gitignore"
+      - ".gitmodules"
+      - "**.md"
+      - "**/*.txt"
+      - "**/*.png"
+      - "**/*.jpg"
+      - "LICENSE"
+      - "NOTICE"
       - image/**
   pull_request:
-    branches: [ master ]
+    # branches: [master]
     paths-ignore:
-      - '.idea/**'
-      - '.gitattributes'
-      - '.github/**.json'
-      - '.gitignore'
-      - '.gitmodules'
-      - '**.md'
-      - '**/*.txt'
-      - '**/*.png'
-      - '**/*.jpg'
-      - 'LICENSE'
-      - 'NOTICE'
+      - ".idea/**"
+      - ".gitattributes"
+      - ".github/**.json"
+      - ".gitignore"
+      - ".gitmodules"
+      - "**.md"
+      - "**/*.txt"
+      - "**/*.png"
+      - "**/*.jpg"
+      - "LICENSE"
+      - "NOTICE"
       - image/**
 
 env:
@@ -43,71 +43,68 @@ jobs:
       fail-fast: false
       matrix:
         os:
-         - platform: macos-latest
-           target: x86_64-apple-darwin
-           build: |
+          - platform: macos-latest
+            target: x86_64-apple-darwin
+            build: |
               cargo build --verbose --release
               cp ./target/release/image-compress ./tag
 
-         - platform: macos-latest
-           target: aarch64-apple-darwin
-           build: |
-            cargo build --verbose --release
-            cp ./target/release/image-compress ./tag
-
-
-         - platform: windows-latest
-           target: x86_64-pc-windows-msvc
-           build: |
+          - platform: macos-latest
+            target: aarch64-apple-darwin
+            build: |
               cargo build --verbose --release
               cp ./target/release/image-compress ./tag
 
-         - platform: windows-latest
-           target: i686-pc-windows-msvc
-           build: |
+          - platform: windows-latest
+            target: x86_64-pc-windows-msvc
+            build: |
               cargo build --verbose --release
               cp ./target/release/image-compress ./tag
 
-         - platform: windows-latest
-           target: aarch64-pc-windows-msvc
-           build: |
+          - platform: windows-latest
+            target: i686-pc-windows-msvc
+            build: |
               cargo build --verbose --release
               cp ./target/release/image-compress ./tag
 
-
-         - platform: ubuntu-latest
-           target: x86_64-unknown-linux-gnu
-           build: |
+          - platform: windows-latest
+            target: aarch64-pc-windows-msvc
+            build: |
               cargo build --verbose --release
               cp ./target/release/image-compress ./tag
 
-         - platform: ubuntu-latest
-           target: x86_64-unknown-linux-musl
-           build: |
+          - platform: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            build: |
               cargo build --verbose --release
               cp ./target/release/image-compress ./tag
 
-
-         - platform: ubuntu-latest
-           target: aarch64-unknown-linux-gnu
-           build: |
+          - platform: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            build: |
               cargo build --verbose --release
               cp ./target/release/image-compress ./tag
 
-         - platform: ubuntu-latest
-           target: armv7-unknown-linux-gnueabihf
-           build: |
+          - platform: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            build: |
               cargo build --verbose --release
               cp ./target/release/image-compress ./tag
 
-         - platform: ubuntu-latest
-           target: aarch64-unknown-linux-musl
-           build: |
+          - platform: ubuntu-latest
+            target: armv7-unknown-linux-gnueabihf
+            build: |
               cargo build --verbose --release
               cp ./target/release/image-compress ./tag
 
-#      - name: Run tests
-#        run: cargo test --verbose --release
+          - platform: ubuntu-latest
+            target: aarch64-unknown-linux-musl
+            build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+
+    #      - name: Run tests
+    #        run: cargo test --verbose --release
     steps:
       - uses: actions/checkout@v4
       - name: 签出文件
@@ -179,9 +176,9 @@ jobs:
       - name: 重命名并移动二进制文件
         shell: bash
         run: |
-            chmod +x ./script/ci-rename-file.sh
-            ./script/ci-rename-file.sh
-            ls -R ./prod_cli
+          chmod +x ./script/ci-rename-file.sh
+          ./script/ci-rename-file.sh
+          ls -R ./prod_cli
 
       - name: 开始发布
         uses: softprops/action-gh-release@v1
@@ -192,4 +189,4 @@ jobs:
           body: ${{ github.event.head_commit.message }}
           token: ${{ github.token }}
           files: |
-           prod_cli/*
+            prod_cli/*

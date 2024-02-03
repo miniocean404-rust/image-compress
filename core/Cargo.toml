@@ -1,0 +1,56 @@
+[package]
+name = "image-compress-core"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# 无损压缩 png (optipng、oxipng)
+oxipng = "9.0.0"
+# 有损压缩 png 把 png24 压缩成 png8 的库 是 pngquant 的包装
+imagequant = { version = "4.2.2", default-features = true }
+# image = "0.24.8"
+lodepng = "3.10.0"
+
+mozjpeg = "= 0.10.6"
+mozjpeg-sys = "2.0.5"
+
+# gifsicle 是读取以及 有损及无损压缩 gif 的库
+gifsicle = "1.94.0"
+libc = "0.2.152"
+
+# webp 无损压缩及有损压缩
+webp = "0.2.6" # 底层使用的是 rust libwebp-sys
+
+# 处理 svg
+svgtypes = "0.13.0"
+
+# 推断文件类型
+infer = "0.15.0"
+
+globset = "0.4.14"
+walkdir = "2.4.0"
+
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# 处理时间
+chrono = "0.4.31"
+
+tokio = { version = "1.33.0", features = ["full"] }
+num_cpus = "1.16.0"
+
+
+# 处理错误
+anyhow = "1.0.75"
+# 处理错误 enum 参数
+thiserror = "1.0.50"
+# 处理日志及栈追踪
+tracing = "0.1.40"
+tracing-appender = "0.2.3"
+tracing-subscriber = {version = "0.3.18",features = ["env-filter"]}
+
+[target.'cfg(target_os = "macos")'.dependencies]
+cocoa = { version = "0.25.0" }
+
+[target.'cfg(target_os = "windows")'.dependencies]
+windows = {version = "0.52.0",features = ["Win32","Foundation","Win32_System_Com","Win32_UI_Shell"]}

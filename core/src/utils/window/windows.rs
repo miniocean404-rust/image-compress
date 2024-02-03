@@ -1,7 +1,7 @@
-#[cfg(windows)]
-use std::ptr::{self};
+// #[cfg(windows)]
+// use std::ptr::{self};
 
-use windows::Win32::{System::Com::CoCreateInstance, UI::Shell::CSIDL_WINDOWS};
+// use windows::Win32::{System::Com::CoCreateInstance, UI::Shell::CSIDL_WINDOWS};
 
 pub fn test() {
     // unsafe { CoCreateInstance(&CSIDL_WINDOWS, ptr::null_mut(), 1) };

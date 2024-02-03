@@ -3,9 +3,8 @@ use std::path::PathBuf;
 use image_compress::{
     compress::{index::ImageCompression, utils::dir::glob_dir},
     shared::error::OptionError,
-    utils::log::tracing::init_tracing,
+    utils::{log::tracing::init_tracing, window::windows::get_windows_dir_path},
 };
-use tracing::info;
 
 fn main() -> anyhow::Result<()> {
     let _guard = init_tracing("./logs");
@@ -25,12 +24,17 @@ fn main() -> anyhow::Result<()> {
 }
 
 async fn async_main() -> anyhow::Result<()> {
-    let infos = get_compress_infos("D:\\soft-dev\\code\\rust\\image-compress\\image")?;
+    get_windows_dir_path();
+    let _infos = get_compress_infos("D:\\soft-dev\\code\\rust\\image-compress\\image")?;
 
     // info!("{:?}", infos);
-    dbg!(infos);
+    // dbg!(infos);
 
     anyhow::Ok(())
+}
+
+fn async_thread_stop() {
+    // warn!("异步线程停止了");
 }
 
 fn get_compress_infos(dir: &str) -> anyhow::Result<Vec<ImageCompression>> {
@@ -43,8 +47,4 @@ fn get_compress_infos(dir: &str) -> anyhow::Result<Vec<ImageCompression>> {
         .collect::<Vec<ImageCompression>>();
 
     Ok(infos)
-}
-
-fn async_thread_stop() {
-    // warn!("异步线程停止了");
 }

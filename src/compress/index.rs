@@ -122,6 +122,7 @@ impl fmt::Debug for ImageCompression {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // f.debug_map().entries(self.enable_info_map.iter());
         // f.debug_list().entries(self.enable_user_vec.iter()).finish()
+        // writeln!(f, "自定义格式化 {} ", self.mem.len()).unwrap_or(());
 
         f.debug_struct("ImageCompression")
             .field("name", &self.name)

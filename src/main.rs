@@ -27,7 +27,8 @@ fn main() -> anyhow::Result<()> {
 async fn async_main() -> anyhow::Result<()> {
     let infos = get_compress_infos("D:\\soft-dev\\code\\rust\\image-compress\\image")?;
 
-    info!("{:#?}", infos);
+    // info!("{:?}", infos);
+    dbg!(infos);
 
     anyhow::Ok(())
 }

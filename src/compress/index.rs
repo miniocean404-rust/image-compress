@@ -122,16 +122,36 @@ impl fmt::Debug for ImageCompression {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // f.debug_map().entries(self.enable_info_map.iter());
         // f.debug_list().entries(self.enable_user_vec.iter()).finish()
+
         f.debug_struct("ImageCompression")
             .field("name", &self.name)
             .field("state", &self.state)
             .field("path", &self.path)
+            .field("mem", &self.mem.len())
             .field("file_type", &self.file_type)
             .field("quality", &self.quality)
             .field("before_size", &self.before_size)
             .field("after_size", &self.after_size)
             .field("rate", &self.rate)
+            .finish()
+    }
+}
+
+impl fmt::Display for ImageCompression {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // f.debug_map().entries(self.enable_info_map.iter());
+        // f.debug_list().entries(self.enable_user_vec.iter()).finish()
+
+        f.debug_struct("ImageCompression")
+            .field("name", &self.name)
+            .field("state", &self.state)
+            .field("path", &self.path)
             .field("mem", &self.mem.len())
+            .field("file_type", &self.file_type)
+            .field("quality", &self.quality)
+            .field("before_size", &self.before_size)
+            .field("after_size", &self.after_size)
+            .field("rate", &self.rate)
             .finish()
     }
 }

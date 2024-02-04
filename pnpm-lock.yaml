@@ -8,6 +8,9 @@ devDependencies:
   '@napi-rs/cli':
     specifier: ^3.0.0-alpha.22
     version: 3.0.0-alpha.36
+  '@types/node':
+    specifier: ^20.11.16
+    version: 20.11.16
   npm-run-all:
     specifier: ^4.1.5
     version: 4.1.5
@@ -469,6 +472,12 @@ packages:
     resolution: {integrity: sha512-FLWs/AvZllw/AGVs+nJ+ELCDZZJk+kY0zMen118xhL2zD0s1etIUHm1odgjP7epxYU1ln7SZxEUWYop5bhsdgQ==}
     dependencies:
       '@octokit/openapi-types': 19.1.0
+    dev: true
+
+  /@types/node@20.11.16:
+    resolution: {integrity: sha512-gKb0enTmRCzXSSUJDq6/sPcqrfCv2mkkG6Jt/clpn5eiCbKTY+SgZUxo+p8ZKMof5dCp9vHQUAB7wOUTod22wQ==}
+    dependencies:
+      undici-types: 5.26.5
     dev: true
 
   /ansi-escapes@4.3.2:
@@ -1568,6 +1577,10 @@ packages:
       has-bigints: 1.0.2
       has-symbols: 1.0.3
       which-boxed-primitive: 1.0.2
+    dev: true
+
+  /undici-types@5.26.5:
+    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
     dev: true
 
   /universal-user-agent@6.0.1:

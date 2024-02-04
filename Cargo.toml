@@ -19,8 +19,6 @@ edition = "2021"
 # name = "core"
 # path = "core/src/main.rs"
 
-[workspace.dependencies]
-
 [profile.dev]
 opt-level = 0
 codegen-units = 16   # debug build will cause runtime panic if codegen-unints is default
@@ -42,4 +40,12 @@ panic = "abort"
 # 是否开启断言调试
 debug-assertions = false
 
+[workspace.dependencies]
+tokio = { version = "1.33.0", features = ["full"] }
 
+# 处理日志及栈追踪
+tracing =  { version = "0.1.40", features = ["release_max_level_info"] }
+tracing-appender = "0.2.3"
+tracing-subscriber = {version = "0.3.18",features = ["env-filter"]}
+tracing-futures = "0.2.5"
+tracing-chrome = "0.7.1"

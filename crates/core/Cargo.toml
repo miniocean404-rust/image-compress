@@ -44,10 +44,12 @@ num_cpus = "1.16.0"
 anyhow = "1.0.75"
 # 处理错误 enum 参数
 thiserror = "1.0.50"
-# 处理日志及栈追踪
-tracing = "0.1.40"
-tracing-appender = "0.2.3"
-tracing-subscriber = {version = "0.3.18",features = ["env-filter"]}
+
+tracing.workspace = true
+tracing-appender.workspace = true
+tracing-subscriber.workspace = true
+
+
 
 [target.'cfg(target_os = "macos")'.dependencies]
 cocoa = { version = "0.25.0" }

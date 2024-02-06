@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 # 无损压缩 png (optipng、oxipng)
-oxipng = {version = "9.0.0",features = ["filetime","parallel","zopfli"],default-features = false}
+oxipng = {version = "9.0.0"}
 # 有损压缩 png 把 png24 压缩成 png8 的库 是 pngquant 的包装
 imagequant = { version = "4.2.2", default-features = true }
 # image = "0.24.8"

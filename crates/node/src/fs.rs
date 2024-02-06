@@ -1,10 +1,11 @@
 use std::{fs::File, io::Read, thread::spawn};
 
+use image_compress_core::compress::utils::dir::glob_dir;
 use napi::{
     threadsafe_function::{
         ErrorStrategy, ThreadSafeCallContext, ThreadsafeFunction, ThreadsafeFunctionCallMode,
     },
-    Error, JsFunction, Result,
+    Error, JsFunction, Result, Status,
 };
 use napi_derive::napi;
 
@@ -36,4 +37,10 @@ pub fn read_file(path: String, callback: JsFunction) {
         let contents = sync_read_file(path);
         tsfn.call(Ok(contents), ThreadsafeFunctionCallMode::Blocking);
     });
+}
+
+#[napi(js_name = "getPaths", ts_return_type = "string[]")]
+pub fn get_dirs(pattern: String, path: String) -> Result<Vec<String>> {
+    glob_dir(&pattern, &path)
+        .map_err(|e| Error::new(Status::GenericFailure, format!("失败的获取路径: {}", e)))
 }

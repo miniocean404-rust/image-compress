@@ -19,13 +19,6 @@ crate-type = ["cdylib","rlib"]
 # wasm-pack cli 依赖这个包进行打包
 wasm-bindgen = {version = "0.2.90",features = [ "enable-interning"]}
 
-# image-compress-core = { path = "../core" }
-# mozjpeg-sys = "2.0.5"
-# lodepng = "3.10.0"
-# gifsicle = "1.94.0"
-# webp = "0.2.6" # 底层使用的是 rust libwebp-sys
-
-
 # web-sys 的 Crate，它为 Rust 提供了控制 DOM 的能力
 web-sys = {version = "0.3.67",features = [ 'Document', 'Element', 'HtmlElement', 'Node', 'Window', 'HtmlInputElement','Performance']}
 

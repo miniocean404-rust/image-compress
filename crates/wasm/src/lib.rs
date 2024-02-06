@@ -3,23 +3,6 @@ use std::{cell::RefCell, rc::Rc};
 // 用于加载 Prelude（预导入）模块
 use wasm_bindgen::{prelude::*, JsCast};
 
-// #[wasm_bindgen]
-// pub fn get_image_info(file: String, quality: i8) -> Result<String, Error> {
-//     start_compress(file, 80);
-
-//     Ok(String::from("success"))
-// }
-
-// async fn start_compress(file: String, quality: i8) -> Result<ImageCompression, String> {
-//     let mut info = ImageCompression::new(file, quality).map_err(|e| "获取压缩信息失败")?;
-
-//     info.start_mem_compress(false)
-//         .await
-//         .map_err(|e| "compress 失败:")?;
-
-//     Ok(info)
-// }
-
 // 操作 DOM
 // start 标识 init() 在 WASM 加载时自动执行
 #[wasm_bindgen(start)]

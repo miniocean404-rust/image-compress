@@ -1,10 +1,7 @@
-use std::borrow::BorrowMut;
-
 use rgb::{
     alt::{GRAY8, GRAYA8},
     AsPixels, FromSlice, RGB8, RGBA8,
 };
-use tracing::instrument::WithSubscriber;
 
 pub fn encode(data: &[u8], width: u32, height: u32) -> Vec<u8> {
     let mut buf = Vec::new();
@@ -19,21 +16,6 @@ pub fn encode(data: &[u8], width: u32, height: u32) -> Vec<u8> {
     }
 
     buf
-}
-
-// Convert pixels in-place within buffer containing source data but preallocated
-// for entire [num_pixels * sizeof(RGBA)].
-// This works because all the color types are <= RGBA by size.
-fn expand_pixels<Src: Copy>(buf: &mut [u8], to_rgba: impl Fn(Src) -> RGBA8)
-where
-    [u8]: AsPixels<Src> + FromSlice<u8>,
-{
-    assert!(std::mem::size_of::<Src>() <= std::mem::size_of::<RGBA8>());
-    let num_pixels = buf.len() / 4;
-    for i in (0..num_pixels).rev() {
-        let src_pixel = buf.as_pixels()[i];
-        buf.as_rgba_mut()[i] = to_rgba(src_pixel);
-    }
 }
 
 pub fn decode(mut data: &[u8]) -> Vec<u8> {
@@ -64,4 +46,19 @@ pub fn decode(mut data: &[u8]) -> Vec<u8> {
     }
 
     buf
+}
+
+// Convert pixels in-place within buffer containing source data but preallocated
+// for entire [num_pixels * sizeof(RGBA)].
+// This works because all the color types are <= RGBA by size.
+fn expand_pixels<Src: Copy>(buf: &mut [u8], to_rgba: impl Fn(Src) -> RGBA8)
+where
+    [u8]: AsPixels<Src> + FromSlice<u8>,
+{
+    assert!(std::mem::size_of::<Src>() <= std::mem::size_of::<RGBA8>());
+    let num_pixels = buf.len() / 4;
+    for i in (0..num_pixels).rev() {
+        let src_pixel = buf.as_pixels()[i];
+        buf.as_rgba_mut()[i] = to_rgba(src_pixel);
+    }
 }

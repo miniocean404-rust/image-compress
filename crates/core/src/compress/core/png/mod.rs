@@ -1,3 +1,3 @@
 pub mod lossless;
 pub mod lossy;
-pub mod png;
+pub mod png_warpper;

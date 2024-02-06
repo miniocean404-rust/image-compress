@@ -2,7 +2,8 @@ name: Rust
 
 on:
   push:
-    # branches: [ master ]
+    # branches: [master]
+    branches: [dev]
     paths-ignore:
       - ".idea/**"
       - ".gitattributes"

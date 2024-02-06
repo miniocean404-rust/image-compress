@@ -15,6 +15,7 @@ fn sync_read_file(path: String) -> Result<String> {
     Ok(contents)
 }
 
+// 掘金文章：https://juejin.cn/post/7322288075850039359?searchId=202402040121440A1FC55F67DF117FA08B
 // napi-线程安全：https://github.com/nodejs/node-addon-api/blob/main/doc/threadsafe_function.md
 #[napi(js_name = "readFile", ts_return_type = "void")]
 pub fn read_file(path: String, callback: JsFunction) {

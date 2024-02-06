@@ -13,23 +13,14 @@ crate-type = ["cdylib"]
 # wasm-pack，一个构建、测试和发布 WASM 的 Rust CLI 工具，我们将使用 wasm-pack 相关的命令来构建 WASM 二进制内容。
 # https://rustwasm.github.io/wasm-pack/installer/
 
-
 # 是一个简化 Rust WASM 与 JS 之间交互的库。
 # 它能够将如 DOM 操作、console.log 和 performance 等 JS 相关 API 暴露给 Rust 使用
 # 它能够将 Rust 功能导出到 JS 中，如类、函数等
 # wasm-pack cli 依赖这个包进行打包
 wasm-bindgen = "0.2.90"
 
-
 # web-sys 的 Crate，它为 Rust 提供了控制 DOM 的能力
-# [dependencies.web-sys]
-# version = "0.3.60"
-# features 需要开发者手动地声明需要使用到的模块，
-# 这样做的好处有二：
-    # 一是避免不同模块下的 features 名字发生冲突；
-    # 二是条件编译各个依赖中的特性，对不使用的 features 不编译。
-# features = [ 'Document', 'Element', 'HtmlElement', 'Node', 'Window', 'HtmlInputElement','Performance']
-
+web-sys = {version = "0.3.67",features = [ 'Document', 'Element', 'HtmlElement', 'Node', 'Window', 'HtmlInputElement','Performance']}
 
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = false

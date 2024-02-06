@@ -9,7 +9,8 @@ edition.workspace = true
 [lib]
 # 一个动态的系统库将会产生，类似于C共享库。当编译一个从其它语言加载调用的动态库时这属性将会被使用。
 # 在 Linux 系统上会生成类型为 *.so 的文件，在 MacOS 上会生成类型为  *.dylib 的文件，在 Windows 系统则是 *.dll 类型的。
-crate-type = ["cdylib"]
+# 默认的 rust 打包类型
+crate-type = ["cdylib","rlib"]
 
 [dependencies]
 image-compress-core = { path = "../core" }

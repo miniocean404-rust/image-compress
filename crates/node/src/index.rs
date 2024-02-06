@@ -1,10 +1,11 @@
-use backtrace::Backtrace;
-use image_compress_core::compress::index::ImageCompression;
-use image_compress_core::compress::utils::dir::glob_dir;
-// use image_compress_core::compress::utils::dir::glob_dir;
-/// import the preludes
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
+
+use image_compress_core::compress::index::ImageCompression;
+use image_compress_core::compress::utils::dir::glob_dir;
+
+use backtrace::Backtrace;
+
 use std::env;
 use std::panic::set_hook;
 

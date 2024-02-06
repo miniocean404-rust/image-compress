@@ -36,7 +36,7 @@ pub fn to_file(input: &str, output: &str) -> Result<(), Box<dyn std::error::Erro
     Ok(())
 }
 
-pub fn to_mem(input: &Vec<u8>, quality: i32) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+pub fn to_mem(input: &Vec<u8>, quality: i8) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
     let image = lodepng::decode_memory(input, ColorType::RGBA, 8)?;
 
     let image = match image {

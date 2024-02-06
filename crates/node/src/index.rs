@@ -1,20 +1,12 @@
 use backtrace::Backtrace;
 use image_compress_core::compress::index::ImageCompression;
+use image_compress_core::compress::utils::dir::glob_dir;
+// use image_compress_core::compress::utils::dir::glob_dir;
 /// import the preludes
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 use std::env;
 use std::panic::set_hook;
-
-#[napi]
-// 定义 export const
-pub const DEFAULT_COST: u32 = 12;
-
-#[napi(js_name = "ImageCompression")]
-#[derive(Default)]
-pub struct ImageCompressionInner {
-    inner: ImageCompression,
-}
 
 #[napi::module_init]
 fn init() {
@@ -26,13 +18,17 @@ fn init() {
     }
 }
 
-#[napi(js_name = "get_image_info")]
+#[napi]
+// 定义 export const
+pub const DEFAULT_COST: u32 = 12;
+
+#[napi(js_name = "getImageBuffer")]
 #[tracing::instrument(level = "info", skip_all)]
-async fn get_image(file: String) -> Result<Buffer> {
+async fn get_image_buffer(file: String, quality: i8) -> Result<Buffer> {
     // 如果没用自定义初始化就使用 默认 的初始化
     crate::log::init_default_trace_subscriber();
 
-    let mut info = ImageCompression::new(file, 80).map_err(|e| {
+    let mut info = ImageCompression::new(file, quality).map_err(|e| {
         Error::new(
             Status::GenericFailure,
             format!("失败的创建 ImageCompression: {}", e),
@@ -46,4 +42,8 @@ async fn get_image(file: String) -> Result<Buffer> {
     Ok(info.mem.into())
 }
 
-// #[napi(ts_return_type = "Promise<{ [index: string]: { code: string, map?: string } }>")]
+#[napi(js_name = "getPaths", ts_return_type = "string[]")]
+fn get_dirs(pattern: String, path: String) -> Result<Vec<String>> {
+    glob_dir(&pattern, &path)
+        .map_err(|e| Error::new(Status::GenericFailure, format!("失败的获取路径: {}", e)))
+}

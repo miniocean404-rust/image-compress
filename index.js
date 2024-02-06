@@ -1,4 +1,4 @@
-const imageCompress = require("./dist/node/index.win32-x64-msvc.node");
+const { getPaths } = require("./dist/node/index");
 const path = require("path");
 
 init();
@@ -6,6 +6,6 @@ init();
 async function init() {
   const image_dir = path.join(process.cwd(), "image/jpg/eye.jpg");
 
-  console.log(new imageCompress.ImageCompression());
-  const res = await imageCompress.get_image_info(image_dir);
+  console.log(getPaths("*.{png,webp,gif,jpg,jpeg}", "image"));
+  // const res = await imageCompress.get_image_info(image_dir);
 }

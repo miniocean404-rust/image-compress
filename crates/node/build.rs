@@ -18,5 +18,5 @@ fn main() {
     let mut f = BufWriter::new(File::create(dest_path).expect("失败的创建 triple text"));
     write!(f, "{}", env::var("TARGET").expect("应该指定目标")).expect("写入 [目标三元组] 失败");
 
-    // napi_build::setup();
+    napi_build::setup();
 }

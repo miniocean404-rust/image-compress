@@ -15,6 +15,7 @@ fn sync_read_file(path: String) -> Result<String> {
     Ok(contents)
 }
 
+// napi-线程安全：https://github.com/nodejs/node-addon-api/blob/main/doc/threadsafe_function.md
 #[napi(js_name = "readFile", ts_return_type = "void")]
 pub fn read_file(path: String, callback: JsFunction) {
     let tsfn: ThreadsafeFunction<Result<String>, ErrorStrategy::CalleeHandled> = callback

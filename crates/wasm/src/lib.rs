@@ -1,15 +1,24 @@
 use std::{cell::RefCell, rc::Rc};
 
-use wasm_bindgen::{prelude::*, JsCast}; // 用于加载 Prelude（预导入）模块
+// 用于加载 Prelude（预导入）模块
+use wasm_bindgen::{prelude::*, JsCast};
 
-#[wasm_bindgen]
-// 斐波那契函数
-pub fn fib(n: u32) -> u32 {
-    if n == 0 || n == 1 {
-        return 1;
-    }
-    fib(n - 1) + fib(n - 2)
-}
+// #[wasm_bindgen]
+// pub fn get_image_info(file: String, quality: i8) -> Result<String, Error> {
+//     start_compress(file, 80);
+
+//     Ok(String::from("success"))
+// }
+
+// async fn start_compress(file: String, quality: i8) -> Result<ImageCompression, String> {
+//     let mut info = ImageCompression::new(file, quality).map_err(|e| "获取压缩信息失败")?;
+
+//     info.start_mem_compress(false)
+//         .await
+//         .map_err(|e| "compress 失败:")?;
+
+//     Ok(info)
+// }
 
 // 操作 DOM
 // start 标识 init() 在 WASM 加载时自动执行
@@ -41,7 +50,7 @@ pub fn init_body() -> Result<(), JsValue> {
         let closure = Closure::<dyn Fn()>::new(move || {
             let val = input.value();
             let num = val.parse::<u32>().unwrap();
-            let res = fib(num);
+            let res = num;
             out.borrow_mut()
                 .set_text_content(Some(res.to_string().as_str())); // 在这里使用 borrow_mut 把 out 当做可变变量获取出来，并设置 textContent
         });

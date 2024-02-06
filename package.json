@@ -8,11 +8,11 @@
         }
     },
     "scripts": {
-        "pack": "wasm-pack",
         "build:wasm-dev": "npm-run-all \"pack -- build ./crates/wasm --dev --out-dir ../../dist/wasm\" --",
         "build:wasm-release": "npm-run-all \"pack -- build ./crates/wasm --release --out-dir dist/wasm\" --",
         "build:node": "napi build  --manifest-path ./Cargo.toml --platform -p node --release -o dist/node",
-        "build:node-dev": "napi build  --manifest-path ./Cargo.toml --platform -p node  -o dist/node"
+        "build:node-dev": "napi build  --manifest-path ./Cargo.toml --platform -p node  -o dist/node",
+        "pack": "wasm-pack"
     },
     "devDependencies": {
         "@napi-rs/cli": "^3.0.0-alpha.22",

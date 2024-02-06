@@ -1511,7 +1511,6 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "js-sys",
- "mozjpeg-sys",
  "serde",
  "serde-wasm-bindgen",
  "wasm-bindgen",

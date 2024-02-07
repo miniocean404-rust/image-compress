@@ -1,5 +1,5 @@
 use oxipng::Deflaters::Libdeflater;
-use oxipng::Options;
+use oxipng::{Interlacing, Options};
 use std::fs;
 use std::fs::File;
 use std::io::Write;
@@ -35,6 +35,9 @@ pub fn to_mem(mem: &Vec<u8>) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
     // oxipng_options.deflate = Zopfli { iterations: NonZeroU8::new(15).ok_or("")?};
     let mut oxipng_options = Options::from_preset(6);
     oxipng_options.deflate = Libdeflater { compression: 6 };
+
+    oxipng_options.interlace = Some(Interlacing::None);
+
     let png_vec = oxipng::optimize_from_memory(mem.as_slice(), &oxipng_options)?;
 
     Ok(png_vec)

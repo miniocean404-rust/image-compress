@@ -641,6 +641,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "chrono",
+ "cocoa",
  "gifsicle",
  "globset",
  "imagequant",
@@ -663,6 +664,7 @@ dependencies = [
  "tracing-subscriber",
  "walkdir",
  "webp",
+ "windows",
 ]
 
 [[package]]

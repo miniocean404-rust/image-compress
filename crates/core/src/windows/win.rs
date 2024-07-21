@@ -9,6 +9,7 @@ use windows::Win32::UI::Shell::{
 };
 use windows::Win32::UI::WindowsAndMessaging::{GetWindowInfo, GetWindowModuleFileNameW, GetWindowTextW, WINDOWINFO, WS_VISIBLE};
 
+#[cfg(windows)]
 // 获取应用程序的名称及位置
 // HWND 是一种数据类型，表示窗口句柄（Handle to a Window）。
 // EnumWindows(Some(enum_windows), LPARAM(0)).unwrap();
@@ -51,6 +52,7 @@ pub unsafe extern "system" fn enum_windows(window: HWND, _: LPARAM) -> BOOL {
     true.into()
 }
 
+#[cfg(windows)]
 // 获取资源管理器的路径
 pub fn get_all_explorer() -> anyhow::Result<Vec<String>> {
     // CoInitialize 是一个 COM 初始化函数，用于初始化 COM 运行时，可以使用 CoInitialize 及 CoInitializeEx。
@@ -61,6 +63,7 @@ pub fn get_all_explorer() -> anyhow::Result<Vec<String>> {
     dump_windows(&shell_windows)
 }
 
+#[cfg(windows)]
 fn dump_windows(shell_windows: &IShellWindows) -> anyhow::Result<Vec<String>> {
     let unknowns = unsafe { shell_windows._NewEnum() }?;
     let enum_variant = unknowns.cast::<IEnumVARIANT>()?;
@@ -95,6 +98,7 @@ fn dump_windows(shell_windows: &IShellWindows) -> anyhow::Result<Vec<String>> {
     Ok(dirs)
 }
 
+#[cfg(windows)]
 // 获取信息
 fn get_browser_info<P>(unk: P, hwnd: &mut HWND) -> Result<Vec<u16>>
 where
@@ -106,6 +110,7 @@ where
     get_location_from_view(&shell_browser)
 }
 
+#[cfg(windows)]
 fn get_location_from_view(browser: &IShellBrowser) -> Result<Vec<u16>> {
     let shell_view = unsafe { browser.QueryActiveShellView() }?;
     let persist_id_list: IPersistIDList = shell_view.cast()?;

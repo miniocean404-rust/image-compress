@@ -6,10 +6,13 @@ edition.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
-bench      = false
-crate-type = ["cdylib","rlib"]
+bench = false
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+anyhow.workspace = true
+serde.workspace = true
+
 # wasm-pack，一个构建、测试和发布 WASM 的 Rust CLI 工具，我们将使用 wasm-pack 相关的命令来构建 WASM 二进制内容。
 # https://rustwasm.github.io/wasm-pack/installer/
 
@@ -17,15 +20,11 @@ crate-type = ["cdylib","rlib"]
 # 它能够将如 DOM 操作、console.log 和 performance 等 JS 相关 API 暴露给 Rust 使用
 # 它能够将 Rust 功能导出到 JS 中，如类、函数等
 # wasm-pack cli 依赖这个包进行打包
-wasm-bindgen = {version = "0.2.90",features = [ "enable-interning"]}
+wasm-bindgen = { version = "0.2.90", features = ["enable-interning"] }
 
 # web-sys 的 Crate，它为 Rust 提供了控制 DOM 的能力
-web-sys = {version = "0.3.67",features = [ 'Document', 'Element', 'HtmlElement', 'Node', 'Window', 'HtmlInputElement','Performance']}
-
-anyhow.workspace = true
-serde = { version = "1.0.196", features = ["derive"] }
+web-sys = { version = "0.3.67", features = ['Document', 'Element', 'HtmlElement', 'Node', 'Window', 'HtmlInputElement', 'Performance'] }
 serde-wasm-bindgen = "0.6.3"
-
 js-sys = "0.3.67"
 wee_alloc = "0.4.5"
 

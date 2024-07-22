@@ -4,6 +4,20 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+tokio.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+chrono.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+tracing-appender.workspace = true
+tracing-subscriber.workspace = true
+infer.workspace = true
+globset.workspace = true
+walkdir.workspace = true
+num_cpus.workspace = true
+
 rgb = "0.8.37"
 
 # 无损压缩 png (optipng、oxipng)
@@ -27,27 +41,4 @@ webp = "0.2.6" # 底层使用的是 rust libwebp-sys
 # 处理 svg
 svgtypes = "0.14.0"
 
-# 推断文件类型
-infer = "0.15.0"
 
-globset = "0.4.14"
-walkdir = "2.4.0"
-
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-
-# 处理时间
-chrono = "0.4.31"
-
-tokio = { version = "1.33.0", features = ["full"] }
-num_cpus = "1.16.0"
-
-
-# 处理错误
-anyhow = "1.0.75"
-# 处理错误 enum 参数
-thiserror = "1.0.50"
-
-tracing.workspace = true
-tracing-appender.workspace = true
-tracing-subscriber.workspace = true

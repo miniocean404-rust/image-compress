@@ -1,3 +1,7 @@
+// RUST https://stackoverflow.com/questions/73311644/get-path-to-selected-files-in-active-explorer-window
+// C# https://stackoverflow.com/questions/27590086/c-sharp-get-the-windows-explore-path-which-has-the-focus
+// C# https://stackoverflow.com/questions/8292953/get-current-selection-in-windowsexplorer-from-a-c-sharp-application
+
 #[cfg(windows)]
 use windows::core::{ComInterface, IUnknown, IntoParam, Result};
 #[cfg(windows)]

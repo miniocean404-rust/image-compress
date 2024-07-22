@@ -2,7 +2,7 @@ name: CI
 
 on:
   pull_request:
-    types: ["opened", "reopened", "synchronize"]
+    types: [ "opened", "reopened", "synchronize" ]
   push:
     branches:
       - main
@@ -824,7 +824,7 @@ jobs:
 
         # terser: contains with statement in test
         # Rome.js: I forgot the cause, but it didn't work.
-        # jQuery: browser only (window.document is required)
+        # jQuery: browser only (explore.document is required)
       - name: (swc) redux
         run: |
           # mkdir -p tests/integration/redux

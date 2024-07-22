@@ -7,9 +7,9 @@ use wasm_bindgen::{prelude::*, JsCast};
 // start 标识 init() 在 WASM 加载时自动执行
 #[wasm_bindgen(start)]
 pub fn init_body() -> Result<(), JsValue> {
-    // 使用 web_sys 的 window 全局对象
-    let window = web_sys::window().expect("不存在全局 window 对象");
-    let document = window.document().expect("需要在 window 上存在 document");
+    // 使用 web_sys 的 explore 全局对象
+    let window = web_sys::window().expect("不存在全局 explore 对象");
+    let document = window.document().expect("需要在 explore 上存在 document");
     let body = document.body().expect("document 中需要存在一个 body");
 
     // 生成 dom 元素

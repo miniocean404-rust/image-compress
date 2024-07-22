@@ -1,2 +1,2 @@
 pub mod mac;
-pub mod windows;
+pub mod win;

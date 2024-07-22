@@ -1,4 +1,5 @@
 use image_compress_core::utils::log::tracing::init_tracing;
+#[cfg(windows)]
 use image_compress_core::windows::win::get_all_explorer;
 
 fn main() -> anyhow::Result<()> {
@@ -19,7 +20,9 @@ fn main() -> anyhow::Result<()> {
 }
 
 async fn async_main() -> anyhow::Result<()> {
+    #[cfg(windows)]
     let dirs = get_all_explorer().unwrap();
+    #[cfg(windows)]
     println!("{:?}", dirs);
 
     // let _infos = get_compress_infos("D:\\soft-dev\\code\\rust\\image-compress\\image")?;

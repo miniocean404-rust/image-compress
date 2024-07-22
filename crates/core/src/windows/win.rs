@@ -1,12 +1,19 @@
+#[cfg(windows)]
 use windows::core::{ComInterface, IUnknown, IntoParam, Result};
+#[cfg(windows)]
 use windows::Win32::Foundation::{BOOL, HWND, LPARAM, S_FALSE};
+#[cfg(windows)]
 use windows::Win32::System::Com::{CoCreateInstance, CoInitializeEx, CoTaskMemFree, CLSCTX_LOCAL_SERVER, COINIT_APARTMENTTHREADED, COINIT_DISABLE_OLE1DDE};
+#[cfg(windows)]
 use windows::Win32::System::Ole::IEnumVARIANT;
+#[cfg(windows)]
 use windows::Win32::System::Variant::{VARIANT, VT_DISPATCH};
+#[cfg(windows)]
 use windows::Win32::UI::Shell::{
     IPersistIDList, IShellBrowser, IShellItem, IShellWindows, IUnknown_QueryService, SHCreateItemFromIDList, SID_STopLevelBrowser, ShellWindows,
     SIGDN_DESKTOPABSOLUTEPARSING,
 };
+#[cfg(windows)]
 use windows::Win32::UI::WindowsAndMessaging::{GetWindowInfo, GetWindowModuleFileNameW, GetWindowTextW, WINDOWINFO, WS_VISIBLE};
 
 #[cfg(windows)]

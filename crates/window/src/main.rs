@@ -1,5 +1,6 @@
-use window::mac::{get_finder, get_line};
+use window::windows::get_all_explorer;
 
 fn main() {
-    get_line()
+    let paths = get_all_explorer().unwrap();
+    dbg!(paths);
 }

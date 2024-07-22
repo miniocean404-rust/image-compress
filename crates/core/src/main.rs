@@ -1,6 +1,4 @@
 use image_compress_core::utils::log::tracing::init_tracing;
-#[cfg(windows)]
-use image_compress_core::windows::win::get_all_explorer;
 
 fn main() -> anyhow::Result<()> {
     let _guard = init_tracing("./logs");
@@ -20,7 +18,6 @@ fn main() -> anyhow::Result<()> {
 }
 
 async fn async_main() -> anyhow::Result<()> {
-    test_window();
     // let _infos = get_compress_infos("D:\\soft-dev\\code\\rust\\image-compress\\image")?;
     // info!("{:?}", infos);
     // dbg!(_infos);
@@ -30,10 +27,4 @@ async fn async_main() -> anyhow::Result<()> {
 
 fn async_thread_stop() {
     // warn!("异步线程停止了");
-}
-
-#[cfg(windows)]
-fn test_window() {
-    let dirs = get_all_explorer().unwrap();
-    println!("{:?}", dirs);
 }

@@ -1,16 +1,14 @@
+#[cfg(target_os = "macos")]
 extern crate objc2;
 
-use std::ffi::{c_char, CStr};
-use std::process::Command;
-
+#[cfg(target_os = "macos")]
 use objc::sel;
+#[cfg(target_os = "macos")]
 use objc::sel_impl;
+#[cfg(target_os = "macos")]
 use objc::{msg_send, runtime::Class};
-// use objc2::class;
-// use objc2::msg_send;
-// use objc2::runtime;
-use urlencoding::decode;
 
+#[cfg(target_os = "macos")]
 pub fn get_line() {
     let output = Command::new("osascript")
         .arg("get_finder_path.scpt")
@@ -20,6 +18,7 @@ pub fn get_line() {
     println!("Output: {}", String::from_utf8_lossy(&output.stdout));
 }
 
+#[cfg(target_os = "macos")]
 pub fn get_finder() {
     let cls = Class::get("NSWorkspace").unwrap();
     let shared_workspace: *mut objc::runtime::Object = unsafe { msg_send![cls, sharedWorkspace] };
@@ -56,6 +55,7 @@ pub fn get_finder() {
     }
 }
 
+#[cfg(target_os = "macos")]
 // 表示引入Mac的AppKit这个模块，因为要使用这个模块下的对象
 #[link(name = "AppKit", kind = "framework")]
 extern "C" {}

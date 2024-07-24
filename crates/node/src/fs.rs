@@ -1,6 +1,5 @@
 use std::{fs::File, io::Read, thread::spawn};
 
-use image_compress_core::compress::utils::dir::glob_dir;
 use napi::{
     threadsafe_function::{
         ErrorStrategy, ThreadSafeCallContext, ThreadsafeFunction, ThreadsafeFunctionCallMode,
@@ -9,12 +8,7 @@ use napi::{
 };
 use napi_derive::napi;
 
-fn sync_read_file(path: String) -> Result<String> {
-    let mut file = File::open(path)?;
-    let mut contents = String::new();
-    file.read_to_string(&mut contents)?;
-    Ok(contents)
-}
+use image_compress_core::compress::utils::dir::glob_dir;
 
 // 掘金文章：https://juejin.cn/post/7322288075850039359?searchId=202402040121440A1FC55F67DF117FA08B
 // napi-线程安全：https://github.com/nodejs/node-addon-api/blob/main/doc/threadsafe_function.md
@@ -37,6 +31,13 @@ pub fn read_file(path: String, callback: JsFunction) {
         let contents = sync_read_file(path);
         tsfn.call(Ok(contents), ThreadsafeFunctionCallMode::Blocking);
     });
+}
+
+fn sync_read_file(path: String) -> Result<String> {
+    let mut file = File::open(path)?;
+    let mut contents = String::new();
+    file.read_to_string(&mut contents)?;
+    Ok(contents)
 }
 
 #[napi(js_name = "getPaths", ts_return_type = "string[]")]

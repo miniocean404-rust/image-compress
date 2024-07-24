@@ -1,17 +1,18 @@
-use objc::runtime;
-#[cfg(target_os = "macos")]
-use objc::{msg_send, runtime::Class, sel, sel_impl};
-use urlencoding::decode;
+// 整个文件是 macos 才会编译
+#![cfg(target_os = "macos")]
 
 use std::{ffi::CStr, process::Command};
 
-#[cfg(target_os = "macos")]
+use urlencoding::decode;
+
+use objc::runtime;
+use objc::{msg_send, runtime::Class, sel, sel_impl};
+
 // 必须！：表示引入 Mac 的 AppKit 这个模块，因为要使用这个模块下的对象
 #[link(name = "AppKit", kind = "framework")]
 extern "C" {}
 
-#[cfg(target_os = "macos")]
-pub fn get_line() {
+pub fn get_os_dir_path() {
     let output = Command::new("osascript")
         .args(["-e",r#"tell application "Finder" to get the POSIX path of (target of front window as alias)"#])
         .output()
@@ -21,7 +22,6 @@ pub fn get_line() {
     println!("stderr: {}", String::from_utf8_lossy(&output.stderr));
 }
 
-#[cfg(target_os = "macos")]
 // 获取 Finder 是否被激活及 bundleId
 pub fn get_finder() -> anyhow::Result<()> {
     let cls = Class::get("NSWorkspace").unwrap();

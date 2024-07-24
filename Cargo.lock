@@ -997,6 +997,7 @@ name = "node"
 version = "0.1.0"
 dependencies = [
  "backtrace",
+ "explore",
  "image-compress-core",
  "napi",
  "napi-build",

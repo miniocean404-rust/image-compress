@@ -1,6 +1,7 @@
 // RUST https://stackoverflow.com/questions/73311644/get-path-to-selected-files-in-active-explorer-window
 // C# https://stackoverflow.com/questions/27590086/c-sharp-get-the-windows-explore-path-which-has-the-focus
 // C# https://stackoverflow.com/questions/8292953/get-current-selection-in-windowsexplorer-from-a-c-sharp-application
+#![cfg(target_os = "windows")]
 
 #[cfg(windows)]
 use windows::core::{ComInterface, IUnknown, IntoParam, Result};
@@ -75,7 +76,7 @@ pub unsafe extern "system" fn enum_windows(window: HWND, _: LPARAM) -> BOOL {
 
 #[cfg(windows)]
 // 获取资源管理器的路径
-pub fn get_all_explorer() -> anyhow::Result<Vec<String>> {
+pub fn get_os_dir_path() -> anyhow::Result<Vec<String>> {
     // CoInitialize 是一个 COM 初始化函数，用于初始化 COM 运行时，可以使用 CoInitialize 及 CoInitializeEx。
     let shell_windows: IShellWindows = unsafe {
         CoInitializeEx(None, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE)?;

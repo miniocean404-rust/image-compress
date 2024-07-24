@@ -4,6 +4,11 @@ use objc::{msg_send, runtime::Class, sel, sel_impl};
 use std::process::Command;
 
 #[cfg(target_os = "macos")]
+// 必须！：表示引入 Mac 的 AppKit 这个模块，因为要使用这个模块下的对象
+#[link(name = "AppKit", kind = "framework")]
+extern "C" {}
+
+#[cfg(target_os = "macos")]
 pub fn get_line() {
     let output = Command::new("osascript")
         .arg("get_finder_path.scpt")
@@ -51,11 +56,6 @@ pub fn get_finder() -> anyhow::Result<()> {
 
     Ok(())
 }
-
-#[cfg(target_os = "macos")]
-// 表示引入Mac的AppKit这个模块，因为要使用这个模块下的对象
-#[link(name = "AppKit", kind = "framework")]
-extern "C" {}
 
 // https://juejin.cn/post/7208732065696038971
 // pub fn get_mac_app_path() {

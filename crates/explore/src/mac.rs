@@ -12,7 +12,7 @@ use objc::{msg_send, runtime::Class, sel, sel_impl};
 #[link(name = "AppKit", kind = "framework")]
 extern "C" {}
 
-pub fn get_os_dir_path() {
+pub fn get_finder_path() {
     let output = Command::new("osascript")
         .args(["-e",r#"tell application "Finder" to get the POSIX path of (target of front window as alias)"#])
         .output()

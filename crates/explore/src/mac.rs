@@ -13,11 +13,13 @@ extern "C" {}
 #[cfg(target_os = "macos")]
 pub fn get_line() {
     let output = Command::new("osascript")
-        .arg("get_finder_path.scpt")
+        .arg("-e")
+        .arg(r#"'tell application "Finder" to get the POSIX path of (target of front window as alias)'"#)
         .output()
-        .expect("Failed to execute command");
+        .expect("获取 Finder 目录路径命令失败");
 
     println!("Output: {}", String::from_utf8_lossy(&output.stdout));
+    println!("Output: {}", String::from_utf8_lossy(&output.stderr));
 }
 
 #[cfg(target_os = "macos")]

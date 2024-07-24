@@ -1,12 +1,7 @@
 #[cfg(target_os = "macos")]
-extern crate objc2;
+use objc::{msg_send, runtime::Class, sel, sel_impl};
 
-#[cfg(target_os = "macos")]
-use objc::sel;
-#[cfg(target_os = "macos")]
-use objc::sel_impl;
-#[cfg(target_os = "macos")]
-use objc::{msg_send, runtime::Class};
+use std::process::Command;
 
 #[cfg(target_os = "macos")]
 pub fn get_line() {
@@ -19,7 +14,7 @@ pub fn get_line() {
 }
 
 #[cfg(target_os = "macos")]
-pub fn get_finder() {
+pub fn get_finder() -> anyhow::Result<()> {
     let cls = Class::get("NSWorkspace").unwrap();
     let shared_workspace: *mut objc::runtime::Object = unsafe { msg_send![cls, sharedWorkspace] };
 
@@ -35,12 +30,12 @@ pub fn get_finder() {
             unsafe { msg_send![app, bundleIdentifier] };
 
         if !bundle_identifier.is_null() {
-            let bundle_identifier_str: &str = unsafe {
+            let bundle_id: &str = unsafe {
                 let c_str: *const std::os::raw::c_char = msg_send![bundle_identifier, UTF8String];
                 std::ffi::CStr::from_ptr(c_str).to_str().unwrap()
             };
 
-            if bundle_identifier_str == "com.apple.finder" {
+            if bundle_id == "com.apple.finder" {
                 let is_active: bool = unsafe { msg_send![app, isActive] };
 
                 if is_active {
@@ -53,6 +48,8 @@ pub fn get_finder() {
             }
         }
     }
+
+    Ok(())
 }
 
 #[cfg(target_os = "macos")]

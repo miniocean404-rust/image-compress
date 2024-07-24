@@ -20,6 +20,7 @@ use windows::Win32::UI::Shell::{
     IPersistIDList, IShellBrowser, IShellItem, IShellWindows, IUnknown_QueryService,
     SHCreateItemFromIDList, SID_STopLevelBrowser, ShellWindows, SIGDN_DESKTOPABSOLUTEPARSING,
 };
+#[cfg(windows)]
 use windows::Win32::UI::WindowsAndMessaging::GetForegroundWindow;
 #[cfg(windows)]
 use windows::Win32::UI::WindowsAndMessaging::{

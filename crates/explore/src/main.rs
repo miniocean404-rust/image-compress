@@ -1,6 +1,5 @@
-use explore::win::get_all_explorer;
+use explore::mac::get_finder;
 
 fn main() {
-    let paths = get_all_explorer().unwrap();
-    dbg!(paths);
+    get_finder();
 }

@@ -12,8 +12,8 @@ importers:
         specifier: ^3.0.0-alpha.22
         version: 3.0.0-alpha.36
       '@types/node':
-        specifier: ^20.11.16
-        version: 20.11.16
+        specifier: ^20.14.12
+        version: 20.14.12
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -287,8 +287,8 @@ packages:
   '@octokit/types@12.4.0':
     resolution: {integrity: sha512-FLWs/AvZllw/AGVs+nJ+ELCDZZJk+kY0zMen118xhL2zD0s1etIUHm1odgjP7epxYU1ln7SZxEUWYop5bhsdgQ==}
 
-  '@types/node@20.11.16':
-    resolution: {integrity: sha512-gKb0enTmRCzXSSUJDq6/sPcqrfCv2mkkG6Jt/clpn5eiCbKTY+SgZUxo+p8ZKMof5dCp9vHQUAB7wOUTod22wQ==}
+  '@types/node@20.14.12':
+    resolution: {integrity: sha512-r7wNXakLeSsGT0H1AU863vS2wa5wBOK4bWMjZz2wj+8nBx+m5PeIn0k8AloSLpRuiwdRQZwarZqHE4FNArPuJQ==}
 
   ansi-escapes@4.3.2:
     resolution: {integrity: sha512-gKXj5ALrKWQLsYG9jlTRmR/xKluxHV+Z9QEwNIgCfM1/uwPMCuzVVnh5mwTd+OuBZcwSIMbqssNWRm1lE51QaQ==}
@@ -1119,7 +1119,7 @@ snapshots:
     dependencies:
       '@octokit/openapi-types': 19.1.0
 
-  '@types/node@20.11.16':
+  '@types/node@20.14.12':
     dependencies:
       undici-types: 5.26.5
 

@@ -6,9 +6,9 @@ n-api 使用：https://juejin.cn/post/7226879080415395897?searchId=2024020401214
 
 `"@napi-rs/cli": "^3.0.0-alpha.22"`版本命令：
 
-1. --manifest-path 指定 workspack 文件夹路径
+1. --manifest-path 指定 workspace 文件夹路径
 2. --platform 指定平台
-3. -p 指定打包的 workspack 名称
+3. -p 指定打包的 workspace 名称
 
 - 将 .d.ts .js 文件都输出为 dist/node/binding 下，但是这时候不能指定 -o 为其他目录只能为 .
 

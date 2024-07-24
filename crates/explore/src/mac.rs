@@ -22,6 +22,7 @@ pub fn get_line() {
 }
 
 #[cfg(target_os = "macos")]
+// 获取 Finder 是否被激活及 bundleId
 pub fn get_finder() -> anyhow::Result<()> {
     let cls = Class::get("NSWorkspace").unwrap();
     let shared_workspace: *mut objc::runtime::Object = unsafe { msg_send![cls, sharedWorkspace] };
@@ -61,6 +62,7 @@ pub fn get_finder() -> anyhow::Result<()> {
 }
 
 // https://juejin.cn/post/7208732065696038971
+// 获取前台正在运行的 app 的路径
 pub fn get_mac_foreground_app_path() {
     unsafe {
         // 获取Mac系统的 AppKit 这个模块下的 NSWorkspace 这个对象

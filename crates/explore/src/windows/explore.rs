@@ -28,7 +28,7 @@ pub struct ExploreInfo {
 pub fn get_explore_path() -> anyhow::Result<()> {
     let sub_explore = get_sub_explore()?;
 
-    // 未处理w
+    // 未处理 windows 11 多个子窗口有同一个父窗口的情况
     sub_explore.iter().for_each(|explore_info| unsafe {
         let foreground_window = get_foreground_window();
 

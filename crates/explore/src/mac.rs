@@ -32,7 +32,7 @@ pub fn get_finder() -> anyhow::Result<()> {
         if !bundle_identifier.is_null() {
             let bundle_id: &str = unsafe {
                 let c_str: *const std::os::raw::c_char = msg_send![bundle_identifier, UTF8String];
-                std::ffi::CStr::from_ptr(c_str).to_str().unwrap()
+                std::ffi::CStr::from_ptr(c_str).to_str()?
             };
 
             if bundle_id == "com.apple.finder" {

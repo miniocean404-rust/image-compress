@@ -1,4 +1,4 @@
-use image_compress_core::utils::log::tracing::init_tracing;
+use utils::log::tracing::init_tracing;
 
 fn main() -> anyhow::Result<()> {
     let _guard = init_tracing("./logs");

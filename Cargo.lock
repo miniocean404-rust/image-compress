@@ -1715,7 +1715,11 @@ name = "utils"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "chrono",
  "tokio",
+ "tracing",
+ "tracing-appender",
+ "tracing-subscriber",
 ]
 
 [[package]]

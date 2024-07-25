@@ -8,3 +8,9 @@ edition.workspace = true
 [dependencies]
 tokio.workspace = true
 anyhow.workspace = true
+
+chrono.workspace = true
+
+tracing.workspace = true
+tracing-appender.workspace = true
+tracing-subscriber.workspace = true

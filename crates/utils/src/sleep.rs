@@ -1,6 +1,8 @@
 use std::thread;
 use std::time::Duration;
 
+use tracing::warn;
+
 pub enum SecsTime {
     MAX,
     Time(u64),
@@ -24,7 +26,7 @@ pub async fn exit_guard() -> anyhow::Result<()> {
            // 默认情况下，select!会伪随机公平地轮询每一个分支，如果确实需要让select!按照任务书写顺序去轮询，
            biased;
            _ = tokio::signal::ctrl_c() => {
-              println!("ctrl-c 接收, 执行结束");
+              warn!("ctrl-c 接收, 执行结束");
               // std::process::exit(0);
               return Ok(())
           }

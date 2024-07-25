@@ -1,3 +1,3 @@
 pub mod cmd;
-pub mod mac;
+pub mod index;
 pub mod utils;

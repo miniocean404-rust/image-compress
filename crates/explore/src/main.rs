@@ -1,5 +1,5 @@
 #[cfg(target_os = "macos")]
-use explore::macos::mac::get_finder_info;
+use explore::macos::index::get_finder_info;
 #[cfg(target_os = "windows")]
 use explore::windows::explore::get_explore_path;
 

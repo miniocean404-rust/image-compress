@@ -9,6 +9,7 @@ members = [
     "crates/node",
     "crates/wasm",
     "crates/explore",
+    "crates/utils",
     # "xx/*"
 ]
 

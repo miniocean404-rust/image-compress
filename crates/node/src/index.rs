@@ -2,7 +2,6 @@ use std::env;
 use std::panic::set_hook;
 
 use backtrace::Backtrace;
-use napi_derive::napi;
 
 #[napi::module_init]
 fn init() {
@@ -13,7 +12,3 @@ fn init() {
         }));
     }
 }
-
-#[napi]
-// 定义 export const
-pub const DEFAULT_COST: u32 = 12;

@@ -1,5 +1,5 @@
 pub mod compress;
-pub mod fs;
+pub mod demo;
 pub mod index;
 pub mod log;
-mod os_dir;
+pub mod os_dir;

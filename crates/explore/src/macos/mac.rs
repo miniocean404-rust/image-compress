@@ -21,6 +21,8 @@ pub struct AppInfo {
 }
 
 #[allow(clippy::missing_safety_doc)]
+// #[inline] 当前函数展开（复制代码）到调用位置
+#[inline]
 pub unsafe fn get_finder_info() -> anyhow::Result<AppInfo> {
     let mut info = get_foreground_app_info()?;
 

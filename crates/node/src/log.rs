@@ -2,7 +2,7 @@ use napi::Env;
 use napi_derive::napi;
 use once_cell::sync::OnceCell;
 use tracing_chrome::ChromeLayerBuilder;
-use tracing_subscriber::{ filter, layer::SubscriberExt, util::SubscriberInitExt, Layer};
+use tracing_subscriber::{filter, layer::SubscriberExt, util::SubscriberInitExt, Layer};
 
 static TARGET_TRIPLE: &str = include_str!(concat!(env!("OUT_DIR"), "/triple.txt"));
 static CUSTOM_TRACE_SUBSCRIBER: OnceCell<bool> = OnceCell::new();
@@ -41,7 +41,7 @@ pub fn init_custom_trace_subscriber(
             flush_guard.flush();
             drop(flush_guard);
         })
-        .expect("Node-API 应该能够为 custom trace subscriber 清理初始化数据");
+        .expect("Node-API 无法清理初始化数据");
 
         true
     });

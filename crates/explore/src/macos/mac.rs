@@ -14,10 +14,10 @@ use super::{
 
 #[derive(Debug, Default)]
 pub struct AppInfo {
-    bundle_id: String,
-    is_active: bool,
-    dir: String,
-    exec: String,
+    pub bundle_id: String,
+    pub is_active: bool,
+    pub dir: String,
+    pub exec: String,
 }
 
 #[allow(clippy::missing_safety_doc)]

@@ -5,19 +5,19 @@
 #[link(name = "AppKit", kind = "framework")]
 extern "C" {}
 
-use anyhow::anyhow;
 use objc::{msg_send, runtime::Class, sel, sel_impl};
 
 use super::{
     cmd::get_finder_path,
-    utils::{get_app_bundle_id, get_app_is_focus, get_foreground_app},
+    utils::{get_app_bundle_id, get_app_exec_path, get_app_is_focus, get_foreground_app},
 };
 
 #[derive(Debug, Default)]
 pub struct AppInfo {
     bundle_id: String,
     is_active: bool,
-    path: String,
+    dir: String,
+    exec: String,
 }
 
 #[allow(clippy::missing_safety_doc)]
@@ -26,8 +26,7 @@ pub unsafe fn get_finder_info() -> anyhow::Result<AppInfo> {
 
     if info.bundle_id == "com.apple.finder" && info.is_active {
         let path = get_finder_path()?;
-        info.path = path;
-
+        info.dir = path;
         return anyhow::Ok(info);
     }
 
@@ -50,16 +49,19 @@ pub unsafe fn get_running_apps_info() -> anyhow::Result<Vec<AppInfo>> {
 
         let bundle_id = get_app_bundle_id(app);
         let is_active = get_app_is_focus(app);
+        let exec = get_app_exec_path(app)?;
 
         let info = match bundle_id {
             Some(bundle_id) => AppInfo {
                 bundle_id,
                 is_active,
+                exec,
                 ..Default::default()
             },
             None => AppInfo {
                 bundle_id: "".to_string(),
                 is_active,
+                exec,
                 ..Default::default()
             },
         };
@@ -85,16 +87,19 @@ pub unsafe fn get_foreground_app_info() -> anyhow::Result<AppInfo> {
     let app = get_foreground_app();
     let bundle_id = get_app_bundle_id(app);
     let is_active = get_app_is_focus(app);
+    let exec = get_app_exec_path(app)?;
 
     let info = match bundle_id {
         Some(bundle_id) => AppInfo {
             bundle_id,
             is_active,
+            exec,
             ..Default::default()
         },
         None => AppInfo {
             bundle_id: "".to_string(),
             is_active,
+            exec,
             ..Default::default()
         },
     };

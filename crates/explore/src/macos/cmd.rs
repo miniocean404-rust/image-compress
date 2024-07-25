@@ -21,7 +21,7 @@ pub fn get_finder_path() -> anyhow::Result<String> {
                 r#"tell application "Finder" to get the POSIX path of (path to desktop)"#,
             ])
             .output()
-            .map_err(|_| anyhow!("获取 Finder 目录路径命令失败"))?;
+            .map_err(|_| anyhow!("获取 Desktop 目录路径命令失败"))?;
 
         return anyhow::Ok(String::from_utf8_lossy(&desktop.stdout).to_string());
     }

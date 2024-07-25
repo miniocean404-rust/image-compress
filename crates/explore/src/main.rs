@@ -1,15 +1,14 @@
 #[cfg(target_os = "macos")]
 use explore::macos::index::get_finder_info;
 #[cfg(target_os = "windows")]
-use explore::windows::explore::get_explore_path;
+use explore::windows::index::get_explore_info;
 
 fn main() {
     #[cfg(target_os = "macos")]
-    unsafe {
-        let info = get_finder_info().unwrap();
-        println!("{:?}", info)
-    }
+    let info = unsafe { get_finder_info().unwrap() };
 
     #[cfg(target_os = "windows")]
-    let path = get_explore_path();
+    let info = unsafe { get_explore_info().unwrap() };
+
+    println!("{:?}", info)
 }

@@ -1,8 +1,11 @@
+#![cfg(target_os = "macos")]
+
 use std::ffi::{c_char, CStr};
+
+use urlencoding::decode;
 
 use objc::runtime;
 use objc::{msg_send, runtime::Class, sel, sel_impl};
-use urlencoding::decode;
 
 #[allow(clippy::missing_safety_doc)]
 pub unsafe fn get_app_bundle_id(app: *mut objc::runtime::Object) -> Option<String> {

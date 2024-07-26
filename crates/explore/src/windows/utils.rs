@@ -28,6 +28,7 @@ pub unsafe fn get_foreground_window() -> HWND {
 // 类：
 // ExploreWClass：这个类名通常与资源管理器的进程相关联，但它不是所有版本的 Windows 中都使用。在某些特定情况下或特定版本的 Windows 中，ExploreWClass 可能用于资源管理器或其他与文件浏览相关的窗口。
 // CabinetWClass：这是最常见的资源管理器窗口类名，用于标识标准的文件浏览窗口。CabinetWClass 窗口类是资源管理器中用于显示文件和文件夹的主要窗口类。
+#[allow(dead_code)]
 pub unsafe fn get_explore_root_window() -> Option<HWND> {
     // 桌面类名
     // Progman
@@ -60,6 +61,7 @@ pub unsafe fn get_explore_root_window() -> Option<HWND> {
 }
 
 // 获取根窗口句柄
+#[allow(dead_code)]
 pub unsafe fn get_root_window_hwnd(window: HWND) -> HWND {
     GetAncestor(window, GA_ROOT)
 }
@@ -87,11 +89,13 @@ pub unsafe fn get_window_title(window: HWND) -> String {
 }
 
 // 获取窗口标题长度
+#[allow(dead_code)]
 pub unsafe fn get_window_title_len(window: HWND) -> i32 {
     GetWindowTextLengthW(window)
 }
 
 // 不知道是做什么的：检索与指定窗口句柄关联的模块的完整路径和文件名。
+#[allow(dead_code)]
 pub unsafe fn get_window_program_path(window: HWND) -> String {
     let mut path: [u16; 512] = [0; 512];
     let path_len = GetWindowModuleFileNameW(window, &mut path);
@@ -128,6 +132,7 @@ pub unsafe fn get_window_exec_path(window: HWND) -> anyhow::Result<String> {
 }
 
 // 获取窗口位置信息、可见性
+#[allow(dead_code)]
 pub unsafe fn get_window_info(window: HWND) -> anyhow::Result<WINDOWINFO> {
     //     // IsWindowVisible 也可以用来判断窗口是否可见
     //     if info.dwStyle.contains(WS_VISIBLE) {
@@ -145,6 +150,7 @@ pub unsafe fn get_window_info(window: HWND) -> anyhow::Result<WINDOWINFO> {
 
 // HWND 是一种数据类型，表示窗口句柄（Handle to a Window）。
 // EnumWindows(Some(enum_windows), LPARAM(0)).unwrap(); // EnumWindows 是一个 Windows API 函数，用于枚举所有顶级窗口。
+#[allow(dead_code)]
 pub unsafe extern "system" fn enum_windows(window: HWND, _: LPARAM) -> BOOL {
     let info = get_window_info(window).unwrap();
     let title = get_window_title(window);

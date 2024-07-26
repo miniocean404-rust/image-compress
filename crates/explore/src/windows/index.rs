@@ -2,20 +2,9 @@
 // C# https://stackoverflow.com/questions/8292953/get-current-selection-in-windowsexplorer-from-a-c-sharp-application
 #![cfg(target_os = "windows")]
 
-use windows::Win32::Foundation::HWND;
-
-use crate::dto::app_info::AppInfo;
+use crate::dto::app_info::{AppInfo, Platform};
 use crate::windows::explore::{get_path_from_explore_view, get_sub_explore};
 use crate::windows::utils::{get_foreground_window, get_window_exec_path, get_window_title};
-
-#[derive(Debug, Default)]
-pub struct AppInfo {
-    pub hwnd_id: HWND,
-    pub title: String,
-    pub is_active: bool,
-    pub dir: String,
-    pub exec: String,
-}
 
 // 获取资源管理器的路径
 pub unsafe fn get_explore_info() -> anyhow::Result<AppInfo> {
@@ -25,10 +14,11 @@ pub unsafe fn get_explore_info() -> anyhow::Result<AppInfo> {
     let exec = get_window_exec_path(foreground_window)?;
 
     let mut app_info = AppInfo {
-        hwnd_id: foreground_window,
+        hwnd_id: foreground_window.0,
         title: foreground_title.clone(),
         is_active: true,
         exec,
+        platform: Platform::Windows,
         ..Default::default()
     };
 

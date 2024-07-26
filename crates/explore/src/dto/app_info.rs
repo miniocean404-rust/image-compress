@@ -1,11 +1,15 @@
-#[cfg(target_os = "windows")]
-use windows::Win32::Foundation::HWND;
+#[derive(Debug, Default)]
+pub enum Platform {
+    #[default]
+    Unknown,
+    Windows,
+    MacOS,
+}
 
 #[derive(Debug, Default)]
 pub struct AppInfo {
     // 句柄
-    #[cfg(target_os = "windows")]
-    pub hwnd_id: HWND,
+    pub hwnd_id: isize,
     // 窗口标题
     pub title: String,
     // MacOS bundleId
@@ -16,4 +20,6 @@ pub struct AppInfo {
     pub dir: String,
     // 执行程序路径
     pub exec: String,
+    // 当前平台
+    pub platform: Platform,
 }

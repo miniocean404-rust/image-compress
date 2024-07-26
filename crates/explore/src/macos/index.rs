@@ -1,18 +1,18 @@
 // 整个文件是 macos 才会编译
 #![cfg(target_os = "macos")]
 
-// 必须！：表示引入 Mac 的 AppKit 这个模块，因为要使用这个模块下的对象
-#[link(name = "AppKit", kind = "framework")]
-extern "C" {}
-
 use objc::{msg_send, runtime::Class, sel, sel_impl};
 
-use crate::dto::app_info::AppInfo;
+use crate::dto::app_info::{AppInfo, Platform};
 
 use super::{
     cmd::get_finder_path,
     utils::{get_app_bundle_id, get_app_exec_path, get_app_is_focus, get_foreground_app},
 };
+
+// 必须！：表示引入 Mac 的 AppKit 这个模块，因为要使用这个模块下的对象
+#[link(name = "AppKit", kind = "framework")]
+extern "C" {}
 
 #[allow(clippy::missing_safety_doc)]
 // #[inline] 当前函数展开（复制代码）到调用位置
@@ -23,6 +23,7 @@ pub unsafe fn get_finder_info() -> anyhow::Result<AppInfo> {
     if info.bundle_id == "com.apple.finder" && info.is_active {
         let path = get_finder_path()?;
         info.dir = path;
+        info.platform = Platform::MacOS;
         return anyhow::Ok(info);
     }
 

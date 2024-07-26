@@ -21,6 +21,22 @@ pub unsafe fn get_app_bundle_id(app: *mut objc::runtime::Object) -> Option<Strin
     None
 }
 
+// pub unsafe fn get_app_title(app: *mut objc::runtime::Object) -> Option<String> {
+//     // 获取 mainWindow 实例方法
+//     let main_window: *mut objc::runtime::Object = msg_send![app, mainWindow];
+
+//     dbg!(main_window);
+
+//     // 获取 title 实例方法
+//     let title: *const std::os::raw::c_char = msg_send![main_window, title];
+
+//     let title_str = CStr::from_ptr(title).to_string_lossy().into_owned();
+
+//     println!("{}", title_str);
+
+//     None
+// }
+
 #[allow(clippy::missing_safety_doc)]
 pub unsafe fn get_app_is_focus(app: *mut objc::runtime::Object) -> bool {
     msg_send![app, isActive]
@@ -42,7 +58,7 @@ pub unsafe fn get_foreground_app() -> *mut runtime::Object {
 }
 
 // https://juejin.cn/post/7208732065696038971
-// 获取前台正在运行的 app 的路径
+// 获取 app 的路径
 #[allow(clippy::missing_safety_doc)]
 pub unsafe fn get_app_exec_path(app: *mut objc::runtime::Object) -> anyhow::Result<String> {
     // 这里可以调用 app 上面的 hide 方法，把这个软件隐藏，相当于系统快捷键 command + h

@@ -85,6 +85,7 @@ pub unsafe fn get_foreground_app_info() -> anyhow::Result<AppInfo> {
     let bundle_id = get_app_bundle_id(app);
     let is_active = get_app_is_focus(app);
     let exec = get_app_exec_path(app)?;
+    // get_app_title(app);
 
     let info = match bundle_id {
         Some(bundle_id) => AppInfo {

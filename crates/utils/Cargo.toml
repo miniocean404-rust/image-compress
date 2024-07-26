@@ -6,11 +6,14 @@ edition.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-tokio.workspace = true
-anyhow.workspace = true
+tokio = { version = "1.33.0", features = ["full"] }
+# 处理错误
+anyhow = "1.0.79"
 
-chrono.workspace = true
+# 处理时间
+chrono = "0.4.31"
 
-tracing.workspace = true
-tracing-appender.workspace = true
-tracing-subscriber.workspace = true
+tracing = { version = "0.1.40", features = ["release_max_level_info"] }
+tracing-appender = "0.2.3"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+

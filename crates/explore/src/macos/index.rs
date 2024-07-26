@@ -7,18 +7,12 @@ extern "C" {}
 
 use objc::{msg_send, runtime::Class, sel, sel_impl};
 
+use crate::dto::app_info::AppInfo;
+
 use super::{
     cmd::get_finder_path,
     utils::{get_app_bundle_id, get_app_exec_path, get_app_is_focus, get_foreground_app},
 };
-
-#[derive(Debug, Default)]
-pub struct AppInfo {
-    pub bundle_id: String,
-    pub is_active: bool,
-    pub dir: String,
-    pub exec: String,
-}
 
 #[allow(clippy::missing_safety_doc)]
 // #[inline] 当前函数展开（复制代码）到调用位置
@@ -37,6 +31,7 @@ pub unsafe fn get_finder_info() -> anyhow::Result<AppInfo> {
 
 // 获取 macos 正在运行的 app 被激活的窗口及 bundleId
 #[allow(clippy::missing_safety_doc)]
+#[allow(dead_code)]
 pub unsafe fn get_running_apps_info() -> anyhow::Result<Vec<AppInfo>> {
     let mut infos = vec![];
 
@@ -90,6 +85,7 @@ pub unsafe fn get_foreground_app_info() -> anyhow::Result<AppInfo> {
     let bundle_id = get_app_bundle_id(app);
     let is_active = get_app_is_focus(app);
     let exec = get_app_exec_path(app)?;
+    // get_app_title(app);
 
     let info = match bundle_id {
         Some(bundle_id) => AppInfo {

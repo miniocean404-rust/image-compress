@@ -11,10 +11,6 @@ pub fn get_finder_path() -> anyhow::Result<String> {
         .output().map_err(|_|anyhow!("获取 Finder 目录路径命令失败"))?;
 
     if !output.stdout.is_empty() {
-        println!(
-            "{:?}",
-            String::from_utf8_lossy(&output.stdout).to_string().trim()
-        );
         return anyhow::Ok(String::from_utf8_lossy(&output.stdout).trim().to_string());
     }
 

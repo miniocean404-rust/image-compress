@@ -1,5 +1,7 @@
-use explore::get_os_dir;
+use explore::export::dir::get_os_dir;
 
 fn main() {
-    unsafe { println!("{:?}", get_os_dir().unwrap()) }
+    unsafe {
+        get_os_dir().unwrap();
+    }
 }

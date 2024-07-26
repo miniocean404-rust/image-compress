@@ -82,18 +82,18 @@ impl ImageCompression {
 
         let mem = match self.file_type {
             SupportedFileTypes::Jpeg => {
-                let file = fs::read(&self.path).unwrap();
+                let file = fs::read(&self.path)?;
                 // let mem = jpeg::lib_mozjpeg_sys::lossless::optimize_lossy_jpeg(&file, self.quality, false, ChromaSubsampling::CS420).unwrap();
-                let mem = jpeg::lib_mozjpeg_sys::optimize_lossless_jpeg(&file, false).unwrap();
+                let mem = jpeg::lib_mozjpeg_sys::optimize_lossless_jpeg(&file, false);
                 mem.to_vec()
             }
             SupportedFileTypes::Png => {
                 // 有损加无损压缩 Png
-                let file = fs::read(&self.path).unwrap();
-                let lossless_mem = png::lossless::to_mem(&file).unwrap();
-                png::lossy::to_mem(&lossless_mem, self.quality).unwrap()
+                let file = fs::read(&self.path)?;
+                let lossless_mem = png::lossless::to_mem(&file)?;
+                png::lossy::to_mem(&lossless_mem, self.quality)?
             }
-            SupportedFileTypes::WebP => webp::to_mem(&self.path, false, self.quality as f32).unwrap(),
+            SupportedFileTypes::WebP => webp::to_mem(&self.path, false, self.quality as f32)?,
             SupportedFileTypes::Gif => Vec::new(),
             SupportedFileTypes::Unknown => {
                 error!("不支持的类型");

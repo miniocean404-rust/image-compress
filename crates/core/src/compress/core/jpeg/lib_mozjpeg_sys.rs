@@ -1,5 +1,6 @@
+use std::{mem, panic, ptr, slice};
+
 use mozjpeg_sys::*;
-use std::{mem, ptr, slice};
 
 struct JPEGOptimizer {
     srcinfo: jpeg_decompress_struct,
@@ -26,9 +27,9 @@ impl Drop for JPEGOptimizer {
 
 // This function losslessly optimizes jpegs.
 // Based on the jpegtran.c example program in libjpeg.
-pub fn optimize_lossless_jpeg(bytes: &[u8], keep_metadata: bool) -> std::thread::Result<&mut [u8]> {
-    unsafe {
-        std::panic::catch_unwind(|| {
+pub fn optimize_lossless_jpeg(bytes: &[u8], keep_metadata: bool) -> &mut [u8] {
+    let result = unsafe {
+        panic::catch_unwind(|| {
             let mut info = JPEGOptimizer::new();
             let mut err = create_error_handler();
             info.srcinfo.common.err = &mut err;
@@ -67,12 +68,19 @@ pub fn optimize_lossless_jpeg(bytes: &[u8], keep_metadata: bool) -> std::thread:
 
             slice::from_raw_parts_mut(buf, outsize as usize)
         })
+    };
+
+    match result {
+        Ok(mem) => mem,
+        // panic::resume_unwind 这被设计为与 catch_unwind 结合使用，例如，在 C 代码层中携带 panic
+        // 请注意，Rust 中的 panic 并不总是通过展开来实现，但它们可以通过中止进程来实现。如果在以这种方式实现 panic 时调用此函数，则此函数将中止进程，而不是触发展开。
+        Err(err) => panic::resume_unwind(err),
     }
 }
 
-pub fn optimize_lossy_jpeg(bytes: &[u8], quality: i32, keep_metadata: bool) -> std::thread::Result<&mut [u8]> {
-    unsafe {
-        std::panic::catch_unwind(|| {
+pub fn optimize_lossy_jpeg(bytes: &[u8], quality: i32, keep_metadata: bool) -> &mut [u8] {
+    let result = unsafe {
+        panic::catch_unwind(|| {
             let mut info = JPEGOptimizer::new();
             let mut err = create_error_handler();
             info.srcinfo.common.err = &mut err;
@@ -167,6 +175,13 @@ pub fn optimize_lossy_jpeg(bytes: &[u8], quality: i32, keep_metadata: bool) -> s
 
             slice::from_raw_parts_mut(buf, outsize as usize)
         })
+    };
+
+    match result {
+        Ok(mem) => mem,
+        // panic::resume_unwind 这被设计为与 catch_unwind 结合使用，例如，在 C 代码层中携带 panic
+        // 请注意，Rust 中的 panic 并不总是通过展开来实现，但它们可以通过中止进程来实现。如果在以这种方式实现 panic 时调用此函数，则此函数将中止进程，而不是触发展开。
+        Err(err) => panic::resume_unwind(err),
     }
 }
 
@@ -193,7 +208,7 @@ extern "C-unwind" fn unwind_error_exit(cinfo: &mut jpeg_common_struct) {
             None => format!("libjpeg error: {}", err.msg_code),
         }
     };
-    std::panic::resume_unwind(Box::new(message))
+    panic::resume_unwind(Box::new(message))
 }
 
 extern "C-unwind" fn silence_message(_cinfo: &mut jpeg_common_struct, _level: c_int) {}

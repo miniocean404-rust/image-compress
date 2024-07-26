@@ -83,12 +83,7 @@ async fn get_image_info(file: String, quality: i8) -> Result<CompressInfo> {
 
 #[allow(dead_code)]
 async fn start_compress(file: String, quality: i8) -> Result<ImageCompression> {
-    let mut info = ImageCompression::new(file, quality).map_err(|e| {
-        Error::new(
-            Status::GenericFailure,
-            format!("失败的创建 ImageCompression: {}", e),
-        )
-    })?;
+    let mut info = ImageCompression::new(file, quality);
 
     info.start_mem_compress(false)
         .await

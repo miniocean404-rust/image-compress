@@ -1,4 +1,10 @@
-const {getPaths, getImageInfo, getOsFileManagerPath} = require("./dist/node");
+const {
+    getPaths,
+    getImageInfo,
+    getOsFileManagerPath,
+    initCustomTraceSubscriber,
+    getTargetTriple
+} = require("./dist/node");
 const path = require("path");
 
 init();
@@ -11,6 +17,7 @@ async function init() {
     //     console.log(res);
     //   });
 
+    initCustomTraceSubscriber("./logs")
     setTimeout(() => {
         const info = getOsFileManagerPath();
         console.log(info);

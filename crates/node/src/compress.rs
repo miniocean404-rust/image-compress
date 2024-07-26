@@ -1,6 +1,8 @@
-use image_compress_core::compress::{index::ImageCompression, utils::mime::SupportedFileTypes};
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
+
+use image_compress_core::compress::index::ImageCompression;
+use image_compress_core::utils::mime::SupportedFileTypes;
 
 #[napi(object)]
 pub struct CompressInfo {

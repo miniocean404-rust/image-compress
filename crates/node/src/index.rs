@@ -1,14 +1,15 @@
 use std::env;
-use std::panic::set_hook;
 
-use backtrace::Backtrace;
+use utils::env::is_debug;
+use utils::hook::panic_hook::register_panic_hook;
 
 #[napi::module_init]
 fn init() {
-    if cfg!(debug_assertions) || env::var("CUSTOM_DEBUG").unwrap_or_default() == "1" {
-        set_hook(Box::new(|panic_info| {
-            let backtrace = Backtrace::new();
-            println!("恐慌: {:?}\n回溯: {:?}", panic_info, backtrace);
-        }));
+    init_panic_hook();
+}
+
+fn init_panic_hook() {
+    if is_debug() || env::var("CUSTOM_DEBUG").unwrap_or_default() == "1" {
+        register_panic_hook()
     }
 }

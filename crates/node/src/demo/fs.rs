@@ -14,7 +14,7 @@ use image_compress_core::compress::utils::dir::glob_dir;
 // napi-线程安全：https://github.com/nodejs/node-addon-api/blob/main/doc/threadsafe_function.md
 #[napi(js_name = "readFile", ts_return_type = "void")]
 pub fn read_file(path: String, callback: JsFunction) {
-    let tsfn: ThreadsafeFunction<Result<String>, ErrorStrategy::CalleeHandled> = callback
+    let thread_safe_fn: ThreadsafeFunction<Result<String>, ErrorStrategy::CalleeHandled> = callback
         .create_threadsafe_function(
             0,
             |ctx: ThreadSafeCallContext<std::prelude::v1::Result<String, Error>>| match ctx.value {
@@ -29,7 +29,7 @@ pub fn read_file(path: String, callback: JsFunction) {
 
     spawn(move || {
         let contents = sync_read_file(path);
-        tsfn.call(Ok(contents), ThreadsafeFunctionCallMode::Blocking);
+        thread_safe_fn.call(Ok(contents), ThreadsafeFunctionCallMode::Blocking);
     });
 }
 

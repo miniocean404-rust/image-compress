@@ -5,13 +5,11 @@ use tokio::{fs::File, io::AsyncWriteExt};
 use tracing::{error, info};
 
 use crate::shared::error::OptionError;
+use crate::utils::mime::{get_filetype_from_path, SupportedFileTypes};
 
-use super::{
-    core::{
-        jpeg::{self},
-        png, webp,
-    },
-    utils::mime::{get_filetype_from_path, SupportedFileTypes},
+use super::core::{
+    jpeg::{self},
+    png, webp,
 };
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
@@ -57,11 +55,7 @@ impl ImageCompression {
         let file_type = get_filetype_from_path(&path);
 
         let path_buf = PathBuf::from(&path);
-        let file_name = path_buf
-            .file_name()
-            .ok_or(OptionError::NoValue)?
-            .to_string_lossy()
-            .to_string();
+        let file_name = path_buf.file_name().ok_or(OptionError::NoValue)?.to_string_lossy().to_string();
 
         let before_size = fs::metadata(&path_buf)?.len();
 

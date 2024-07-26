@@ -1752,11 +1752,13 @@ dependencies = [
  "anyhow",
  "backtrace",
  "chrono",
+ "globset",
  "infer",
  "tokio",
  "tracing",
  "tracing-appender",
  "tracing-subscriber",
+ "walkdir",
 ]
 
 [[package]]

@@ -1,13 +1,14 @@
 use std::path::PathBuf;
 
-use crate::{
-    compress::{index::ImageCompression, utils::dir::glob_dir},
-    shared::error::OptionError,
-};
+use utils::path::deep::get_deep_dirs;
+
+use crate::compress::index::ImageCompression;
 
 pub fn get_compress_infos(dir: &str) -> anyhow::Result<Vec<ImageCompression>> {
-    let path = PathBuf::from(dir);
-    let files = glob_dir("*.{png,webp,gif,jpg,jpeg}", path.to_str().ok_or(OptionError::NoValue)?).map_err(|_| OptionError::NoValue)?;
+    let path_buf = PathBuf::from(dir);
+    let path = path_buf.to_str().unwrap_or("");
+
+    let files = get_deep_dirs("*.{png,webp,gif,jpg,jpeg}", path, 5)?;
 
     let infos = files
         .into_iter()

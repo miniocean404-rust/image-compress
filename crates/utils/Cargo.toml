@@ -13,12 +13,17 @@ anyhow = "1.0.79"
 # 处理时间
 chrono = "0.4.31"
 
-tracing = { version = "0.1.40", features = ["release_max_level_info"] }
-tracing-appender = "0.2.3"
-tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
-
 # 用于在 Rust 程序运行时获取堆栈跟踪的库
 backtrace = "0.3.69"
 
 # 获取 mime 信息
 infer = "0.15.0"
+
+# 跨平台单一 glob 和 glob 集匹配。 Glob 集匹配是同时将一个或多个 glob 模式与单个候选路径进行匹配并返回所有匹配的 glob 的过程
+globset = "0.4.14"
+# 递归遍历目录
+walkdir = "2.5.0"
+
+tracing = { version = "0.1.40", features = ["release_max_level_info"] }
+tracing-appender = "0.2.3"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }

@@ -8,7 +8,7 @@ use napi::{
 };
 use napi_derive::napi;
 
-use image_compress_core::compress::utils::dir::glob_dir;
+use utils::path::deep::get_deep_dirs;
 
 // 掘金文章：https://juejin.cn/post/7322288075850039359?searchId=202402040121440A1FC55F67DF117FA08B
 // napi-线程安全：https://github.com/nodejs/node-addon-api/blob/main/doc/threadsafe_function.md
@@ -41,7 +41,7 @@ fn sync_read_file(path: String) -> Result<String> {
 }
 
 #[napi(js_name = "getPaths", ts_return_type = "string[]")]
-pub fn get_dirs(pattern: String, path: String) -> Result<Vec<String>> {
-    glob_dir(&pattern, &path)
+pub fn get_dirs(pattern: String, path: String, max_deep: u32) -> Result<Vec<String>> {
+    get_deep_dirs(&pattern, &path, max_deep as usize)
         .map_err(|e| Error::new(Status::GenericFailure, format!("失败的获取路径: {}", e)))
 }

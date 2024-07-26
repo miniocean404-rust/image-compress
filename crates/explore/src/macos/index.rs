@@ -31,6 +31,7 @@ pub unsafe fn get_finder_info() -> anyhow::Result<AppInfo> {
 
 // 获取 macos 正在运行的 app 被激活的窗口及 bundleId
 #[allow(clippy::missing_safety_doc)]
+#[allow(dead_code)]
 pub unsafe fn get_running_apps_info() -> anyhow::Result<Vec<AppInfo>> {
     let mut infos = vec![];
 

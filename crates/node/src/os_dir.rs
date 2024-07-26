@@ -1,4 +1,5 @@
 use explore::export::dir::get_os_dir;
+use napi::{Error, Status};
 use napi_derive::napi;
 
 #[napi(object)]
@@ -34,9 +35,24 @@ pub struct TsAppInfo {
     pub exec: String,
 }
 
-// #[napi(js_name = "getOSDir", ts_return_type = "string")]
-// pub fn get_os_dirs() -> napi::Result<String> {
-//     unsafe {
-//         let info = get_os_dir().unwrap();
-//     };
-// }
+#[napi(js_name = "getOSDir")]
+pub fn get_os_dirs() -> napi::Result<TsAppInfo> {
+    let info = unsafe {
+        let info = get_os_dir().map_err(|err| {
+            Error::new(
+                Status::GenericFailure,
+                format!("获取系统窗口信息失败:, {}", err),
+            )
+        })?;
+
+        TsAppInfo {
+            title: info.title,
+            bundle_id: info.bundle_id,
+            is_active: info.is_active,
+            dir: info.dir,
+            exec: info.exec,
+        }
+    };
+
+    Ok(info)
+}

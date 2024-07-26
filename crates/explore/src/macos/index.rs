@@ -7,18 +7,12 @@ extern "C" {}
 
 use objc::{msg_send, runtime::Class, sel, sel_impl};
 
+use crate::dto::app_info::AppInfo;
+
 use super::{
     cmd::get_finder_path,
     utils::{get_app_bundle_id, get_app_exec_path, get_app_is_focus, get_foreground_app},
 };
-
-#[derive(Debug, Default)]
-pub struct AppInfo {
-    pub bundle_id: String,
-    pub is_active: bool,
-    pub dir: String,
-    pub exec: String,
-}
 
 #[allow(clippy::missing_safety_doc)]
 // #[inline] 当前函数展开（复制代码）到调用位置

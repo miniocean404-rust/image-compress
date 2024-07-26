@@ -13,5 +13,6 @@ async function init() {
 
   setTimeout(() => {
     const info = getOSDir();
+    console.log(info);
   }, 1000);
 }

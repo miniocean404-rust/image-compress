@@ -1,3 +1,4 @@
+use std::ffi::OsStr;
 use std::{fs, path::PathBuf};
 
 use serde::{Deserialize, Serialize};
@@ -51,23 +52,29 @@ pub enum CompressState {
 }
 
 impl ImageCompression {
-    pub fn new(path: String, quality: i8) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn new(path: String, quality: i8) -> Self {
         let file_type = get_filetype_from_path(&path);
 
         let path_buf = PathBuf::from(&path);
-        let file_name = path_buf.file_name().ok_or(OptionError::NoValue)?.to_string_lossy().to_string();
+        let file_name = path_buf.file_name();
+        let metadata = fs::metadata(&path_buf);
 
-        let before_size = fs::metadata(&path_buf)?.len();
-
-        Ok(Self {
-            name: file_name,
-            file_type,
-            quality,
-            before_size,
-            path,
-            // 没有初始化的字段使用默认值
-            ..Default::default()
-        })
+        match (file_name, metadata) {
+            (Some(name), Ok(before_size)) => {
+                Self {
+                    name: name.to_string_lossy().into_owned(),
+                    file_type,
+                    quality,
+                    before_size: before_size.len(),
+                    path,
+                    // 没有初始化的字段使用默认值
+                    ..Default::default()
+                }
+            }
+            _ => {
+                panic!("文件名有问题 或 文件尺寸获取失败")
+            }
+        }
     }
 
     pub async fn start_mem_compress(&mut self, is_cover: bool) -> Result<(), Box<dyn std::error::Error>> {

@@ -9,11 +9,7 @@ pub fn get_compress_infos(dir: &str) -> anyhow::Result<Vec<ImageCompression>> {
     let path = path_buf.to_str().unwrap_or("");
 
     let files = get_deep_dirs("*.{png,webp,gif,jpg,jpeg}", path, 5)?;
-
-    let infos = files
-        .into_iter()
-        .map(|file| ImageCompression::new(file, 80).unwrap())
-        .collect::<Vec<ImageCompression>>();
+    let infos = files.into_iter().map(|file| ImageCompression::new(file, 80)).collect();
 
     Ok(infos)
 }

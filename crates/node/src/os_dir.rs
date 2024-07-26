@@ -1,15 +1,28 @@
 use napi::{Error, Status};
 use napi_derive::napi;
 
-use explore::export::dir::get_os_dir;
+use explore::dto::app_info::Platform as SDKPlatform;
+use explore::export::dir::get_os_file_manager_path;
 
 #[napi(string_enum)]
 #[derive(Debug, Default)]
+#[allow(non_camel_case_types)]
 pub enum Platform {
     #[default]
-    Unknown,
-    Windows,
-    MacOS,
+    unknown,
+    windows,
+    macos,
+}
+
+// 将 SDKPlatform 转换为 Platform
+impl From<SDKPlatform> for Platform {
+    fn from(platform: SDKPlatform) -> Self {
+        match platform {
+            SDKPlatform::Unknown => Platform::unknown,
+            SDKPlatform::Windows => Platform::windows,
+            SDKPlatform::MacOS => Platform::macos,
+        }
+    }
 }
 
 #[napi(object)]
@@ -46,10 +59,10 @@ pub struct AppInfo {
     pub platform: Platform,
 }
 
-#[napi(js_name = "getOSDir")]
-pub fn get_os_dirs() -> napi::Result<AppInfo> {
+#[napi(js_name = "getOsFileManagerPath")]
+pub fn get_os_file_manager_path_node() -> napi::Result<AppInfo> {
     let info = unsafe {
-        let info = get_os_dir().map_err(|err| {
+        let info = get_os_file_manager_path().map_err(|err| {
             Error::new(
                 Status::GenericFailure,
                 format!("获取系统窗口信息失败:, {}", err),
@@ -63,7 +76,7 @@ pub fn get_os_dirs() -> napi::Result<AppInfo> {
             is_active: info.is_active,
             dir: info.dir,
             exec: info.exec,
-            platform: Platform::Unknown,
+            platform: Platform::from(info.platform),
         }
     };
 

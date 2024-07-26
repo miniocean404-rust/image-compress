@@ -1,8 +1,15 @@
-#[derive(Debug, Default)]
+use strum_macros::AsRefStr;
+
+#[derive(AsRefStr, Debug, Default)]
 pub enum Platform {
     #[default]
+    #[strum(serialize = "unknown")]
     Unknown,
+
+    #[strum(serialize = "windows")]
     Windows,
+
+    #[strum(serialize = "macos")]
     MacOS,
 }
 

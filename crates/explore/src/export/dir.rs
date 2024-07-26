@@ -5,7 +5,7 @@ use crate::macos::index::get_finder_info;
 use crate::windows::index::get_explore_info;
 
 #[allow(clippy::missing_safety_doc)]
-pub unsafe fn get_os_dir() -> anyhow::Result<AppInfo> {
+pub unsafe fn get_os_file_manager_path() -> anyhow::Result<AppInfo> {
     #[cfg(target_os = "macos")]
     let info = unsafe { get_finder_info()? };
 

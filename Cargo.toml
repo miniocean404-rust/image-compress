@@ -59,6 +59,9 @@ walkdir = "2.4.0"
 num_cpus = "1.16.0"
 urlencoding = "2.1.3"
 
+strum = "0.26.3"
+strum_macros = "0.26.4"
+
 # 处理日志及栈追踪
 tracing = { version = "0.1.40", features = ["release_max_level_info"] }
 tracing-appender = "0.2.3"

@@ -112,7 +112,7 @@ jobs:
             # --manifest-path ./Cargo.toml
             # ls -R ../
             build: |
-              cd ../../ && cargo build -p image-compress-core --release --target x86_64-apple-darwin
+              cd ../ && cargo build -p image-compress-core --release --target x86_64-apple-darwin
               cd ./packages && yarn build:node-dev
 
           # cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target x86_64-apple-darwin
@@ -295,11 +295,13 @@ jobs:
             corepack enable &&
             npm i -g wasm-pack &&
             ${{ matrix.settings.build }}
+
       - name: 构建
         working-directory: ./packages
         if: ${{ !matrix.settings.docker }}
         run: ${{ matrix.settings.build }}
         shell: bash
+
       - name: 上传 artifact
         uses: actions/upload-artifact@v3
         with:

@@ -1,4 +1,5 @@
 [workspace]
+
 resolver = "2"
 # 设置默认执行的 workspace
 default-members = [
@@ -16,6 +17,7 @@ members = [
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
+repository = "https://github.com/miniocean404-rust/image-compress"
 
 # [[bin]]
 # name = "core"

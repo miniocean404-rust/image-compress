@@ -45,6 +45,15 @@ concurrency:
   # 表示如果在同一个并发组中，当新的作业或工作流被排队时，如果已经有另一个使用相同并发组的作业或工作流正在进行中，那么正在进行的作业或工作流将被取消。
   cancel-in-progress: true
 
+# bump 代码中含义：提升、增加或更改版本号
+
+#      - uses: actions-rs/toolchain@v1
+#        with:
+#          # 在安装工具链之前执行 rustup set profile {value}，例如。minimal
+#          # https://skyao.io/learning-rust/docs/build/rustup/rustup-book/
+#          # 安装新的 Rust 工具链时可以选择下载的组件组设置为 minimal 以获得一个可工作的编译器（rustc、rust-std和cargo），这样可以减少下载的组件数量，加快下载速度
+#          profile: minimal
+
 jobs:
   #   determine-nightly-version:
   #     name: "确定 version"
@@ -59,23 +68,14 @@ jobs:
   #         run: |
   #           npx ts-node .github/bot/src/nightly-version.ts ${{ github.event.inputs.version }} >> $GITHUB_OUTPUT
 
-  #   publish-cargo:
-  #     name: "Publish ${{ needs.determine-nightly-version.outputs.version }}"
-  #     uses: ./.github/workflows/publish-cargo-package.yml
-  #     secrets: inherit
-  #     with:
-  #       package: "core"
-  #       version: ${{ needs.determine-nightly-version.outputs.version }}
-  #       buildCli: true
-  #       skipBuild: ${{ inputs.skipBuild || false }}
-  #       skipPublishing: false
-
   publish-cargo:
+    # name: "Publish ${{ needs.determine-nightly-version.outputs.version }}"
     name: "Publish "
     uses: ./.github/workflows/publish-cargo-package.yml
     secrets: inherit
     with:
       package: "core"
+      # version: ${{ needs.determine-nightly-version.outputs.version }}
       version: "测试版本"
       buildCli: true
       skipBuild: ${{ inputs.skipBuild || false }}

@@ -5,15 +5,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  DEBUG: napi:*
-  APP_NAME: swc
   MACOSX_DEPLOYMENT_TARGET: "10.13"
   CARGO_INCREMENTAL: 0
   CARGO_PROFILE_RELEASE_LTO: "fat"
-  CI: "1"
-  DISABLE_PLUGIN_E2E_TESTS: true
-  # https://github.com/actions/setup-node/issues/899#issuecomment-1819151595
-  SKIP_YARN_COREPACK_CHECK: 1
   GIT_AUTHOR_NAME: "SWC Bot"
   GIT_AUTHOR_EMAIL: "bot@swc.rs"
   GIT_COMMITTER_NAME: "SWC Bot"
@@ -111,9 +105,11 @@ jobs:
             target: x86_64-apple-darwin
             # --manifest-path ./Cargo.toml
             # ls -R ../
+            # cd ../ && cargo build -p image-compress-core --release --target x86_64-apple-darwin
             build: |
-              cd ../ && cargo build -p image-compress-core --release --target x86_64-apple-darwin
+              cd ../ &&
               cd ./packages && pnpm build:node-dev
+              cp ./dist ./
 
           # cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target x86_64-apple-darwin
           # cp ../../bindings/target/x86_64-apple-darwin/release/swc .
@@ -281,7 +277,6 @@ jobs:
         shell: bash
         run: |
           corepack enable
-          ls -R ./
           pnpm install
           curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
           echo '/usr/local/cargo/bin' >> $GITHUB_PATH
@@ -315,7 +310,8 @@ jobs:
       - name: 上传 artifact
         uses: actions/upload-artifact@v3
         with:
+          # 上传归档的名称
           name: bindings-${{ matrix.settings.target }}
           path: |
-            packages/core/dist*
+            packages/index*
           if-no-files-found: error

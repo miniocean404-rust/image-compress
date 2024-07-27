@@ -224,16 +224,19 @@ jobs:
           node-version: 20
           # cache: yarn
           architecture: x64
+
       - name: 输出 rust toolchain
         id: toolchain
         shell: bash
         run: echo "version=$(cat ./rust-toolchain)" >> "$GITHUB_OUTPUT"
+
       - name: 安装 rust toolchain
         uses: dtolnay/rust-toolchain@stable
         if: ${{ !matrix.settings.docker }}
         with:
           targets: ${{ matrix.settings.target }}
           toolchain: ${{ steps.toolchain.outputs.version }}
+
       # 在 Github Actions 工作流程中使用 Zig 编译器
       - uses: goto-bus-stop/setup-zig@v2
         if: ${{ matrix.settings.target == 'armv7-unknown-linux-gnueabihf' }}

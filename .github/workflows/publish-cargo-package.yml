@@ -109,7 +109,8 @@ jobs:
             build: |
               cd ../ &&
               cd ./packages && pnpm build:node-dev
-              chmod +x ./dist
+              chmod +x ./dist/node
+              strip -x ./dist/node/*.node
 
           # 打包 swc 二进制文件
           # cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target x86_64-apple-darwin
@@ -316,5 +317,5 @@ jobs:
           name: bindings-${{ matrix.settings.target }}
           # 归档的文件路径 xx* 代表以 xx 开头的文件
           path: |
-            packages/dist/image-compress*
+            packages/dist/node/image-compress*
           if-no-files-found: error

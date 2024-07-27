@@ -1,11 +1,9 @@
-use std::ffi::OsStr;
 use std::{fs, path::PathBuf};
 
 use serde::{Deserialize, Serialize};
 use tokio::{fs::File, io::AsyncWriteExt};
 use tracing::{error, info};
 
-use crate::shared::error::OptionError;
 use crate::utils::mime::{get_filetype_from_path, SupportedFileTypes};
 
 use super::core::{

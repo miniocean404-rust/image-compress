@@ -111,10 +111,12 @@ jobs:
             target: x86_64-apple-darwin
             build: |
               cd ../../ &&
-              cargo build --manifest-path ./Cargo.toml -p image-compress-core --release --target x86_64-apple-darwin  &&
+              ls -R
+              cargo build --manifest-path ./Cargo.toml -p image-compress-core --release --target x86_64-apple-darwin
+              &&
               cd ./packages &&
               yarn build:node-dev
-              ls -R ../../
+              ls -R ../
 
           # cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target x86_64-apple-darwin
           # cp ../../bindings/target/x86_64-apple-darwin/release/swc .

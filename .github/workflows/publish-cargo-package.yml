@@ -109,10 +109,11 @@ jobs:
         settings:
           - host: macos-latest
             target: x86_64-apple-darwin
+            # --manifest-path ./Cargo.toml
             build: |
               cd ../../ &&
               ls -R
-              cargo build --manifest-path ./Cargo.toml -p image-compress-core --release --target x86_64-apple-darwin
+              cargo build -p image-compress-core --release --target x86_64-apple-darwin
               &&
               cd ./packages &&
               yarn build:node-dev

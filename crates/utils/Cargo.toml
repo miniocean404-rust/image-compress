@@ -17,7 +17,7 @@ chrono = "0.4.31"
 backtrace = "0.3.69"
 
 # 获取 mime 信息
-infer = "0.15.0"
+infer = "0.16.0"
 
 # 跨平台单一 glob 和 glob 集匹配。 Glob 集匹配是同时将一个或多个 glob 模式与单个候选路径进行匹配并返回所有匹配的 glob 的过程
 globset = "0.4.14"

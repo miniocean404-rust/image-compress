@@ -231,7 +231,7 @@ jobs:
           # cache: yarn
           architecture: x64
 
-      - name: 输出 rust toolchain
+      - name: 获取 rust toolchain
         id: toolchain
         shell: bash
         run: echo "version=$(cat ./rust-toolchain)" >> "$GITHUB_OUTPUT"
@@ -283,6 +283,7 @@ jobs:
         with:
           node-version: 20
           architecture: x86
+
       - name: 在 docker 中构建
         uses: addnab/docker-run-action@v3
         if: ${{ matrix.settings.docker }}

@@ -5,3 +5,4 @@ logs
 pkg
 node_modules
 *.node
+release

@@ -2,28 +2,28 @@
   "package": "image-compress",
   "license": "MIT",
   "napi": {
-    "binaryName": "index",
+    "binaryName": "image-compress",
     "package": {
-      "name": "image-compress-node",
-      "targets": [
-        "x86_64-apple-darwin",
-        "x86_64-pc-windows-msvc",
-        "x86_64-unknown-linux-gnu",
-        "x86_64-unknown-linux-musl",
-        "i686-pc-windows-msvc",
-        "armv7-unknown-linux-gnueabihf",
-        "aarch64-unknown-linux-gnu",
-        "aarch64-apple-darwin",
-        "aarch64-unknown-linux-musl",
-        "aarch64-pc-windows-msvc"
-      ]
-    }
+      "name": "image-compress"
+    },
+    "targets": [
+      "x86_64-apple-darwin",
+      "x86_64-pc-windows-msvc",
+      "x86_64-unknown-linux-gnu",
+      "x86_64-unknown-linux-musl",
+      "i686-pc-windows-msvc",
+      "armv7-unknown-linux-gnueabihf",
+      "aarch64-unknown-linux-gnu",
+      "aarch64-apple-darwin",
+      "aarch64-unknown-linux-musl",
+      "aarch64-pc-windows-msvc"
+    ]
   },
   "scripts": {
     "build:wasm-dev": "npm-run-all \"pack -- build ../crates/wasm --dev --out-dir ../../packages/dist/wasm\" --",
     "build:wasm-release": "npm-run-all \"pack -- build ../crates/wasm --release --out-dir ../../packages/dist/wasm\" --",
     "build:node": "napi build --manifest-path ../crates/node/Cargo.toml --platform -p node --release -o dist/node",
-    "build:node-dev": "napi build -bin swc --manifest-path ../crates/node/Cargo.toml -x --platform -p node --target-dir ../release -o .",
+    "build:node-dev": "napi build --manifest-path ../Cargo.toml -x --platform -p node --js ./index.js --dts ./index.d.ts --target-dir ../target -o ./dist/node",
     "pack": "wasm-pack"
   },
   "devDependencies": {

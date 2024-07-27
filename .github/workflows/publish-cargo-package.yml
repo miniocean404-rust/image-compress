@@ -110,10 +110,10 @@ jobs:
           - host: macos-latest
             target: x86_64-apple-darwin
             build: |
-              ls -R ../../
               cd ../../packages &&
+              cd .. &&
               yarn build:node-dev
-              cargo build --manifest-path ../../crates/core/Cargo.toml --release --target x86_64-apple-darwin
+              cargo build --manifest-path ./crates/core/Cargo.toml --release --target x86_64-apple-darwin
               ls -R ../../
 
           # cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target x86_64-apple-darwin

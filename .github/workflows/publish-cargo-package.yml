@@ -242,7 +242,7 @@ jobs:
         if: ${{ !matrix.settings.docker }}
         with:
           targets: ${{ matrix.settings.target }}
-          toolchain: ${{ steps.toolchain.outputs.version }}
+          # toolchain: ${{ steps.toolchain.outputs.version }}
 
       # 在 Github Actions 工作流程中使用 Zig 编译器
       - uses: goto-bus-stop/setup-zig@v2

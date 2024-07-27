@@ -1,9 +1,8 @@
-# 使用方式：- uses: ./.github/actions/setup-node
-name: "配置 Node.js"
-description: "为 CI 设置 Node.js"
+name: "Configure Node.js"
+description: "Sets Node.js up for CI"
 inputs:
   node-version:
-    description: "要安装的节点版本"
+    description: "Node version to install"
     required: false
     default: "20"
 
@@ -16,10 +15,10 @@ runs:
         node-version: ${{ inputs.node-version }}
         cache: "yarn"
 
-    - name: 开启 corepack
+    - name: Enable corepack
       shell: bash
       run: corepack enable
 
-    - name: 安装依赖
+    - name: Install dependencies
       shell: bash
       run: yarn

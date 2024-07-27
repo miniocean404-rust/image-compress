@@ -1,8 +1,9 @@
 name: CI
 
 on:
+  merge_group:
   pull_request:
-    types: [ "opened", "reopened", "synchronize" ]
+    types: ["opened", "reopened", "synchronize"]
   push:
     branches:
       - main
@@ -14,10 +15,12 @@ env:
   DIFF: 0
   # For faster CI
   RUST_LOG: "off"
-  # https://github.com/swc-project/swc/pull/3742
-  RUST_MIN_STACK: 4194304
   # https://github.com/actions/setup-node/issues/899#issuecomment-1819151595
   SKIP_YARN_COREPACK_CHECK: 1
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: "${{ github.event_name == 'pull_request' }}"
 
 jobs:
   cargo-fmt:
@@ -53,46 +56,6 @@ jobs:
 
       - run: cargo clippy --all --all-targets -- -D warnings
 
-  cargo-crev:
-    name: Cargo crev
-    if: >-
-      ${{ !contains(github.event.head_commit.message, 'chore: ') }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-
-      - name: Remove unrelated
-        run: |
-          rm -rf packages
-          rm -rf tests
-          ls -al
-
-      - name: Configure git
-        run: |
-          git config --global user.name 'SWC bot'
-          git config --global user.email 'bot@swc.rs'
-
-      # - name: Install cargo-crev
-      #   uses: baptiste0928/cargo-install@v2
-      #   with:
-      #     crate: cargo-crev
-      #     version: "=0.24.3"
-      #     # locked: true
-
-      # - name: Configure cargo-crev
-      #   run: |
-      #     cargo crev trust --level high https://github.com/kdy1/crev-proofs
-      #     cargo crev repo fetch all
-
-      # - name: Check dependencies
-      #   run: |
-      #     ./scripts/crev/verify.sh
-
   cargo-deny:
     name: Check license of dependencies
     runs-on: ubuntu-latest
@@ -107,10 +70,9 @@ jobs:
           profile: minimal
 
       - name: Install cargo-deny
-        uses: baptiste0928/cargo-install@v2
+        uses: taiki-e/install-action@v2
         with:
-          crate: cargo-deny
-          version: "0.14.3"
+          tool: cargo-deny@0.14.15
 
       - name: Check licenses
         run: |
@@ -142,6 +104,8 @@ jobs:
           # toolchain: stable
           # override: true
 
+      - run: corepack enable
+
       - uses: actions/setup-node@v4
         with:
           node-version: "18"
@@ -150,6 +114,7 @@ jobs:
       - name: Install node dependencies
         shell: bash
         run: |
+          corepack enable
           yarn
 
       # Ensure that all components are compilable.
@@ -161,8 +126,18 @@ jobs:
     if: >-
       ${{ !contains(github.event.head_commit.message, 'chore: ') }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        pkg:
+          - binding_core_wasm
+          - binding_minifier_wasm
+          - binding_typescript_wasm
     steps:
       - uses: actions/checkout@v4
+
+      - shell: bash
+        run: corepack enable
 
       # We explicitly do this to cache properly.
       - uses: actions-rs/toolchain@v1
@@ -174,7 +149,7 @@ jobs:
         run: |
           echo '[patch.crates-io]' >> bindings/Cargo.toml
           ./scripts/cargo/patch-section.sh >> bindings/Cargo.toml
-          cd bindings && cargo update -p swc_core
+          cd bindings && cargo update -p swc_core -p swc_fast_ts_strip
 
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
@@ -187,392 +162,38 @@ jobs:
       - name: Install node dependencies
         shell: bash
         run: |
+          corepack enable
           yarn
-
-      - name: Build
-        run: |
-          (cd bindings/binding_core_wasm && ./scripts/build.sh --features plugin)
 
       - name: Test
         run: |
-          (cd bindings/binding_core_wasm && ./scripts/test.sh)
+          (cd bindings/${{ matrix.pkg }} && ./scripts/test.sh)
+
+  list-cargo-tests:
+    if: >-
+      ${{ !contains(github.event.head_commit.message, 'chore: ') }}
+    name: List crates
+    runs-on: ubuntu-latest
+    outputs:
+      settings: ${{ steps.list-tests.outputs.settings }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-node
+
+      - name: List crates
+        id: list-tests
+        run: echo "settings=$(npx zx ./scripts/github/get-test-matrix.mjs)" >> $GITHUB_OUTPUT
 
   cargo-test:
     name: Test - ${{ matrix.settings.crate }} - ${{ matrix.settings.os }}
-    runs-on: ${{ matrix.settings.runner }}
-    if: >-
-      ${{ !contains(github.event.head_commit.message, 'chore: ') }}
+    runs-on: ${{ matrix.settings.os }}
+    needs:
+      - list-cargo-tests
     strategy:
       fail-fast: false
       matrix:
-        settings:
-          # Use scripts/github/create-matrix.sh to create this.
-          - crate: ast_node
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: better_scoped_tls
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: binding_macros
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: dbg-swc
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: from_variant
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: jsdoc
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: preset_env_base
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: string_enum
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc
-            os: windows-latest
-            runner: windows-latest
-          - crate: swc_atoms
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_bundler
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_cached
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_cli_impl
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_common
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_common
-            os: windows-latest
-            runner: windows-latest
-          - crate: swc_compiler_base
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_config
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_config_macro
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_core
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_css
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_css_ast
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_css_codegen
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_css_codegen
-            os: windows-latest
-            runner: windows-latest
-          - crate: swc_css_codegen_macros
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_css_compat
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_css_lints
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_css_minifier
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_css_modules
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_css_parser
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_css_parser
-            os: windows-latest
-            runner: windows-latest
-          - crate: swc_css_prefixer
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_css_utils
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_css_visit
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_ast
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_codegen
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_codegen
-            os: windows-latest
-            runner: windows-latest
-          - crate: swc_ecma_codegen_macros
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_compat_bugfixes
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_compat_common
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_compat_es2015
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_compat_es2016
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_compat_es2017
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_compat_es2018
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_compat_es2019
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_compat_es2020
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_compat_es2021
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_compat_es2022
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_compat_es3
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_ext_transforms
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_lints
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_loader
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_loader
-            os: windows-latest
-            runner: windows-latest
-          - crate: swc_ecma_minifier
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_parser
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_parser
-            os: windows-latest
-            runner: windows-latest
-          - crate: swc_ecma_preset_env
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_preset_env
-            os: windows-latest
-            runner: windows-latest
-          - crate: swc_ecma_quote
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_quote_macros
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_testing
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_transforms
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_transforms_base
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_transforms_classes
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_transforms_compat
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_transforms_macros
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_transforms_module
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_transforms_module
-            os: windows-latest
-            runner: windows-latest
-          - crate: swc_ecma_transforms_optimization
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_transforms_proposal
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_transforms_react
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_transforms_testing
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_transforms_testing
-            os: windows-latest
-            runner: windows-latest
-          - crate: swc_ecma_transforms_typescript
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_usage_analyzer
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_utils
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecma_visit
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_ecmascript
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_eq_ignore_macros
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_error_reporters
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_estree_ast
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_estree_compat
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_fast_graph
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_graph_analyzer
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_html
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_html_ast
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_html_codegen
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_html_codegen
-            os: windows-latest
-            runner: windows-latest
-          - crate: swc_html_codegen_macros
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_html_minifier
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_html_parser
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_html_parser
-            os: windows-latest
-            runner: windows-latest
-          - crate: swc_html_utils
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_html_visit
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_macros_common
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_malloc
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_node_bundler
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_node_bundler
-            os: windows-latest
-            runner: windows-latest
-          - crate: swc_node_comments
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_nodejs_common
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_plugin
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_plugin
-            os: windows-latest
-            runner: windows-latest
-          - crate: swc_plugin_macro
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_plugin_proxy
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_plugin_runner
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_plugin_runner
-            os: macos-latest
-            runner: macos-latest
-          - crate: swc_plugin_runner
-            os: windows-latest
-            runner: windows-latest
-          - crate: swc_plugin_testing
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_plugin_testing
-            os: windows-latest
-            runner: windows-latest
-          - crate: swc_timer
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_trace_macro
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_visit
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_visit_macros
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_xml
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_xml_ast
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_xml_codegen
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_xml_codegen_macros
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_xml_parser
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: swc_xml_visit
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: testing
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: testing_macros
-            os: ubuntu-latest
-            runner: ubuntu-latest
-          - crate: xtask
-            os: ubuntu-latest
-            runner: ubuntu-latest
+        settings: ${{fromJson(needs.list-cargo-tests.outputs.settings)}}
     steps:
       - name: Handle line endings
         shell: bash
@@ -584,6 +205,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
+
+      - run: corepack enable
 
       # Source map format
       - uses: actions/setup-node@v4
@@ -609,6 +232,7 @@ jobs:
       - name: Install node dependencies
         shell: bash
         run: |
+          corepack enable
           yarn
           # I don't want to think deeply about this
           yarn global add jest@27 mocha || \
@@ -629,7 +253,7 @@ jobs:
       - name: Verify dependencies
         shell: bash
         run: |
-          jest --version && mocha --version
+          yarn jest --version && yarn mocha --version
 
       - name: Configure execution cache
         shell: bash
@@ -639,15 +263,16 @@ jobs:
 
       - name: Cache execution results
         uses: actions/cache@v3
+        if: ${{ matrix.settings.crate }} == 'swc' || ${{ startsWith(matrix.settings.crate, 'swc_ecma_transforms_') }}
         with:
           path: |
             .swc-exec-cache
-          key: swc-exec-cache-${{ runner.os }}-${{ matrix.settings.crate }}-${{ hashFiles('**/Cargo.lock') }}
+          key: swc-exec-cache-${{ matrix.settings.crate }}-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
-            swc-exec-cache-${{ matrix.settings.crate }}-${{ runner.os }}
+            swc-exec-cache-${{ matrix.settings.crate }}
 
       - name: Run cargo test
-        if: matrix.settings.crate != 'swc_plugin_runner' && matrix.settings.crate != 'swc_ecma_minifier' && matrix.settings.crate != 'swc_core' && matrix.settings.crate != 'swc_ecma_quote' && matrix.settings.crate != 'swc_cli' && matrix.settings.crate != 'binding_core_wasm'
+        if: matrix.settings.crate != 'swc_plugin_runner' && matrix.settings.crate != 'swc_ecma_parser' && matrix.settings.crate != 'swc_ecma_minifier' && matrix.settings.crate != 'swc_core' && matrix.settings.crate != 'swc_ecma_quote' && matrix.settings.crate != 'swc_cli' && matrix.settings.crate != 'binding_core_wasm'
         run: |
           cargo test -p ${{ matrix.settings.crate }}
 
@@ -678,10 +303,20 @@ jobs:
         run: |
           cargo test -p swc_ecma_minifier --features concurrent
 
+      - name: Run cargo test (swc_ecma_parser)
+        if: matrix.settings.crate == 'swc_ecma_parser'
+        run: |
+          cargo test -p swc_ecma_parser --features verify
+
       - name: Run cargo test (all features)
-        if: matrix.settings.crate == 'swc_ecma_parser' || matrix.settings.crate == 'swc_ecma_loader' || matrix.settings.crate == 'swc_ecma_transforms'
+        if: matrix.settings.crate == 'swc_ecma_parser' || matrix.settings.crate == 'swc_ecma_loader'
         run: |
           cargo test -p ${{ matrix.settings.crate }} --all-features
+
+      - name: Run cargo test (transforms with stacker)
+        if: matrix.settings.crate == 'swc_ecma_transforms'
+        run: |
+          cargo test -p ${{ matrix.settings.crate }} --all-features --features swc_ecma_utils/stacker
 
       - name: Run cargo test (concurrent)
         if: runner.os == 'Linux' && matrix.settings.crate != 'swc_ecma_minifier'
@@ -690,14 +325,13 @@ jobs:
           ./scripts/github/test-concurrent.sh ${{ matrix.settings.crate }}
 
       - name: Install cargo-hack
-        uses: baptiste0928/cargo-install@v2
+        uses: taiki-e/install-action@v2
         if: matrix.settings.os == 'ubuntu-latest'
         with:
-          crate: cargo-hack
-          version: "0.5.29"
-          locked: true
+          tool: cargo-hack@0.5.29
 
       - name: Check compilation
+        if: matrix.settings.os == 'ubuntu-latest'
         run: |
           ./scripts/github/run-cargo-hack.sh ${{ matrix.settings.crate }}
 
@@ -710,14 +344,13 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
+          # - ubuntu-latest
           - windows-latest
           - macos-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Corepack
-        shell: bash
+      - shell: bash
         run: corepack enable
 
       # We explicitly do this to cache properly.
@@ -726,7 +359,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 18
           cache: "yarn"
 
       - name: Patch
@@ -735,7 +368,7 @@ jobs:
           echo '[patch.crates-io]' >> bindings/Cargo.toml
           ./scripts/cargo/patch-section.sh
           ./scripts/cargo/patch-section.sh >> bindings/Cargo.toml
-          cd bindings && cargo update -p swc_core
+          cd bindings && cargo update -p swc_core -p swc_fast_ts_strip
 
       - name: Set platform name
         run: |
@@ -752,7 +385,14 @@ jobs:
           corepack enable
           yarn
 
+      - name: Build
+        working-directory: packages/core
+        run: |
           yarn build:dev
+
+      - name: Test
+        working-directory: packages/core
+        run: |
           yarn test
 
   integration-test:
@@ -763,8 +403,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Corepack
-        shell: bash
+      - shell: bash
         run: corepack enable
 
       - uses: actions/setup-node@v4
@@ -786,7 +425,7 @@ jobs:
         run: |
           echo '[patch.crates-io]' >> bindings/Cargo.toml
           ./scripts/cargo/patch-section.sh >> bindings/Cargo.toml
-          cd bindings && cargo update -p swc_core
+          cd bindings && cargo update -p swc_core -p swc_fast_ts_strip
 
       - name: Prepare
         run: |
@@ -824,7 +463,7 @@ jobs:
 
         # terser: contains with statement in test
         # Rome.js: I forgot the cause, but it didn't work.
-        # jQuery: browser only (explore.document is required)
+        # jQuery: browser only (window.document is required)
       - name: (swc) redux
         run: |
           # mkdir -p tests/integration/redux
@@ -849,6 +488,58 @@ jobs:
           export NODE_OPTIONS="--unhandled-rejections=warn"
           (cd crates/swc_node_bundler/tests/integration/react && npm install && npx spack)
 
+  miri:
+    name: Miri
+    runs-on: ubuntu-latest
+    if: >-
+      ${{ !contains(github.event.head_commit.message, 'chore: ') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        crate:
+          - better_scoped_tls
+          - string_enum
+          - swc
+          - swc_bundler
+          - swc_ecma_codegen
+          - swc_ecma_minifier
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - shell: bash
+        run: corepack enable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "yarn"
+
+      - name: Install node dependencies
+        shell: bash
+        run: |
+          corepack enable
+          yarn
+
+      - name: Print rustup toolchain version
+        shell: bash
+        id: rustup-version
+        run: |
+          export RUST_TOOLCHAIN="$(cat rust-toolchain | tr -d '\n')"
+          echo "Rust toolchain: $RUST_TOOLCHAIN"
+          echo "RUST_TOOLCHAIN=$RUST_TOOLCHAIN" >> "$GITHUB_OUTPUT"
+
+      - name: Install
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: "${{ steps.rustup-version.outputs.RUST_TOOLCHAIN }}"
+          components: miri
+
+      - run: cargo miri test -p ${{ matrix.crate }} --no-fail-fast
+        continue-on-error: true
+        env:
+          MIRIFLAGS: "-Zmiri-disable-isolation"
   done:
     needs:
       - cargo-fmt

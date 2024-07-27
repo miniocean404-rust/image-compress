@@ -47,7 +47,7 @@ on:
 
 jobs:
   check-if-build-required:
-    name: 检查是否必须构建
+    name: 是否需要构建
     runs-on: ubuntu-latest
     outputs:
       need-build: ${{ steps.check.outputs.need-build }}
@@ -111,8 +111,8 @@ jobs:
             target: x86_64-apple-darwin
             build: |
               cd ../../packages &&
-              cd .. &&
               yarn build:node-dev
+              cd .. &&
               cargo build --manifest-path ./crates/core/Cargo.toml --release --target x86_64-apple-darwin
               ls -R ../../
 

@@ -3,7 +3,7 @@ name: "配置 Node.js"
 description: "为 CI 设置 Node.js"
 inputs:
   node-version:
-    description: "要安装的节点版本"
+    description: "要安装的 node 版本"
     required: false
     default: "20"
 
@@ -14,7 +14,8 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
-        cache: "yarn"
+        # 缓存 yarn.lock 文件
+        # cache: "yarn"
 
     - name: 开启 corepack
       shell: bash

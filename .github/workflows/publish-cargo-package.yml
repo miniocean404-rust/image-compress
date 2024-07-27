@@ -113,7 +113,7 @@ jobs:
             # ls -R ../
             build: |
               cd ../ && cargo build -p image-compress-core --release --target x86_64-apple-darwin
-              cd ./packages && yarn build:node-dev
+              cd ./packages && pnpm build:node-dev
 
           # cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target x86_64-apple-darwin
           # cp ../../bindings/target/x86_64-apple-darwin/release/swc .
@@ -218,17 +218,19 @@ jobs:
       #   shell: bash
 
       - uses: actions/checkout@v4
+        # 引用 git tag 版本
         # with:
         #   ref: "v${{ inputs.version }}"
 
-      - name: Node Corepack
+      - name: 开启 Node Corepack
         shell: bash
         run: corepack enable
+
       - name: Setup node x64
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          # cache: yarn
+          # cache: pnpm
           architecture: x64
 
       - name: 获取 rust toolchain
@@ -248,35 +250,42 @@ jobs:
         if: ${{ matrix.settings.target == 'armv7-unknown-linux-gnueabihf' }}
         with:
           version: 0.12.0
+
       - name: 缓存 cargo registry
         uses: actions/cache@v3
         with:
           path: ~/.cargo/registry
           key: ${{ matrix.settings.target }}-node@20-cargo-registry-trimmed
+
       - name: 缓存 cargo index
         uses: actions/cache@v3
         with:
           path: ~/.cargo/git
           key: ${{ matrix.settings.target }}-node@20-cargo-index-trimmed
         if: ${{ matrix.settings.docker }}
+
       - name: 设置 toolchain
         run: ${{ matrix.settings.setup }}
         if: ${{ matrix.settings.setup }}
         shell: bash
+
       # 使用 x64 Node.js 安装依赖，因 为 ia32 版本将会失败，会提示 "错误:无法分配足够的内存"。
       - name: 设置 install target x86
         if: matrix.settings.target == 'i686-pc-windows-msvc'
-        run: yarn config set supportedArchitectures.cpu "ia32"
+        run: pnpm config set supportedArchitectures.cpu "ia32"
         shell: bash
+
       - name: 安装依赖
         # 再次运行 corepack enable
-        # 因为在 Windows 上，yarn 会使用 cmd 来运行 yarn install。
+        # 因为在 Windows pnpm 会使用 cmd 来运行 pnpm install。
         shell: bash
         run: |
           corepack enable
-          yarn install
+          ls -R ./
+          pnpm install
           curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
           echo '/usr/local/cargo/bin' >> $GITHUB_PATH
+
       - name: 设置 node x86
         uses: actions/setup-node@v4
         if: matrix.settings.target == 'i686-pc-windows-msvc'
@@ -292,7 +301,7 @@ jobs:
           options: -v ${{ env.HOME }}/.cargo/git:/root/.cargo/git -v ${{ env.HOME }}/.cargo/registry:/root/.cargo/registry -v ${{ github.workspace }}:/build -w /build
           run: >-
             cd ./packages &&
-            npm install -f -g yarn@1.22 &&
+            npm install -f -g pnpm@9.6.0 &&
             corepack enable &&
             npm i -g wasm-pack &&
             ${{ matrix.settings.build }}

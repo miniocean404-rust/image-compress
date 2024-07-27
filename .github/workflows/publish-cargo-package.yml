@@ -24,6 +24,8 @@ permissions:
   id-token: write
 
 on:
+  push:
+    branches: [master]
   # 工作流的执行依赖其他 workflow 的调用
   workflow_call:
     inputs:
@@ -108,6 +110,7 @@ jobs:
           - host: macos-latest
             target: x86_64-apple-darwin
             build: |
+              ls -R ../../
               cd ../../packages
               yarn build:node-dev
               cargo build --manifest-path ../../crates/core/Cargo.toml --release --target x86_64-apple-darwin
@@ -211,6 +214,9 @@ jobs:
     name: "构建 ${{ inputs.package }} - ${{ matrix.settings.target }} - node@20"
     runs-on: ${{ matrix.settings.host }}
     steps:
+      - name: 展示 packages
+        run: ls -R ../../
+        shell: bash
       - uses: actions/checkout@v4
         # with:
         #   ref: "v${{ inputs.version }}"

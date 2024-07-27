@@ -70,17 +70,17 @@ jobs:
 
       - uses: ./.github/actions/setup-node
 
-      - name: Install git-cliff
+      - name: 安装 git-cliff
         uses: taiki-e/install-action@v2
         with:
           tool: git-cliff@1.3.1
 
-      - name: Install cargo-edit
+      - name: 安装 cargo-edit
         uses: taiki-e/install-action@v2
         with:
           tool: cargo-edit@0.12.2
 
-      - name: "Setup jq"
+      - name: "设置 jq 轻量级的命令行 JSON 处理工具"
         uses: dcarbone/install-jq-action@v2
         with:
           version: "1.7"
@@ -222,7 +222,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: yarn
+          # cache: yarn
           architecture: x64
       - name: 输出 rust toolchain
         id: toolchain

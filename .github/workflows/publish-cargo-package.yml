@@ -108,7 +108,7 @@ jobs:
           - host: macos-latest
             target: x86_64-apple-darwin
             build: |
-              cargo build --release
+              cargo build --release --target x86_64-apple-darwin
               cp ./target/release/image-compress ./tag
               cd ./packages && pnpm build:node-dev --target x86_64-apple-darwin &&
               cd ../ &&
@@ -120,7 +120,7 @@ jobs:
           - host: macos-latest
             target: aarch64-apple-darwin
             build: |
-              cargo build  --release
+              cargo build --release --target aarch64-apple-darwin
               cp ./target/release/image-compress ./tag
               cd ./packages && pnpm build:node-dev --target aarch64-apple-darwin &&
               cd ../ &&
@@ -130,7 +130,7 @@ jobs:
           - host: windows-latest
             target: x86_64-pc-windows-msvc
             build: |
-              cargo build  --release
+              cargo build  --release --target x86_64-pc-windows-msvc
               cp ./target/release/image-compress ./tag
               cd ./packages && pnpm build:node-dev --target x86_64-pc-windows-msvc &&
               cd ../ &&
@@ -140,7 +140,7 @@ jobs:
           - host: windows-latest
             target: i686-pc-windows-msvc
             build: |
-              cargo build  --release
+              cargo build  --release --target i686-pc-windows-msvc
               cp ./target/release/image-compress ./tag
               cd ./packages && pnpm build:node-dev --target i686-pc-windows-msvc &&
               cd ../ &&
@@ -150,7 +150,7 @@ jobs:
           - host: windows-latest
             target: aarch64-pc-windows-msvc
             build: |
-              cargo build  --release
+              cargo build  --release --target aarch64-pc-windows-msvc
               cp ./target/release/image-compress ./tag
               cd ./packages && pnpm build:node-dev --target aarch64-pc-windows-msvc &&
               cd ../ &&
@@ -160,7 +160,7 @@ jobs:
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             build: |
-              cargo build  --release
+              cargo build  --release --target x86_64-unknown-linux-gnu
               cp ./target/release/image-compress ./tag
               cd ./packages && pnpm build:node-dev --target x86_64-unknown-linux-gnu &&
               cd ../ &&
@@ -170,7 +170,7 @@ jobs:
           - host: ubuntu-latest
             target: x86_64-unknown-linux-musl
             build: |
-              cargo build  --release
+              cargo build  --release --target x86_64-unknown-linux-musl
               cp ./target/release/image-compress ./tag
               cd ./packages && pnpm build:node-dev --target x86_64-unknown-linux-musl &&
               cd ../ &&
@@ -180,7 +180,7 @@ jobs:
           - host: ubuntu-latest
             target: aarch64-unknown-linux-gnu
             build: |
-              cargo build  --release
+              cargo build  --release  --target aarch64-unknown-linux-gnu
               cp ./target/release/image-compress ./tag
               cd ./packages && pnpm build:node-dev --target aarch64-unknown-linux-gnu &&
               cd ../ &&
@@ -190,7 +190,7 @@ jobs:
           - host: ubuntu-latest
             target: armv7-unknown-linux-gnueabihf
             build: |
-              cargo build  --release
+              cargo build  --release --target armv7-unknown-linux-gnueabihf
               cp ./target/release/image-compress ./tag
               cd ./packages && pnpm build:node-dev --target armv7-unknown-linux-gnueabihf &&
               cd ../ &&
@@ -200,7 +200,7 @@ jobs:
           - host: ubuntu-latest
             target: aarch64-unknown-linux-musl
             build: |
-              cargo build  --release
+              cargo build  --release --target aarch64-unknown-linux-musl
               cp ./target/release/image-compress ./tag
               cd ./packages && pnpm build:node-dev --target aarch64-unknown-linux-musl &&
               cd ../ &&

@@ -69,7 +69,7 @@ jobs:
       - name: 获取发布版本
         id: determine-version
         run: |
-          pnpm i -g ts-node
+          npm i -g ts-node
           ts-node .github/bot/src/nightly-version.ts ${{ github.event.inputs.version }} >> $GITHUB_OUTPUT
 
   publish-cargo-stable:

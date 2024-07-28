@@ -358,7 +358,7 @@ jobs:
 
       - name: 移动 artifacts 二进制文件
         shell: bash
-        working-directory: ./packages
+        working-directory: ./
         run: |
           chmod +x ./.github/scripts/cli_artifacts_rename.sh
           ./.github/scripts/cli_artifacts_rename.sh

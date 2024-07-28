@@ -1,8 +1,8 @@
-name: "Lock Threads"
+name: "issue 超时自动锁定"
 
 on:
   schedule:
-    # This runs twice a day: https://crontab.guru/#0_0,12_*_*_*
+    # 每天运行两次: https://crontab.guru/#0_0,12_*_*_*
     - cron: "0 0,12 * * *"
   workflow_dispatch:
 
@@ -16,7 +16,8 @@ concurrency:
 jobs:
   action:
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'swc-project'
+    # 仓库组织名称
+    if: github.repository_owner == 'miniocean404-rust'
     steps:
       - uses: dessant/lock-threads@v3
         with:

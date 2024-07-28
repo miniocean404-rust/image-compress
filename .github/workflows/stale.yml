@@ -1,0 +1,25 @@
+name: "Stale issue handler"
+on:
+  workflow_dispatch:
+  schedule:
+    # This runs every day 20 minutes before midnight: https://crontab.guru/#40_23_*_*_*
+    - cron: "40 23 * * *"
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'miniocean404-rust'
+    steps:
+      - uses: actions/stale@v4
+        id: stale
+        name: "关闭没有反馈的过期问题"
+        with:
+          repo-token: ${{ secrets.GH_TOKEN }}
+          only-labels: "需要更多的信息"
+          close-issue-message: "这个问题已经自动关闭，因为它一个月没有收到任何活动，也没有反馈信息来调查。如果你认为这是意外关闭的，请留下评论。如果您遇到类似的问题，请打开带有反馈的新问题。谢谢！"
+          days-before-issue-close: 1
+          days-before-issue-stale: 30
+          days-before-pr-close: -1
+          days-before-pr-stale: -1
+          exempt-issue-labels: "blocked,must,should,keep"
+          operations-per-run: 300 # 1 operation per 100 issues, the rest is to label/comment/close

@@ -2,8 +2,7 @@
 
 cd ./packages/
 
-# Naive substitution to napi artifacts for the cli binary.
-for filename in artifacts/*
+for filename in artifacts_rename/*
 do
   echo "尝试上传 $filename"
 

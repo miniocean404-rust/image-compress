@@ -5,6 +5,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  CARGO_TERM_COLOR: always
   MACOSX_DEPLOYMENT_TARGET: "10.13"
   CARGO_INCREMENTAL: 0
   CARGO_PROFILE_RELEASE_LTO: "fat"
@@ -254,13 +255,13 @@ jobs:
           version: 0.12.0
 
       - name: 缓存 cargo registry
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cargo/registry
           key: ${{ matrix.settings.target }}-node@20-cargo-registry-trimmed
 
       - name: 缓存 cargo index
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cargo/git
           key: ${{ matrix.settings.target }}-node@20-cargo-index-trimmed
@@ -314,7 +315,7 @@ jobs:
         shell: bash
 
       - name: 上传 artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           # 上传归档的名称
           name: bindings-${{ matrix.settings.target }}
@@ -346,21 +347,21 @@ jobs:
         run: corepack enable && pnpm install
 
       - name: 下载所有 artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: ./packages/artifacts
 
-      - name: 展示二进制文件
+      - name: 展示 artifacts 二进制文件
         run: ls -R ./packages/artifacts
         shell: bash
 
-      # - name: 移动二进制文件
-      #   shell: bash
-      #   working-directory: ./packages
-      #   run: |
-      #     ./scripts/cli_artifacts.sh
-      #     ls -R ./artifacts_cli
-      #     npm run artifacts
+      - name: 移动 artifacts 二进制文件
+        shell: bash
+        working-directory: ./packages
+        run: |
+          chmod +x ./cli_artifacts_rename.sh
+          ./.github/scripts/cli_artifacts_rename.sh
+          ls -R ./artifacts_rename
 
       # - name: 展示 npm 包文件
       #   run: ls -R ./scripts/npm
@@ -390,5 +391,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_VERSION: "v${{ inputs.version }}"
         run: |
-          chmod +x ./.github/scripts/cli_upload_gh_release.sh
           ./.github/scripts/cli_upload_gh_release.sh

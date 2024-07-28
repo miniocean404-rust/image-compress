@@ -70,8 +70,8 @@ jobs:
         run: |
           ${{ github.event.inputs.version }} >> $GITHUB_OUTPUT
 
-  publish-cargo:
-    name: "Publish ${{ needs.determine-nightly-version.outputs.version }}"
+  publish-cargo-stable:
+    name: "发布稳定版 ${{ needs.determine-nightly-version.outputs.version }}"
     uses: ./.github/workflows/publish-cargo-package.yml
     secrets: inherit
     with:

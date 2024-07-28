@@ -1,0 +1,77 @@
+name: Bug 反馈
+description: 当您遇到问题时，请使用此模板提交问题报告。
+labels: C-bug
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: 描述这个 bug
+      description: |
+        您可以获取堆栈信息来获取异常信息
+
+        请注意，如果您不提供最简易的 Demo，则该问题将关闭，因为团队无法处理它。
+        详情请参阅 https://antfu.me/posts/why-reproductions-are-required
+    validations:
+      required: true
+  - type: textarea
+    id: code
+    attributes:
+      label: 输入代码
+      render: typescript
+  - type: textarea
+    id: config
+    attributes:
+      label: 配置
+      description: 粘贴你的配置信息到这里
+      render: json
+  - type: input
+    id: repro-link
+    validations:
+      required: true
+    attributes:
+      label: Playground link (or link to the minimal reproduction)
+      description: "You can use [swc playground](https://play.swc.rs/) to create a reproduction link, then paste the link here. If your link is invalid, the issue will be closed automatically. Allowed domains are github.com,gist.github.com,play.swc.rs,evanw.github.io,lightningcss.dev,play.rust-lang.org,stackblitz.com"
+  - type: textarea
+    id: swc-info
+    attributes:
+      label: SWC Info output
+      description: Please run `npx -y swc-info@latest` and paste the output here.
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expect to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual behavior
+      description: A clear and concise description of actual behavior.
+    validations:
+      required: false
+  - type: input
+    id: version
+    attributes:
+      label: Version
+    validations:
+      required: true
+  - type: textarea
+    id: addition
+    attributes:
+      label: Additional context
+      placeholder: Add any other context about the problem here.
+
+  - type: markdown
+    attributes:
+      value: |
+        <!--
+          Thanks for taking the time to fill out this bug report!
+          Please do not remove this, or your issue will be closed.
+        -->
+
+        ---
+
+        _This is message for readers, not the author of ths issue._
+
+        Please read [no +1](https://github.com/golang/go/wiki/NoPlusOne) before lefting a comment, or your comment will be deleted and you will be blocked.

@@ -2,6 +2,10 @@
     "name": "@image-compress/workspace",
     "packageManager": "pnpm@9.6.0",
     "private": true,
+    "repository": {
+        "type": "github",
+        "url": "https://github.com/miniocean404-rust/image-compress"
+    },
     "scripts": {
         "changelog": "git cliff --output CHANGELOG.md"
     }

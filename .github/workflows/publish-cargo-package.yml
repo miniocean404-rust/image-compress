@@ -328,6 +328,7 @@ jobs:
           if-no-files-found: error
 
   publish:
+    needs: build
     name: 发布 ${{ inputs.version }}
     runs-on: ubuntu-latest
     steps:

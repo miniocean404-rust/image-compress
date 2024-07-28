@@ -10,8 +10,8 @@ do
 
   echo "-------------------开始准备变量-------------------"
   echo "准备上传:"
+  echo "文件路径 $filename"
   echo "二进制名称 $BINDING_NAME"
-  echo "文件名称 $filename"
   echo "文件 ABI 名称 $BINDING_ABI"
   echo "Cli 二进制路径 $CLI_BINARY_PATH"
   echo "-------------------变量准备完成-------------------"
@@ -23,4 +23,6 @@ do
   elif [ -f "$CLI_BINARY_PATH.exe" ]; then
       gh release upload $RELEASE_VERSION $CLI_BINARY_PATH.exe
   fi
+
+   gh release upload $filename
 done

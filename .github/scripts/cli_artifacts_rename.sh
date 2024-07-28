@@ -33,9 +33,5 @@ do
 
   mv $filename $OUTPUT_DIR
 
-  echo "-------------------输出-------------------"
-  echo "二进制移动前：$CLI_BINARY_PATH"
-  echo "二进制移动后：$OUTPUT_DIR/$PROJECT_BINDING_NAME-$BINDING_ABI"
-  echo ".node 移动后：$OUTPUT_DIR"
-  echo "-------------------输出-------------------"
+  ls -R $OUTPUT_DIR
 done

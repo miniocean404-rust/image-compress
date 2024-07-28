@@ -1,0 +1,27 @@
+name: "Lock Threads"
+
+on:
+  schedule:
+    # This runs twice a day: https://crontab.guru/#0_0,12_*_*_*
+    - cron: "0 0,12 * * *"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: lock
+
+jobs:
+  action:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'swc-project'
+    steps:
+      - uses: dessant/lock-threads@v3
+        with:
+          github-token: ${{ secrets.BOT_GH_TOKEN }}
+          issue-comment: "这个已关闭的问题已被自动锁定，因为它一个月没有新的活动。如果您遇到类似的问题，请创建一个新的问题，并附上重现的步骤。谢谢你！"
+          issue-inactive-days: 30
+          pr-inactive-days: 30
+          log-output: true

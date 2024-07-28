@@ -18,8 +18,6 @@ permissions:
   id-token: write
 
 on:
-  push:
-    branches: [master]
   # 工作流的执行依赖其他 workflow 的调用
   workflow_call:
     inputs:

@@ -3,7 +3,7 @@
 cd ./packages/
 
 # 重命名二进制文件 为 image-compress-<ABI>.<ext>，移动 .node 文件到 artifacts_rename 文件夹
-ENTRY_DIR="artifacts/*/*.node" # 不能有 ./
+ENTRY_DIR="artifacts/*/image-compress*" # 不能有 ./
 OUTPUT_DIR="./artifacts_rename"
 PROJECT_BINDING_NAME="image-compress"
 

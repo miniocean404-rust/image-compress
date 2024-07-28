@@ -124,7 +124,7 @@ jobs:
               cp ./target/release/image-compress-core ./tag
               cd ./packages && pnpm build:node-dev &&
               cd ../ &&
-              cp -r ./packages/dist/node ./tag
+              cp -r ./packages/dist/node/* ./tag
               chmod +x ./tag
 
           - host: windows-latest
@@ -134,7 +134,7 @@ jobs:
               cp ./target/release/image-compress-core ./tag
               cd ./packages && pnpm build:node-dev &&
               cd ../ &&
-              cp -r  ./packages/dist/node ./tag
+              cp -r  ./packages/dist/node/* ./tag
               chmod +x ./tag
 
           - host: windows-latest
@@ -144,7 +144,7 @@ jobs:
               cp ./target/release/image-compress-core ./tag
               cd ./packages && pnpm build:node-dev &&
               cd ../ &&
-              cp -r  ./packages/dist/node ./tag
+              cp -r  ./packages/dist/node/* ./tag
               chmod +x ./tag
 
           - host: windows-latest
@@ -154,7 +154,7 @@ jobs:
               cp ./target/release/image-compress-core ./tag
               cd ./packages && pnpm build:node-dev &&
               cd ../ &&
-              cp -r  ./packages/dist/node ./tag
+              cp -r  ./packages/dist/node/* ./tag
               chmod +x ./tag
 
           - host: ubuntu-latest
@@ -164,7 +164,7 @@ jobs:
               cp ./target/release/image-compress-core ./tag
               cd ./packages && pnpm build:node-dev &&
               cd ../ &&
-              cp -r  ./packages/dist/node ./tag
+              cp -r  ./packages/dist/node/* ./tag
               chmod +x ./tag
 
           - host: ubuntu-latest
@@ -174,7 +174,7 @@ jobs:
               cp ./target/release/image-compress-core ./tag
               cd ./packages && pnpm build:node-dev &&
               cd ../ &&
-              cp -r  ./packages/dist/node ./tag
+              cp -r  ./packages/dist/node/* ./tag
               chmod +x ./tag
 
           - host: ubuntu-latest
@@ -184,7 +184,7 @@ jobs:
               cp ./target/release/image-compress-core ./tag
               cd ./packages && pnpm build:node-dev &&
               cd ../ &&
-              cp -r  ./packages/dist/node ./tag
+              cp -r  ./packages/dist/node/* ./tag
               chmod +x ./tag
 
           - host: ubuntu-latest
@@ -194,7 +194,7 @@ jobs:
               cp ./target/release/image-compress-core ./tag
               cd ./packages && pnpm build:node-dev &&
               cd ../ &&
-              cp -r  ./packages/dist/node ./tag
+              cp -r  ./packages/dist/node/* ./tag
               chmod +x ./tag
 
           - host: ubuntu-latest
@@ -204,7 +204,7 @@ jobs:
               cp ./target/release/image-compress-core ./tag
               cd ./packages && pnpm build:node-dev &&
               cd ../ &&
-              cp -r  ./packages/dist/node ./tag
+              cp -r  ./packages/dist/node/* ./tag
               chmod +x ./tag
 
     name: "构建 ${{ inputs.package }} - ${{ matrix.settings.target }} - node@20"

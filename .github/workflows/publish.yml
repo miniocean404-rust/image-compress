@@ -58,26 +58,28 @@ concurrency:
 #          profile: minimal
 
 jobs:
-  determine-nightly-version:
+  determine-version:
     name: "获取发布版本"
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.determine-nightly-version.outputs.version }}
+      version: ${{ steps.determine-version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-node
       - name: 获取发布版本
-        id: determine-nightly-version
+        id: determine-version
         run: |
-          npx ts-node .github/bot/src/nightly-version.ts ${{ github.event.inputs.version }} >> $GITHUB_OUTPUT
+          pnpm i -g ts-node
+          ts-node .github/bot/src/nightly-version.ts ${{ github.event.inputs.version }} >> $GITHUB_OUTPUT
 
   publish-cargo-stable:
-    name: "发布稳定版 ${{ needs.determine-nightly-version.outputs.version }}"
+    needs: determine-version
+    name: "发布稳定版 ${{ needs.determine-version.outputs.version }}"
     uses: ./.github/workflows/publish-cargo-package.yml
     secrets: inherit
     with:
       package: "core"
-      version: ${{ needs.determine-nightly-version.outputs.version }}
+      version: ${{ needs.determine-version.outputs.version }}
       buildCli: true
       skipBuild: ${{ inputs.skipBuild || false }}
       skipPublishing: false

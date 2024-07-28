@@ -400,4 +400,4 @@ jobs:
           body: ${{ github.event.head_commit.message }}
           token: ${{ github.token }}
           files: |
-            prod_cli/*
+            ./packages/artifacts_rename/*

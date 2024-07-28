@@ -76,8 +76,7 @@ jobs:
     secrets: inherit
     with:
       package: "core"
-      # version: ${{ needs.determine-nightly-version.outputs.version }}
-      version: "测试版本"
+      version: ${{ needs.determine-nightly-version.outputs.version }}
       buildCli: true
       skipBuild: ${{ inputs.skipBuild || false }}
       skipPublishing: false

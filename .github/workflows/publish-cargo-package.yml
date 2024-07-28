@@ -99,16 +99,14 @@ jobs:
       fail-fast: false
       matrix:
         settings:
-          - host: macos-latest
-            target: x86_64-apple-darwin
-            # --manifest-path ./Cargo.toml
-            # ls -R ../
-            # cd ../ && cargo build -p image-compress-core --release --target x86_64-apple-darwin
-            build: |
-              cd ../ &&
-              cd ./packages && pnpm build:node-dev --target x86_64-apple-darwin
-              chmod +x ./dist/node
-              strip -x ./dist/node/*.node
+          # - host: macos-latest
+          #   target: x86_64-apple-darwin
+          #   # cd ../ && cargo build -p image-compress-core --release --target x86_64-apple-darwin
+          #   build: |
+          #     cd ../ &&
+          #     cd ./packages && pnpm build:node-dev --target x86_64-apple-darwin
+          #     chmod +x ./dist/node
+          #     strip -x ./dist/node/*.node
           - host: macos-latest
             target: aarch64-apple-darwin
             build: |
@@ -392,4 +390,5 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_VERSION: "v${{ inputs.version }}"
         run: |
+          chmod +x ./.github/scripts/cli_upload_gh_release.sh
           ./.github/scripts/cli_upload_gh_release.sh

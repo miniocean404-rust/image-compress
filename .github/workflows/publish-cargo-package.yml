@@ -103,115 +103,112 @@ jobs:
         settings:
           - host: macos-latest
             target: x86_64-apple-darwin
-            # cd ../ && cargo build -p image-compress-core --release --target x86_64-apple-darwin
             build: |
-              cd ../ &&
-              cd ./packages && pnpm build:node-dev --target x86_64-apple-darwin
-              chmod +x ./dist/node
-              strip -x ./dist/node/*.node
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+              cd ./packages && pnpm build:node-dev
+              cd ../
+              cp ./packages/dist/node ./tag
+              chmod +x ./tag
+              strip -x ./tag/*.node
+
           - host: macos-latest
             target: aarch64-apple-darwin
             build: |
-              sudo rm -Rf /Library/Developer/CommandLineTools/SDKs/*;
-              export CC=$(xcrun -f clang);
-              export CXX=$(xcrun -f clang++);
-              SYSROOT=$(xcrun --sdk macosx --show-sdk-path);
-              export CFLAGS="-isysroot $SYSROOT -isystem $SYSROOT";
-              cd ../ &&
-              cd ./packages && pnpm build:node-dev --target aarch64-apple-darwin
-              chmod +x ./dist/node
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+              cd ./packages && pnpm build:node-dev
+              cd ../
+              cp ./packages/dist/node ./tag
+              chmod +x ./tag
 
           - host: windows-latest
             target: x86_64-pc-windows-msvc
             build: |
-              export CARGO_PROFILE_RELEASE_LTO=false
-              cd ../ &&
-              cd ./packages && pnpm build:node-dev --target x86_64-pc-windows-msvc
-              chmod +x ./dist/node
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+              cd ./packages && pnpm build:node-dev
+              cd ../
+              cp ./packages/dist/node ./tag
+              chmod +x ./tag
 
           - host: windows-latest
             target: i686-pc-windows-msvc
             build: |
-              export CARGO_PROFILE_RELEASE_LTO=false
-              cd ../ &&
-              cd ./packages && pnpm build:node-dev --target i686-pc-windows-msvc
-              chmod +x ./dist/node
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+              cd ./packages && pnpm build:node-dev
+              cd ../
+              cp ./packages/dist/node ./tag
+              chmod +x ./tag
 
           - host: windows-latest
             target: aarch64-pc-windows-msvc
-            # 禁用'LTO'并增加'codegen-units'以避免在 GitHub Actions 上使用llvm 'OOM'。
             build: |
-              export DISABLE_PLUGIN_E2E_TESTS=true
-              export CARGO_PROFILE_RELEASE_CODEGEN_UNITS=256
-              export CARGO_PROFILE_RELEASE_LTO=false
-              cd ../ &&
-              cd ./packages && pnpm build:node-dev --target aarch64-pc-windows-msvc
-              chmod +x ./dist/node
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+              cd ./packages && pnpm build:node-dev
+              cd ../
+              cp ./packages/dist/node ./tag
+              chmod +x ./tag
 
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
-            # unset CC_x86_64_unknown_linux_gnu && unset CC && RUSTFLAGS='-C target-feature=+sse2' &&
-            # rm -rf ../../bindings/target/target/x86_64-unknown-linux-gnu/release/.cargo-lock &&
-            build: >-
-              set -e &&
-              cd ../ &&
-              cd ./packages && pnpm build:node-dev --target x86_64-unknown-linux-gnu
-              chmod +x ./dist/node
+            build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+              cd ./packages && pnpm build:node-dev
+              cd ../
+              cp ./packages/dist/node ./tag
+              chmod +x ./tag
 
           - host: ubuntu-latest
             target: x86_64-unknown-linux-musl
-            # musl 构建太慢了，让我们关闭 LTO
-            # RUSTFLAGS='-C target-feature=+sse2' cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target x86_64-unknown-linux-musl &&
-            # rm -rf target/release/.cargo-lock  &&
-            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
-            build: >-
-              set -e &&
-              export CARGO_PROFILE_RELEASE_LTO=false &&
-              cd ../ &&
-              cd ./packages && RUSTFLAGS='-C target-feature=+sse2 -C target-feature=-crt-static' pnpm build:node-dev --target x86_64-unknown-linux-musl
-              chmod +x ./dist/node
+            build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+              cd ./packages && pnpm build:node-dev
+              cd ../
+              cp ./packages/dist/node ./tag
+              chmod +x ./tag
 
           - host: ubuntu-latest
             target: aarch64-unknown-linux-gnu
-            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
-            #  RUSTFLAGS='' cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target aarch64-unknown-linux-gnu &&
-            build: >-
-              set -e &&
-              export JEMALLOC_SYS_WITH_LG_PAGE=16 &&
-              rustup target add aarch64-unknown-linux-gnu &&
-              cd ../ &&
-              cd ./packages &&
-              export CC_aarch64_unknown_linux_gnu=/usr/aarch64-unknown-linux-gnu/bin/aarch64-unknown-linux-gnu-gcc && pnpm build:node-dev --target aarch64-unknown-linux-gnu
-              chmod +x ./dist/node
+            build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+              cd ./packages && pnpm build:node-dev
+              cd ../
+              cp ./packages/dist/node ./tag
+              chmod +x ./tag
+
           - host: ubuntu-latest
             target: armv7-unknown-linux-gnueabihf
             build: |
-              export DISABLE_PLUGIN_E2E_TESTS=true
-              cd ../ &&
-              cd ./packages && pnpm build:node-dev --target armv7-unknown-linux-gnueabihf --no-default-features --features swc_v1 --use-napi-cross
-              chmod +x ./dist/node
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+              cd ./packages && pnpm build:node-dev
+              cd ../
+              cp ./packages/dist/node ./tag
+              chmod +x ./tag
+
           - host: ubuntu-latest
             target: aarch64-unknown-linux-musl
-            downloadTarget: aarch64-unknown-linux-musl
-            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
-            # rustup toolchain install $(cat ../../rust-toolchain) &&
-            # RUSTFLAGS='-C target-feature=+crt-static -C link-arg=-lgcc' cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target aarch64-unknown-linux-musl &&
-            # rm -rf target/release/.cargo-lock &&
-            build: >-
-              export JEMALLOC_SYS_WITH_LG_PAGE=16 &&
-              rustup target add aarch64-unknown-linux-musl &&
-              cd ../ &&
-              cd ./packages && env RUSTFLAGS='-C target-feature=-crt-static' pnpm build:node-dev --target=aarch64-unknown-linux-musl
-              chmod +x ./dist/node
+            build: |
+              cargo build --verbose --release
+              cp ./target/release/image-compress ./tag
+              cd ./packages && pnpm build:node-dev
+              cd ../
+              cp ./packages/dist/node ./tag
+              chmod +x ./tag
 
     name: "构建 ${{ inputs.package }} - ${{ matrix.settings.target }} - node@20"
     runs-on: ${{ matrix.settings.host }}
     steps:
-      # - name: 展示 packages
-      #   working-directory: ./packages
-      #   run: ls -R ../../
-      #   shell: bash
+      - name: 展示 packages
+        working-directory: ./tag
+        run: ls -R .
+        shell: bash
 
       - uses: actions/checkout@v4
         # 引用 git tag 版本
@@ -266,10 +263,10 @@ jobs:
         shell: bash
 
       # 使用 x64 Node.js 安装依赖，因 为 ia32 版本将会失败，会提示 "错误:无法分配足够的内存"。
-      - name: 设置 install target x86
-        if: matrix.settings.target == 'i686-pc-windows-msvc'
-        run: pnpm config set supportedArchitectures.cpu "ia32"
-        shell: bash
+      # - name: 设置 install target x86
+      #   if: matrix.settings.target == 'i686-pc-windows-msvc'
+      #   run: pnpm config set supportedArchitectures.cpu "ia32"
+      #   shell: bash
 
       - name: 安装依赖
         # 再次运行 corepack enable
@@ -281,30 +278,20 @@ jobs:
           curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
           echo '/usr/local/cargo/bin' >> $GITHUB_PATH
 
-      - name: 设置 node x86
-        uses: actions/setup-node@v4
-        if: matrix.settings.target == 'i686-pc-windows-msvc'
-        with:
-          node-version: 20
-          architecture: x86
-
-      - name: 在 docker 中构建
-        uses: addnab/docker-run-action@v3
-        if: ${{ matrix.settings.docker }}
-        with:
-          image: ${{ matrix.settings.docker }}
-          options: -v ${{ env.HOME }}/.cargo/git:/root/.cargo/git -v ${{ env.HOME }}/.cargo/registry:/root/.cargo/registry -v ${{ github.workspace }}:/build -w /build
-          run: >-
-            cd ./packages &&
-            npm install -f -g pnpm@9.6.0 &&
-            corepack enable &&
-            npm i -g wasm-pack &&
-            ${{ matrix.settings.build }}
+      # - name: 设置 node x86
+      #   uses: actions/setup-node@v4
+      #   if: matrix.settings.target == 'i686-pc-windows-msvc'
+      #   with:
+      #     node-version: 20
+      #     architecture: x86
 
       - name: 构建
-        working-directory: ./packages
-        if: ${{ !matrix.settings.docker }}
-        run: ${{ matrix.settings.build }}
+        working-directory: .
+        run: |
+          mkdir tag
+          ${{matrix.settings.build}}
+          pwd
+          ls -R
         shell: bash
 
       - name: 上传 artifact
@@ -314,7 +301,7 @@ jobs:
           name: bindings-${{ matrix.settings.target }}
           # 归档的文件路径 xx* 代表以 xx 开头的文件
           path: |
-            packages/dist/node/image-compress*
+            tag/image-compress*
           if-no-files-found: error
 
   publish:
@@ -344,11 +331,11 @@ jobs:
         with:
           path: ./packages/artifacts
 
-      - name: 展示 artifacts 二进制文件 及 .node 文件
+      - name: 展示 artifacts 文件
         run: ls -R ./packages/artifacts
         shell: bash
 
-      - name: 移动 artifacts 二进制文件 (非 .node 文件)
+      - name: 移动 artifacts 文件
         shell: bash
         working-directory: .
         run: |
@@ -382,12 +369,12 @@ jobs:
       #     ./.github/scripts/cli_upload_gh_release.sh
       #       - name: 开始发布
 
-      - name: 通过 action 上传二进制到 gh release
+      - name: 通过 Action 上传二进制到 gh release
         uses: softprops/action-gh-release@v1
         # 403 错误 设置 Action 权限 github -> setting -> actiong -> general -> Workflow permissions
         with:
           generate_release_notes: true
-          tag_name: ${{ github.repository }}
+          tag_name: ${{ inputs.version }}
           body: ${{ github.event.head_commit.message }}
           token: ${{ github.token }}
           files: |

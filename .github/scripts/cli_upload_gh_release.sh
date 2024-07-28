@@ -2,7 +2,7 @@
 
 cd ./packages/
 
-for filename in artifacts_rename/*
+for filename in ./artifacts_rename/*
 do
   BINDING_NAME=${filename#*.}
   BINDING_ABI=${BINDING_NAME%%.*}

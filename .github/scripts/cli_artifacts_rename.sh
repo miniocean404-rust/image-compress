@@ -28,4 +28,8 @@ do
   elif [ -f "$CLI_BINARY_PATH.exe" ]; then
       mv -v $CLI_BINARY_PATH.exe ./$OUTPUT_DIR/$PROJECT_BINDING_NAME-$BINDING_ABI.exe
   fi
+
+  echo "-------------------开始准备变量-------------------"
+  echo "输出的文件路径：$CLI_BINARY_PATH"
+  echo "-------------------变量准备完成-------------------"
 done

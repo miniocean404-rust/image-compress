@@ -5,8 +5,8 @@ export const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
 });
 
-export const owner = "swc-project";
-export const repo = "swc";
+export const owner = "miniocean404-rust";
+export const repo = "image-compress";
 
 export function getCurrentPrNumber(): number {
   const ref = process.env.GITHUB_REF;

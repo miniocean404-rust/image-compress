@@ -10,7 +10,7 @@ function addZ(n: number) {
 async function main() {
   const latest: string = process.argv[2] || pkg.version;
 
-  process.stderr.write(`Previous version: ${latest}\n`);
+  process.stderr.write(`上一个版本: ${latest}\n`);
 
   // Bump patch version
 
@@ -20,7 +20,6 @@ async function main() {
   // Nightly version after 1.2.3-nightly-20211020.1 is 1.2.3-nightly-20211020.2
 
   const version = `${major}.${minor}.${patch}`;
-  // Nightly version
 
   const date = new Date();
 
@@ -41,6 +40,7 @@ async function main() {
     repo,
     order: "desc",
   });
+
   const tags = tagData.map((tag) => tag.name);
   while (tags.includes(nightlyVersion)) {
     idx += 1;

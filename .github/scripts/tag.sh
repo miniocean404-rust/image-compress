@@ -7,10 +7,12 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 git pull || true
 yarn
 
-version="$1"
-swc_core_version="$(cargo tree -i -p swc_core --depth 0 | awk '{print $2}')"
+CARGO_PROJECT_NAME="image-compress-core"
 
-echo "Publishing $version with swc_core $swc_core_version"
+version="$1"
+cargo_version="$(cargo tree -i -p $CARGO_PROJECT_NAME --depth 0 | awk '{print $2}')"
+
+echo "发布 $version with $CARGO_PROJECT_NAME $cargo_version"
 
 # Update swc_core
 (cd ./bindings && ../scripts/update-all-swc-crates.sh || true)
@@ -25,8 +27,8 @@ echo "Publishing $version with swc_core $swc_core_version"
 
 # Commmit and tag
 git add -A
-git commit -am "chore: Publish \`$version\` with \`swc_core\` \`$swc_core_version\`"
-git tag -a -m "swc_core $swc_core_version" "v$version"
+git commit -am "chore: 发布 \`$version\` with \`$CARGO_PROJECT_NAME\` \`$cargo_version\`"
+git tag -a -m "$CARGO_PROJECT_NAME $cargo_version" "v$version"
 
 
 # Update changelog

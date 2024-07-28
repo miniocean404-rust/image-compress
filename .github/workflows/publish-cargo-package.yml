@@ -81,6 +81,7 @@ jobs:
           version: "1.7"
           force: true
 
+    # 获取 determine-nightly-version 的 version 通过 ssh 生成 git tag 后，在后边使用
     #   - uses: webfactory/ssh-agent@v0.9.0
     #     if: needs.check-if-build-required.outputs.need-build == 'true' && !inputs.skipPublishing
     #     with:
@@ -379,13 +380,24 @@ jobs:
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # - name: 上传二进制到 gh release
+      #   if: ${{ !inputs.skipPublishing }}
+      #   shell: bash
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     RELEASE_VERSION: "v${{ inputs.version }}"
+      #   run: |
+      #     chmod +x ./.github/scripts/cli_upload_gh_release.sh
+      #     ./.github/scripts/cli_upload_gh_release.sh
+      #       - name: 开始发布
 
-      - name: 上传二进制到 gh release
-        if: ${{ !inputs.skipPublishing }}
-        shell: bash
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_VERSION: "v${{ inputs.version }}"
-        run: |
-          chmod +x ./.github/scripts/cli_upload_gh_release.sh
-          ./.github/scripts/cli_upload_gh_release.sh
+      - name: 通过 action 上传二进制到 gh release
+        uses: softprops/action-gh-release@v1
+        # 403 错误 设置 Action 权限 github -> setting -> actiong -> general -> Workflow permissions
+        with:
+          generate_release_notes: true
+          tag_name: ${{ github.repository }}
+          body: ${{ github.event.head_commit.message }}
+          token: ${{ github.token }}
+          files: |
+            prod_cli/*

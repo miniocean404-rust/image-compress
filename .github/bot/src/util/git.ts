@@ -10,22 +10,18 @@ async function streamToString(stream: Stream): Promise<string> {
   });
 }
 
+// 获取 git message
 export async function getTitleOfLatestCommit(): Promise<string> {
   const { stdout } = await exec("git log -1 --pretty=%B");
-
   const msg = await streamToString(stdout!);
-
   const s = msg.trim();
-
   return s.split("\n")[0];
 }
 
+// 获取 git hash 值
 export async function getCommitSha(): Promise<string> {
   const { stdout } = exec("git rev-parse HEAD");
-
   const msg = await streamToString(stdout!);
-
   const s = msg.trim();
-
   return s;
 }

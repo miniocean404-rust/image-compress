@@ -5,7 +5,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "ts-node ./src/nightly-version.ts"
+    "get-nightly-version": "ts-node ./src/nightly-version.ts"
   },
   "devDependencies": {
     "@types/node": "22.0.0",

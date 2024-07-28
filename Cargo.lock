@@ -686,7 +686,7 @@ dependencies = [
  "gifsicle",
  "globset",
  "imagequant",
- "infer 0.15.0",
+ "infer",
  "libc",
  "lodepng",
  "mozjpeg",
@@ -730,15 +730,6 @@ dependencies = [
  "equivalent",
  "hashbrown 0.14.5",
  "rayon",
-]
-
-[[package]]
-name = "infer"
-version = "0.15.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cb33622da908807a06f9513c19b3c1ad50fab3e4137d82a78107d502075aa199"
-dependencies = [
- "cfb",
 ]
 
 [[package]]
@@ -1778,7 +1769,7 @@ dependencies = [
  "backtrace",
  "chrono",
  "globset",
- "infer 0.16.0",
+ "infer",
  "tokio",
  "tracing",
  "tracing-appender",

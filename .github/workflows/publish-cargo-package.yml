@@ -352,11 +352,11 @@ jobs:
         with:
           path: ./packages/artifacts
 
-      - name: 展示 artifacts 二进制文件
+      - name: 展示 artifacts 二进制文件 及 .node 文件
         run: ls -R ./packages/artifacts
         shell: bash
 
-      - name: 移动 artifacts 二进制文件
+      - name: 移动 artifacts 二进制文件 (非 .node 文件)
         shell: bash
         working-directory: .
         run: |
@@ -369,7 +369,8 @@ jobs:
       #   run: |
       #     node ./scripts/update_fallback_dependencies.js
 
-      # - name: 发布 npm 包
+      # - name: 发布 npm 包及长传 .node 文件到 github release
+      # npm config set provenance true 命令设置发布 npm 包时候自动发布 github release https://docs.npmjs.com/generating-provenance-statements
       #   if: ${{ !inputs.skipPublishing }}
       #   run: |
       #     npm config set provenance true
@@ -380,7 +381,7 @@ jobs:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: 上传 cli 二进制到 gh release
+      - name: 上传二进制到 gh release
         if: ${{ !inputs.skipPublishing }}
         shell: bash
         env:

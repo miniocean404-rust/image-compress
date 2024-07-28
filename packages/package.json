@@ -19,11 +19,16 @@
       "aarch64-pc-windows-msvc"
     ]
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
   "scripts": {
     "build:wasm-dev": "npm-run-all \"pack -- build ../crates/wasm --dev --out-dir ../../packages/dist/wasm\" --",
     "build:wasm-release": "npm-run-all \"pack -- build ../crates/wasm --release --out-dir ../../packages/dist/wasm\" --",
     "build:node": "napi build --manifest-path ../crates/node/Cargo.toml --platform -p node --release -o dist/node",
     "build:node-dev": "napi build --manifest-path ../Cargo.toml -x --platform -p node --js ./index.js --dts ./index.d.ts --target-dir ../target -o ./dist/node",
+    "artifacts": "napi dist/node --npm-dir scripts/npm",
     "pack": "wasm-pack"
   },
   "devDependencies": {

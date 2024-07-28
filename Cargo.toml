@@ -55,7 +55,7 @@ anyhow = "1.0.79"
 # 处理错误 enum 参数
 thiserror = "1.0.50"
 # 推断文件类型
-infer = "0.15.0"
+infer = "0.16.0"
 globset = "0.4.14"
 walkdir = "2.4.0"
 num_cpus = "1.16.0"

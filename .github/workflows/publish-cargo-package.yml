@@ -1,3 +1,5 @@
+# 其他参考文：https://github.com/biomejs/biome/blob/main/.github/workflows/release_cli.yml
+
 name: "构建 Cargo 包"
 
 concurrency:
@@ -205,10 +207,10 @@ jobs:
     name: "构建 ${{ inputs.package }} - ${{ matrix.settings.target }} - node@20"
     runs-on: ${{ matrix.settings.host }}
     steps:
-      - name: 展示 packages
-        working-directory: ./tag
-        run: ls -R .
-        shell: bash
+      # - name: 展示 packages
+      #   working-directory: ./tag
+      #   run: ls -R .
+      #   shell: bash
 
       - uses: actions/checkout@v4
         # 引用 git tag 版本

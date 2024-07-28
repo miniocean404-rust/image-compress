@@ -387,4 +387,5 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_VERSION: "v${{ inputs.version }}"
         run: |
+          chmod +x ./.github/scripts/cli_upload_gh_release.sh
           ./.github/scripts/cli_upload_gh_release.sh

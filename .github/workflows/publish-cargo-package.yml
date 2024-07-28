@@ -109,7 +109,7 @@ jobs:
             target: x86_64-apple-darwin
             build: |
               cargo build --release
-              cp ./target/release/image-compress-core ./tag
+              cp ./target/release/image-compress ./tag
               cd ./packages && pnpm build:node-dev --target x86_64-apple-darwin &&
               cd ../ &&
               cp -r ./packages/dist/node/* ./tag
@@ -121,7 +121,7 @@ jobs:
             target: aarch64-apple-darwin
             build: |
               cargo build  --release
-              cp ./target/release/image-compress-core ./tag
+              cp ./target/release/image-compress ./tag
               cd ./packages && pnpm build:node-dev --target aarch64-apple-darwin &&
               cd ../ &&
               cp -r ./packages/dist/node/* ./tag
@@ -131,7 +131,7 @@ jobs:
             target: x86_64-pc-windows-msvc
             build: |
               cargo build  --release
-              cp ./target/release/image-compress-core ./tag
+              cp ./target/release/image-compress ./tag
               cd ./packages && pnpm build:node-dev --target x86_64-pc-windows-msvc &&
               cd ../ &&
               cp -r  ./packages/dist/node/* ./tag
@@ -141,7 +141,7 @@ jobs:
             target: i686-pc-windows-msvc
             build: |
               cargo build  --release
-              cp ./target/release/image-compress-core ./tag
+              cp ./target/release/image-compress ./tag
               cd ./packages && pnpm build:node-dev --target i686-pc-windows-msvc &&
               cd ../ &&
               cp -r  ./packages/dist/node/* ./tag
@@ -151,7 +151,7 @@ jobs:
             target: aarch64-pc-windows-msvc
             build: |
               cargo build  --release
-              cp ./target/release/image-compress-core ./tag
+              cp ./target/release/image-compress ./tag
               cd ./packages && pnpm build:node-dev --target aarch64-pc-windows-msvc &&
               cd ../ &&
               cp -r  ./packages/dist/node/* ./tag
@@ -161,7 +161,7 @@ jobs:
             target: x86_64-unknown-linux-gnu
             build: |
               cargo build  --release
-              cp ./target/release/image-compress-core ./tag
+              cp ./target/release/image-compress ./tag
               cd ./packages && pnpm build:node-dev --target x86_64-unknown-linux-gnu &&
               cd ../ &&
               cp -r  ./packages/dist/node/* ./tag
@@ -171,7 +171,7 @@ jobs:
             target: x86_64-unknown-linux-musl
             build: |
               cargo build  --release
-              cp ./target/release/image-compress-core ./tag
+              cp ./target/release/image-compress ./tag
               cd ./packages && pnpm build:node-dev --target x86_64-unknown-linux-musl &&
               cd ../ &&
               cp -r  ./packages/dist/node/* ./tag
@@ -181,7 +181,7 @@ jobs:
             target: aarch64-unknown-linux-gnu
             build: |
               cargo build  --release
-              cp ./target/release/image-compress-core ./tag
+              cp ./target/release/image-compress ./tag
               cd ./packages && pnpm build:node-dev --target aarch64-unknown-linux-gnu &&
               cd ../ &&
               cp -r  ./packages/dist/node/* ./tag
@@ -191,7 +191,7 @@ jobs:
             target: armv7-unknown-linux-gnueabihf
             build: |
               cargo build  --release
-              cp ./target/release/image-compress-core ./tag
+              cp ./target/release/image-compress ./tag
               cd ./packages && pnpm build:node-dev --target armv7-unknown-linux-gnueabihf &&
               cd ../ &&
               cp -r  ./packages/dist/node/* ./tag
@@ -201,7 +201,7 @@ jobs:
             target: aarch64-unknown-linux-musl
             build: |
               cargo build  --release
-              cp ./target/release/image-compress-core ./tag
+              cp ./target/release/image-compress ./tag
               cd ./packages && pnpm build:node-dev --target aarch64-unknown-linux-musl &&
               cd ../ &&
               cp -r  ./packages/dist/node/* ./tag
@@ -247,7 +247,7 @@ jobs:
       - uses: goto-bus-stop/setup-zig@v2
         if: ${{ matrix.settings.target == 'armv7-unknown-linux-gnueabihf' }}
         with:
-          version: 0.12.0
+          version: 0.13.0
 
       - name: 缓存 cargo registry
         uses: actions/cache@v4

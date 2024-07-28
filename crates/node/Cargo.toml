@@ -12,7 +12,7 @@ edition.workspace = true
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-image-compress-core = { path = "../core" }
+image-compress = { path = "../core" }
 explore = { path = "../explore" }
 utils = { path = "../utils" }
 

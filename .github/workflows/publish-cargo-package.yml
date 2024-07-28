@@ -126,7 +126,7 @@ jobs:
             build: |
               export CARGO_PROFILE_RELEASE_LTO=false
               cd ../ &&
-              cd ./packages && pnpm build:node-dev --target aarch64-apple-darwin
+              cd ./packages && pnpm build:node-dev --target x86_64-pc-windows-msvc
               chmod +x ./dist/node
 
           - host: windows-latest
@@ -134,7 +134,7 @@ jobs:
             build: |
               export CARGO_PROFILE_RELEASE_LTO=false
               cd ../ &&
-              cd ./packages && pnpm build:node-dev --target aarch64-apple-darwin
+              cd ./packages && pnpm build:node-dev --target i686-pc-windows-msvc
               chmod +x ./dist/node
 
           - host: windows-latest
@@ -145,7 +145,7 @@ jobs:
               export CARGO_PROFILE_RELEASE_CODEGEN_UNITS=256
               export CARGO_PROFILE_RELEASE_LTO=false
               cd ../ &&
-              cd ./packages && pnpm build:node-dev --target aarch64-apple-darwin
+              cd ./packages && pnpm build:node-dev --target aarch64-pc-windows-msvc
               chmod +x ./dist/node
 
           - host: ubuntu-latest
@@ -156,7 +156,7 @@ jobs:
             build: >-
               set -e &&
               cd ../ &&
-              cd ./packages && pnpm build:node-dev --target aarch64-apple-darwin
+              cd ./packages && pnpm build:node-dev --target x86_64-unknown-linux-gnu
               chmod +x ./dist/node
 
           - host: ubuntu-latest
@@ -169,7 +169,7 @@ jobs:
               set -e &&
               export CARGO_PROFILE_RELEASE_LTO=false &&
               cd ../ &&
-              cd ./packages && RUSTFLAGS='-C target-feature=+sse2 -C target-feature=-crt-static' pnpm build:node-dev --target aarch64-apple-darwin
+              cd ./packages && RUSTFLAGS='-C target-feature=+sse2 -C target-feature=-crt-static' pnpm build:node-dev --target x86_64-unknown-linux-musl
               chmod +x ./dist/node
 
           - host: ubuntu-latest
@@ -181,7 +181,8 @@ jobs:
               export JEMALLOC_SYS_WITH_LG_PAGE=16 &&
               rustup target add aarch64-unknown-linux-gnu &&
               cd ../ &&
-              cd ./packages &&  export CC_aarch64_unknown_linux_gnu=/usr/aarch64-unknown-linux-gnu/bin/aarch64-unknown-linux-gnu-gcc && pnpm build:node-dev --target aarch64-apple-darwin
+              cd ./packages &&
+              export CC_aarch64_unknown_linux_gnu=/usr/aarch64-unknown-linux-gnu/bin/aarch64-unknown-linux-gnu-gcc && pnpm build:node-dev --target aarch64-unknown-linux-gnu
               chmod +x ./dist/node
           - host: ubuntu-latest
             target: armv7-unknown-linux-gnueabihf

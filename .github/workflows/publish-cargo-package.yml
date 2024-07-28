@@ -1,4 +1,6 @@
-# 其他参考文：https://github.com/biomejs/biome/blob/main/.github/workflows/release_cli.yml
+# 其他参考文：
+# https://github.com/biomejs/biome/blob/main/.github/workflows/release_cli.yml
+# https://github.com/orhun/git-cliff/blob/main/.github/workflows/cd.yml
 
 name: "构建 Cargo 包"
 
@@ -108,8 +110,8 @@ jobs:
             build: |
               cargo build --verbose --release
               cp ./target/release/image-compress-core ./tag
-              cd ./packages && pnpm build:node-dev
-              cd ../
+              cd ./packages && pnpm build:node-dev &&
+              cd ../ &&
               cp ./packages/dist/node ./tag
               chmod +x ./tag
               strip -x ./tag/*.node
@@ -119,8 +121,8 @@ jobs:
             build: |
               cargo build --verbose --release
               cp ./target/release/image-compress-core ./tag
-              cd ./packages && pnpm build:node-dev
-              cd ../
+              cd ./packages && pnpm build:node-dev &&
+              cd ../ &&
               cp ./packages/dist/node ./tag
               chmod +x ./tag
 
@@ -129,8 +131,8 @@ jobs:
             build: |
               cargo build --verbose --release
               cp ./target/release/image-compress-core ./tag
-              cd ./packages && pnpm build:node-dev
-              cd ../
+              cd ./packages && pnpm build:node-dev &&
+              cd ../ &&
               cp ./packages/dist/node ./tag
               chmod +x ./tag
 
@@ -139,8 +141,8 @@ jobs:
             build: |
               cargo build --verbose --release
               cp ./target/release/image-compress-core ./tag
-              cd ./packages && pnpm build:node-dev
-              cd ../
+              cd ./packages && pnpm build:node-dev &&
+              cd ../ &&
               cp ./packages/dist/node ./tag
               chmod +x ./tag
 
@@ -149,8 +151,8 @@ jobs:
             build: |
               cargo build --verbose --release
               cp ./target/release/image-compress-core ./tag
-              cd ./packages && pnpm build:node-dev
-              cd ../
+              cd ./packages && pnpm build:node-dev &&
+              cd ../ &&
               cp ./packages/dist/node ./tag
               chmod +x ./tag
 
@@ -159,8 +161,8 @@ jobs:
             build: |
               cargo build --verbose --release
               cp ./target/release/image-compress-core ./tag
-              cd ./packages && pnpm build:node-dev
-              cd ../
+              cd ./packages && pnpm build:node-dev &&
+              cd ../ &&
               cp ./packages/dist/node ./tag
               chmod +x ./tag
 
@@ -169,8 +171,8 @@ jobs:
             build: |
               cargo build --verbose --release
               cp ./target/release/image-compress-core ./tag
-              cd ./packages && pnpm build:node-dev
-              cd ../
+              cd ./packages && pnpm build:node-dev &&
+              cd ../ &&
               cp ./packages/dist/node ./tag
               chmod +x ./tag
 
@@ -179,8 +181,8 @@ jobs:
             build: |
               cargo build --verbose --release
               cp ./target/release/image-compress-core ./tag
-              cd ./packages && pnpm build:node-dev
-              cd ../
+              cd ./packages && pnpm build:node-dev &&
+              cd ../ &&
               cp ./packages/dist/node ./tag
               chmod +x ./tag
 
@@ -189,8 +191,8 @@ jobs:
             build: |
               cargo build --verbose --release
               cp ./target/release/image-compress-core ./tag
-              cd ./packages && pnpm build:node-dev
-              cd ../
+              cd ./packages && pnpm build:node-dev &&
+              cd ../ &&
               cp ./packages/dist/node ./tag
               chmod +x ./tag
 
@@ -199,8 +201,8 @@ jobs:
             build: |
               cargo build --verbose --release
               cp ./target/release/image-compress-core ./tag
-              cd ./packages && pnpm build:node-dev
-              cd ../
+              cd ./packages && pnpm build:node-dev &&
+              cd ../ &&
               cp ./packages/dist/node ./tag
               chmod +x ./tag
 

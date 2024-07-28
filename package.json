@@ -8,5 +8,8 @@
     },
     "scripts": {
         "changelog": "git cliff --output CHANGELOG.md"
+    },
+    "devDependencies": {
+        "git-cliff": "^2.4.0"
     }
 }

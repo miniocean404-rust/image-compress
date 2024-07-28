@@ -24,5 +24,8 @@ do
       gh release upload $RELEASE_VERSION $CLI_BINARY_PATH.exe
   fi
 
-   gh release upload $filename
+  if [ -f "$filename" ]; then
+      gh release upload $RELEASE_VERSION $filename
+  fi
+
 done

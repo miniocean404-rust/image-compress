@@ -81,7 +81,7 @@ pub unsafe fn get_window_title(window: HWND) -> String {
     let mut title = [0u16; 512];
     let len = GetWindowTextW(window, &mut title);
 
-    return String::from_utf16_lossy(&title[..len as usize]);
+    String::from_utf16_lossy(&title[..len as usize])
 
     // GetWindowTextW(hwnd, &mut title);
     // let title = OsString::from_wide(&title[..]);
@@ -99,7 +99,7 @@ pub unsafe fn get_window_title_len(window: HWND) -> i32 {
 pub unsafe fn get_window_program_path(window: HWND) -> String {
     let mut path: [u16; 512] = [0; 512];
     let path_len = GetWindowModuleFileNameW(window, &mut path);
-    return String::from_utf16_lossy(&path[..path_len as usize]);
+    String::from_utf16_lossy(&path[..path_len as usize])
 }
 
 // 根据句柄获取窗口的可执行文件路径

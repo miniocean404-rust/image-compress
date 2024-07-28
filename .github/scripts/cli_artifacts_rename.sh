@@ -24,6 +24,7 @@ do
   echo "Cli 二进制路径 $CLI_BINARY_PATH"
   echo "-------------------变量准备完成-------------------"
 
+  # -f 是一个测试操作符，用于测试指定的路径是否为一个常规文件（不是目录、设备文件等）
   if [ -f "$CLI_BINARY_PATH" ]; then
       chmod +x $CLI_BINARY_PATH
       mv -v $CLI_BINARY_PATH        $OUTPUT_DIR/$PROJECT_BINDING_NAME-$BINDING_ABI
@@ -31,7 +32,9 @@ do
       mv -v $CLI_BINARY_PATH.exe    $OUTPUT_DIR/$PROJECT_BINDING_NAME-$BINDING_ABI.exe
   fi
 
-  mv $filename $OUTPUT_DIR
+  if [ -f "$filename" ]; then
+      mv -v $filename $OUTPUT_DIR
+  fi
 
   ls -R $OUTPUT_DIR
 done

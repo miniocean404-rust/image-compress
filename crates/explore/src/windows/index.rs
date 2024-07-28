@@ -26,7 +26,7 @@ pub unsafe fn get_explore_info() -> anyhow::Result<AppInfo> {
         let dir = get_path_from_explore_view(&info.shell_browser)?;
         let title = get_window_title(info.hwnd);
 
-        if &foreground_title == &title {
+        if foreground_title == title {
             app_info.dir = dir;
         }
 

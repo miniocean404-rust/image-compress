@@ -362,7 +362,7 @@ jobs:
         run: |
           chmod +x ./.github/scripts/cli_artifacts_rename.sh
           ./.github/scripts/cli_artifacts_rename.sh
-          ls -R ./artifacts_rename
+          ls -R ./packages/artifacts_rename
 
       # - name: 设置 npm 包依赖
       #   shell: bash

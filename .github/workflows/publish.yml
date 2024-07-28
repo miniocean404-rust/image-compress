@@ -59,14 +59,14 @@ concurrency:
 
 jobs:
   determine-nightly-version:
-    name: "确定发布版本"
+    name: "获取发布版本"
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.determine-nightly-version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-node
-      - name: 确定发布版本
+      - name: 获取发布版本
         id: determine-nightly-version
         run: |
           npx ts-node .github/bot/src/nightly-version.ts ${{ github.event.inputs.version }} >> $GITHUB_OUTPUT

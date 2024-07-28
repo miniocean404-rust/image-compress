@@ -103,6 +103,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # 命令解释
+        # 打包 swc 二进制文件
+        # cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target x86_64-apple-darwin
+        # cp ../../bindings/target/x86_64-apple-darwin/release/swc .
+        # chmod +x ./swc
+        # 打包 swc .node 文件
+        # yarn build --target x86_64-apple-darwin
+        # strip -x *.node
         settings:
           - host: macos-latest
             target: x86_64-apple-darwin

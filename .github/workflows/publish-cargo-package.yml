@@ -101,118 +101,108 @@ jobs:
       fail-fast: false
       matrix:
         settings:
-          # - host: macos-latest
-          #   target: x86_64-apple-darwin
-          #   # cd ../ && cargo build -p image-compress-core --release --target x86_64-apple-darwin
-          #   build: |
-          #     cd ../ &&
-          #     cd ./packages && pnpm build:node-dev --target x86_64-apple-darwin
-          #     chmod +x ./dist/node
-          #     strip -x ./dist/node/*.node
+          - host: macos-latest
+            target: x86_64-apple-darwin
+            # cd ../ && cargo build -p image-compress-core --release --target x86_64-apple-darwin
+            build: |
+              cd ../ &&
+              cd ./packages && pnpm build:node-dev --target x86_64-apple-darwin
+              chmod +x ./dist/node
+              strip -x ./dist/node/*.node
           - host: macos-latest
             target: aarch64-apple-darwin
             build: |
+              sudo rm -Rf /Library/Developer/CommandLineTools/SDKs/*;
+              export CC=$(xcrun -f clang);
+              export CXX=$(xcrun -f clang++);
+              SYSROOT=$(xcrun --sdk macosx --show-sdk-path);
+              export CFLAGS="-isysroot $SYSROOT -isystem $SYSROOT";
               cd ../ &&
               cd ./packages && pnpm build:node-dev --target aarch64-apple-darwin
               chmod +x ./dist/node
-              strip -x ./dist/node/*.node
 
-          # 打包 swc 二进制文件
-          # cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target x86_64-apple-darwin
-          # cp ../../bindings/target/x86_64-apple-darwin/release/swc .
-          # chmod +x ./swc
-          # 打包 swc .node 文件
-          # yarn build --target x86_64-apple-darwin
-          # strip -x *.node
-          # - host: macos-latest
-          #   target: aarch64-apple-darwin
-          #   build: |
-          #     sudo rm -Rf /Library/Developer/CommandLineTools/SDKs/*;
-          #     export CC=$(xcrun -f clang);
-          #     export CXX=$(xcrun -f clang++);
-          #     SYSROOT=$(xcrun --sdk macosx --show-sdk-path);
-          #     export CFLAGS="-isysroot $SYSROOT -isystem $SYSROOT";
-          #     cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target aarch64-apple-darwin
-          #     cp ../../bindings/target/aarch64-apple-darwin/release/swc .
-          #     chmod +x ./swc
-          #     yarn build --target aarch64-apple-darwin
+          - host: windows-latest
+            target: x86_64-pc-windows-msvc
+            build: |
+              export CARGO_PROFILE_RELEASE_LTO=false
+              cd ../ &&
+              cd ./packages && pnpm build:node-dev --target aarch64-apple-darwin
+              chmod +x ./dist/node
 
-          # - host: windows-latest
-          #   target: x86_64-pc-windows-msvc
-          #   build: |
-          #     export CARGO_PROFILE_RELEASE_LTO=false
-          #     yarn build --target x86_64-pc-windows-msvc
-          #     cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target x86_64-pc-windows-msvc
-          #     cp ../../bindings/target/x86_64-pc-windows-msvc/release/swc .
-          # - host: windows-latest
-          #   target: i686-pc-windows-msvc
-          #   # use npm to run test, because of corepack link the yarn with x64 Node.js
-          #   build: |
-          #     export CARGO_PROFILE_RELEASE_LTO=false
-          #     cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --target i686-pc-windows-msvc
-          #     cp ../../bindings/target/i686-pc-windows-msvc/release/swc .
-          #     yarn build --target i686-pc-windows-msvc --no-default-features --features swc_v1
-          #     npm run test
-          # - host: windows-latest
-          #   target: aarch64-pc-windows-msvc
-          #   # Disable `LTO` and increase `codegen-units` to avoid llvm `OOM` on GitHub Actions.
-          #   build: |
-          #     export DISABLE_PLUGIN_E2E_TESTS=true
-          #     export CARGO_PROFILE_RELEASE_CODEGEN_UNITS=256
-          #     export CARGO_PROFILE_RELEASE_LTO=false
-          #     cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --target aarch64-pc-windows-msvc
-          #     cp ../../bindings/target/aarch64-pc-windows-msvc/release/swc.exe .
-          #     yarn build --target aarch64-pc-windows-msvc --no-default-features --features swc_v1
-          # - host: ubuntu-latest
-          #   target: x86_64-unknown-linux-gnu
-          #   docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
-          #   build: >-
-          #     set -e &&
-          #     unset CC_x86_64_unknown_linux_gnu && unset CC && RUSTFLAGS='-C target-feature=+sse2' cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target x86_64-unknown-linux-gnu &&
-          #     rm -rf ../../bindings/target/target/x86_64-unknown-linux-gnu/release/.cargo-lock &&
-          #     cp ../../bindings/target/x86_64-unknown-linux-gnu/release/swc . && chmod +x ./swc &&
-          #     yarn build --target x86_64-unknown-linux-gnu
-          # - host: ubuntu-latest
-          #   target: x86_64-unknown-linux-musl
-          #   # musl build is slow, let's disable the LTO
-          #   docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
-          #   build: >-
-          #     set -e &&
-          #     export CARGO_PROFILE_RELEASE_LTO=false &&
-          #     RUSTFLAGS='-C target-feature=+sse2' cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target x86_64-unknown-linux-musl &&
-          #     rm -rf target/release/.cargo-lock &&
-          #     cp ../../bindings/target/x86_64-unknown-linux-musl/release/swc . && chmod +x ./swc &&
-          #     RUSTFLAGS='-C target-feature=+sse2 -C target-feature=-crt-static' yarn build --target x86_64-unknown-linux-musl
-          # - host: ubuntu-latest
-          #   target: aarch64-unknown-linux-gnu
-          #   docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
-          #   build: >-
-          #     set -e &&
-          #     export JEMALLOC_SYS_WITH_LG_PAGE=16 &&
-          #     rustup target add aarch64-unknown-linux-gnu &&
-          #     RUSTFLAGS='' cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target aarch64-unknown-linux-gnu &&
-          #     cp ../../bindings/target/aarch64-unknown-linux-gnu/release/swc . && chmod +x ./swc &&
-          #     export CC_aarch64_unknown_linux_gnu=/usr/aarch64-unknown-linux-gnu/bin/aarch64-unknown-linux-gnu-gcc &&
-          #     yarn build --target aarch64-unknown-linux-gnu
-          # - host: ubuntu-latest
-          #   target: armv7-unknown-linux-gnueabihf
-          #   build: |
-          #     export DISABLE_PLUGIN_E2E_TESTS=true
-          #     yarn napi build --bin swc --release --target armv7-unknown-linux-gnueabihf --manifest-path ../../bindings/swc_cli/Cargo.toml -x --target-dir ../release -o .
-          #     chmod +x ./swc
-          #     yarn build --target armv7-unknown-linux-gnueabihf --no-default-features --features swc_v1 --use-napi-cross
-          # - host: ubuntu-latest
-          #   target: aarch64-unknown-linux-musl
-          #   downloadTarget: aarch64-unknown-linux-musl
-          #   docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
-          #   build: >-
-          #     export JEMALLOC_SYS_WITH_LG_PAGE=16 &&
-          #     rustup toolchain install $(cat ../../rust-toolchain) &&
-          #     rustup target add aarch64-unknown-linux-musl &&
-          #     RUSTFLAGS='-C target-feature=+crt-static -C link-arg=-lgcc' cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target aarch64-unknown-linux-musl &&
-          #     rm -rf target/release/.cargo-lock &&
-          #     cp ../../bindings/target/aarch64-unknown-linux-musl/release/swc . && chmod +x ./swc &&
-          #     env RUSTFLAGS='-C target-feature=-crt-static' yarn build --target=aarch64-unknown-linux-musl
+          - host: windows-latest
+            target: i686-pc-windows-msvc
+            build: |
+              export CARGO_PROFILE_RELEASE_LTO=false
+              cd ../ &&
+              cd ./packages && pnpm build:node-dev --target aarch64-apple-darwin
+              chmod +x ./dist/node
+
+          - host: windows-latest
+            target: aarch64-pc-windows-msvc
+            # 禁用'LTO'并增加'codegen-units'以避免在 GitHub Actions 上使用llvm 'OOM'。
+            build: |
+              export DISABLE_PLUGIN_E2E_TESTS=true
+              export CARGO_PROFILE_RELEASE_CODEGEN_UNITS=256
+              export CARGO_PROFILE_RELEASE_LTO=false
+              cd ../ &&
+              cd ./packages && pnpm build:node-dev --target aarch64-apple-darwin
+              chmod +x ./dist/node
+
+          - host: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
+            # unset CC_x86_64_unknown_linux_gnu && unset CC && RUSTFLAGS='-C target-feature=+sse2' &&
+            # rm -rf ../../bindings/target/target/x86_64-unknown-linux-gnu/release/.cargo-lock &&
+            build: >-
+              set -e &&
+              cd ../ &&
+              cd ./packages && pnpm build:node-dev --target aarch64-apple-darwin
+              chmod +x ./dist/node
+
+          - host: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            # musl 构建太慢了，让我们关闭 LTO
+            # RUSTFLAGS='-C target-feature=+sse2' cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target x86_64-unknown-linux-musl &&
+            # rm -rf target/release/.cargo-lock &&
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
+            build: >-
+              set -e &&
+              export CARGO_PROFILE_RELEASE_LTO=false &&
+              cd ../ &&
+              cd ./packages && RUSTFLAGS='-C target-feature=+sse2 -C target-feature=-crt-static' pnpm build:node-dev --target aarch64-apple-darwin
+              chmod +x ./dist/node
+
+          - host: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
+            #  RUSTFLAGS='' cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target aarch64-unknown-linux-gnu &&
+            build: >-
+              set -e &&
+              export JEMALLOC_SYS_WITH_LG_PAGE=16 &&
+              rustup target add aarch64-unknown-linux-gnu &&
+              cd ../ &&
+              cd ./packages &&  export CC_aarch64_unknown_linux_gnu=/usr/aarch64-unknown-linux-gnu/bin/aarch64-unknown-linux-gnu-gcc && pnpm build:node-dev --target aarch64-apple-darwin
+              chmod +x ./dist/node
+          - host: ubuntu-latest
+            target: armv7-unknown-linux-gnueabihf
+            build: |
+              export DISABLE_PLUGIN_E2E_TESTS=true
+              cd ../ &&
+              cd ./packages && pnpm build:node-dev --target armv7-unknown-linux-gnueabihf --no-default-features --features swc_v1 --use-napi-cross
+              chmod +x ./dist/node
+          - host: ubuntu-latest
+            target: aarch64-unknown-linux-musl
+            downloadTarget: aarch64-unknown-linux-musl
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
+            # rustup toolchain install $(cat ../../rust-toolchain) &&
+            # RUSTFLAGS='-C target-feature=+crt-static -C link-arg=-lgcc' cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target aarch64-unknown-linux-musl &&
+            # rm -rf target/release/.cargo-lock &&
+            build: >-
+              export JEMALLOC_SYS_WITH_LG_PAGE=16 &&
+              rustup target add aarch64-unknown-linux-musl &&
+              cd ../ &&
+              cd ./packages && env RUSTFLAGS='-C target-feature=-crt-static' pnpm build:node-dev --target=aarch64-unknown-linux-musl
+              chmod +x ./dist/node
 
     name: "构建 ${{ inputs.package }} - ${{ matrix.settings.target }} - node@20"
     runs-on: ${{ matrix.settings.host }}

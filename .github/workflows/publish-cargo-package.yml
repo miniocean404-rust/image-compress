@@ -163,7 +163,7 @@ jobs:
             target: x86_64-unknown-linux-musl
             # musl 构建太慢了，让我们关闭 LTO
             # RUSTFLAGS='-C target-feature=+sse2' cargo build --manifest-path ../../bindings/swc_cli/Cargo.toml --release --features plugin --target x86_64-unknown-linux-musl &&
-            # rm -rf target/release/.cargo-lock &&
+            # rm -rf target/release/.cargo-lock  &&
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
             build: >-
               set -e &&

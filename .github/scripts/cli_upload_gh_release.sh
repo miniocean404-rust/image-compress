@@ -4,11 +4,18 @@ cd ./packages/
 
 for filename in artifacts_rename/*
 do
-  echo "尝试上传 $filename"
-
   BINDING_NAME=${filename#*.}
   BINDING_ABI=${BINDING_NAME%%.*}
   CLI_BINARY_PATH=${filename%%.*}
+
+  echo "-------------------开始准备变量-------------------"
+  echo "准备上传:"
+  echo "二进制名称 $BINDING_NAME"
+  echo "文件名称 $filename"
+  echo "文件 ABI 名称 $BINDING_ABI"
+  echo "Cli 二进制路径 $CLI_BINARY_PATH"
+  echo "-------------------变量准备完成-------------------"
+
 
   if [ -f "$CLI_BINARY_PATH" ]; then
       chmod +x $CLI_BINARY_PATH

@@ -5,7 +5,7 @@ OUTPUT_DIR="./artifacts_rename"
 ENTRY_DIR="./artifacts/*/*.node"
 PROJECT_BINDING_NAME="image-compress"
 
-mkdir -p $OUTPUT_DIR
+mkdir -p ./artifacts_rename
 
 for filename in $ENTRY_DIR
 do

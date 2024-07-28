@@ -1,0 +1,190 @@
+name: CI
+
+on:
+  merge_group:
+  pull_request:
+    types: ["opened", "reopened", "synchronize"]
+  push:
+    branches:
+      - master
+
+env:
+  CI: 1
+  CARGO_INCREMENTAL: 0
+  CARGO_TERM_COLOR: "always"
+  DIFF: 0
+  # For faster CI
+  RUST_LOG: "off"
+  # https://github.com/actions/setup-node/issues/899#issuecomment-1819151595
+  SKIP_YARN_COREPACK_CHECK: 1
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: "${{ github.event_name == 'pull_request' }}"
+
+jobs:
+  cargo-fmt:
+    name: Cargo 格式化
+    runs-on: ubuntu-latest
+    env:
+      RUST_LOG: "0"
+    steps:
+      - uses: actions/checkout@v4
+
+      # We explicitly do this to cache properly.
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          components: rustfmt
+
+      - run: cargo fmt --all -- --check
+
+  cargo-clippy:
+    name: Cargo clippy
+    if: >-
+      ${{ !contains(github.event.head_commit.message, 'chore: ') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          components: clippy
+
+      - run: cargo clippy --all --all-targets -- -D warnings
+
+  cargo-deny:
+    name: Check license of dependencies
+    runs-on: ubuntu-latest
+    if: >-
+      ${{ !contains(github.event.head_commit.message, 'chore: ') }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+
+      - name: 安装 cargo-deny
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-deny@0.14.15
+
+      - name: 检查许可证 licenses
+        run: |
+          cargo deny check
+
+  cargo-check:
+    name: Check
+    runs-on: ${{ matrix.os }}
+    if: >-
+      ${{ !contains(github.event.head_commit.message, 'chore: ') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      # We explicitly do this to cache properly.
+      - name: 安装 Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          # MSRV is current stable for ES crates and nightly for other languages
+          # toolchain: stable
+          # override: true
+
+      - run: corepack enable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: 安装 node 依赖
+        shell: bash
+        run: |
+          corepack enable
+          pnpm i
+
+      # Ensure that all components are compilable.
+      - name: Run cargo check for all targets
+        run: cargo check --all --all-targets
+
+  # miri 是一个用于 Rust 的即时（JIT）编译器的测试和分析工具。它可以模拟 Rust 代码在不同的抽象层面上的运行时行为。
+  miri:
+    name: Miri 分析
+    runs-on: ubuntu-latest
+    if: >-
+      ${{ !contains(github.event.head_commit.message, 'chore: ') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        crate:
+          - better_scoped_tls
+          - string_enum
+          - swc
+          - swc_bundler
+          - swc_ecma_codegen
+          - swc_ecma_minifier
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - shell: bash
+        run: corepack enable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: 安装 node 依赖
+        shell: bash
+        run: |
+          corepack enable
+          pnpm i
+
+      - name: 打印 rustup toolchain 版本
+        shell: bash
+        id: rustup-version
+        run: |
+          export RUST_TOOLCHAIN="$(cat rust-toolchain | tr -d '\n')"
+          echo "Rust toolchain: $RUST_TOOLCHAIN"
+          echo "RUST_TOOLCHAIN=$RUST_TOOLCHAIN" >> "$GITHUB_OUTPUT"
+
+      - name: 安装 miri
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: "${{ steps.rustup-version.outputs.RUST_TOOLCHAIN }}"
+          components: miri
+
+      - run: cargo miri test -p ${{ matrix.crate }} --no-fail-fast
+        continue-on-error: true
+        env:
+          MIRIFLAGS: "-Zmiri-disable-isolation"
+
+  done:
+    needs:
+      - cargo-fmt
+      - cargo-clippy
+      - cargo-deny
+      - cargo-check
+    if: >-
+      ${{ always() && !contains(github.event.head_commit.message, 'chore: ') }}
+    runs-on: ubuntu-latest
+    name: 结束
+    steps:
+      - run: exit 1
+        if: ${{ always() && (contains(needs.*.result, 'failure') || contains(needs.*.result, 'skipped') || contains(needs.*.result, 'cancelled')) }}

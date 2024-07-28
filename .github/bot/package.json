@@ -4,13 +4,16 @@
   "main": "index.js",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "dev": "ts-node ./src/nightly-version.ts"
+  },
   "devDependencies": {
     "@types/node": "22.0.0",
     "ts-node": "^10.5.0",
     "typescript": "5.5.4"
   },
   "dependencies": {
-    "@octokit/rest": "21.0.1",
+    "@octokit/rest": "20.1.1",
     "yaml": "2.5.0"
   }
 }

@@ -1,3 +1,4 @@
+// 20.1.1 最后一个 require 版本
 import { Octokit } from "@octokit/rest";
 
 export const octokit = new Octokit({

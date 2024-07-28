@@ -69,7 +69,7 @@ jobs:
       - name: 确定发布版本
         id: determine-nightly-version
         run: |
-          npx ts-node .github/bot/src/nightly-version.ts github.event.inputs.version >> $GITHUB_OUTPUT
+          npx ts-node .github/bot/src/nightly-version.ts ${{ github.event.inputs.version }} >> $GITHUB_OUTPUT
 
   publish-cargo-stable:
     name: "发布稳定版 ${{ needs.determine-nightly-version.outputs.version }}"

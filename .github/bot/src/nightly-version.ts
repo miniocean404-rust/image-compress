@@ -1,16 +1,14 @@
 // npx ts-node .github/bot/src/nightly-version.ts $version
 
 import { octokit, owner, repo } from "./util/octokit";
+import pkg from "../../../packages/package.json";
 
 function addZ(n: number) {
   return n < 10 ? "0" + n : "" + n;
 }
 
 async function main() {
-  // Default to the core version in packages/core/package.json
-  const coreVersion = require("../../../packages/package.json").version;
-
-  const latest: string = process.argv[2] || coreVersion;
+  const latest: string = process.argv[2] || pkg.version;
 
   process.stderr.write(`Previous version: ${latest}\n`);
 

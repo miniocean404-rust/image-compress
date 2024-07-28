@@ -27,7 +27,7 @@ impl Drop for JPEGOptimizer {
 
 // This function losslessly optimizes jpegs.
 // Based on the jpegtran.c example program in libjpeg.
-pub fn optimize_lossless_jpeg(bytes: &[u8], keep_metadata: bool) -> &mut [u8] {
+pub fn optimize_lossless_jpeg(bytes: &[u8], keep_metadata: bool) -> &[u8] {
     let result = unsafe {
         panic::catch_unwind(|| {
             let mut info = JPEGOptimizer::new();
@@ -78,7 +78,7 @@ pub fn optimize_lossless_jpeg(bytes: &[u8], keep_metadata: bool) -> &mut [u8] {
     }
 }
 
-pub fn optimize_lossy_jpeg(bytes: &[u8], quality: i32, keep_metadata: bool) -> &mut [u8] {
+pub fn optimize_lossy_jpeg(bytes: &[u8], quality: i32, keep_metadata: bool) -> &[u8] {
     let result = unsafe {
         panic::catch_unwind(|| {
             let mut info = JPEGOptimizer::new();

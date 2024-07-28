@@ -108,7 +108,14 @@ jobs:
             # cd ../ && cargo build -p image-compress-core --release --target x86_64-apple-darwin
             build: |
               cd ../ &&
-              cd ./packages && pnpm build:node-dev
+              cd ./packages && pnpm build:node-dev --target x86_64-apple-darwin
+              chmod +x ./dist/node
+              strip -x ./dist/node/*.node
+          - host: macos-latest
+            target: aarch64-apple-darwin
+            build: |
+              cd ../ &&
+              cd ./packages && pnpm build:node-dev --target aarch64-apple-darwin
               chmod +x ./dist/node
               strip -x ./dist/node/*.node
 
@@ -119,7 +126,6 @@ jobs:
           # 打包 swc .node 文件
           # yarn build --target x86_64-apple-darwin
           # strip -x *.node
-
           # - host: macos-latest
           #   target: aarch64-apple-darwin
           #   build: |
@@ -132,6 +138,7 @@ jobs:
           #     cp ../../bindings/target/aarch64-apple-darwin/release/swc .
           #     chmod +x ./swc
           #     yarn build --target aarch64-apple-darwin
+
           # - host: windows-latest
           #   target: x86_64-pc-windows-msvc
           #   build: |
@@ -319,3 +326,71 @@ jobs:
           path: |
             packages/dist/node/image-compress*
           if-no-files-found: error
+
+  publish:
+    name: 发布 ${{ inputs.version }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: "v${{ inputs.version }}"
+
+      - uses: ./.github/actions/setup-node
+
+      - name: 设置 npm 发行版标签
+        run: |
+          if [[ '${{ inputs.version }}' != *"nightly"* ]]; then
+            echo "NPM_TAG=latest" >> $GITHUB_ENV
+          else
+            echo "NPM_TAG=nightly" >> $GITHUB_ENV
+          fi
+
+      - name: 安装依赖
+        run: corepack enable && pnpm install
+
+      - name: 下载所有 artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: ./packages/artifacts
+
+      - name: 展示二进制文件
+        run: ls -R ./packages/artifacts
+        shell: bash
+
+      # - name: 移动二进制文件
+      #   shell: bash
+      #   working-directory: ./packages
+      #   run: |
+      #     ./scripts/cli_artifacts.sh
+      #     ls -R ./artifacts_cli
+      #     npm run artifacts
+
+      # - name: 展示 npm 包文件
+      #   run: ls -R ./scripts/npm
+      #   working-directory: ./packages
+      #   shell: bash
+
+      # - name: 设置 npm 包依赖
+      #   shell: bash
+      #   run: |
+      #     node ./scripts/update_fallback_dependencies.js
+
+      # - name: 发布 npm 包
+      #   if: ${{ !inputs.skipPublishing }}
+      #   run: |
+      #     npm config set provenance true
+      #     echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+      #     echo "npmAlwaysAuth:true\n npmAuthToken: '$NPM_TOKEN'\n" >> ~/.yarnrc
+      #     (cd packages/core && yarn workspaces foreach -Rt npm publish --tolerate-republish --tag $NPM_TAG)
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: 上传 cli 二进制到 gh release
+        if: ${{ !inputs.skipPublishing }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_VERSION: "v${{ inputs.version }}"
+        run: |
+          ./.github/scripts/cli_upload_gh_release.sh

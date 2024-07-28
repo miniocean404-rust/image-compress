@@ -112,7 +112,7 @@ jobs:
               cp ./target/release/image-compress-core ./tag
               cd ./packages && pnpm build:node-dev &&
               cd ../ &&
-              cp -r ./packages/dist/node ./tag
+              cp -r ./packages/dist/node/* ./tag
               chmod +x ./tag
               ls -R ./tag
               strip -x ./tag/*.node

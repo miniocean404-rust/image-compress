@@ -3,7 +3,7 @@
 cd ./packages/
 
 # 将归档的文件重命名移动到另一个文件夹中
-ENTRY_DIR="artifacts/*/*.node"
+ENTRY_DIR="artifacts/*/*.node" # 不能有 ./
 OUTPUT_DIR="./artifacts_rename"
 PROJECT_BINDING_NAME="image-compress"
 

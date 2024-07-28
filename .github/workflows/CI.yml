@@ -59,7 +59,7 @@ jobs:
       - run: cargo clippy --all --all-targets -- -D warnings
 
   cargo-deny:
-    name: Check license of dependencies
+    name: 检查依赖许可证
     runs-on: ubuntu-latest
     if: >-
       ${{ !contains(github.event.head_commit.message, 'chore: ') }}
@@ -160,7 +160,7 @@ jobs:
           corepack enable
           pnpm i
 
-      - name: 打印 rustup toolchain 版本
+      - name: 获取本地文件中 rustup toolchain 版本
         shell: bash
         id: rustup-version
         run: |
@@ -171,7 +171,8 @@ jobs:
       - name: 安装 miri
         uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: "${{ steps.rustup-version.outputs.RUST_TOOLCHAIN }}"
+          # toolchain: "${{ steps.rustup-version.outputs.RUST_TOOLCHAIN }}"
+          toolchain: stable
           components: miri
 
       - run: cargo miri test -p ${{ matrix.crate }} --no-fail-fast

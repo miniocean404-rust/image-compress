@@ -1,6 +1,7 @@
 {
   "package": "image-compress",
   "license": "MIT",
+  "version": "1.0.0",
   "napi": {
     "binaryName": "image-compress",
     "package": {

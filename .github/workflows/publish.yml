@@ -22,6 +22,7 @@ on:
         description: "发布的版本"
         required: true
         type: string
+        default: 1.0.0
       skipBuild:
         description: "跳过构建. Used to debug swc-ecosystem-ci."
         required: false
@@ -58,17 +59,17 @@ concurrency:
 
 jobs:
   determine-nightly-version:
-    name: "确定 version"
+    name: "确定发布版本"
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.determine-nightly-version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-node
-      - name: Determine nightly version
+      - name: 确定发布版本
         id: determine-nightly-version
         run: |
-          ${{ github.event.inputs.version }} >> $GITHUB_OUTPUT
+          npx ts-node .github/bot/src/nightly-version.ts github.event.inputs.version >> $GITHUB_OUTPUT
 
   publish-cargo-stable:
     name: "发布稳定版 ${{ needs.determine-nightly-version.outputs.version }}"

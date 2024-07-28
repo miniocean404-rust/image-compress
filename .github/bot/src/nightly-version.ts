@@ -8,7 +8,7 @@ function addZ(n: number) {
 
 async function main() {
   // Default to the core version in packages/core/package.json
-  const coreVersion = require("../../../packages/core/package.json").version;
+  const coreVersion = require("../../../packages/package.json").version;
 
   const latest: string = process.argv[2] || coreVersion;
 
@@ -49,7 +49,6 @@ async function main() {
     nightlyVersion = `${base}.${idx}`;
   }
   process.stderr.write(`Nightly version: ${nightlyVersion}\n`);
-
   process.stdout.write(`version=${nightlyVersion.substring(1)}\n`);
 }
 

@@ -114,6 +114,7 @@ jobs:
               cd ../ &&
               cp -r ./packages/dist/node ./tag
               chmod +x ./tag
+              ls -R ./tag
               strip -x ./tag/*.node
 
           - host: macos-latest

@@ -55,18 +55,18 @@ concurrency:
 #          profile: minimal
 
 jobs:
-  #   determine-nightly-version:
-  #     name: "确定 version"
-  #     runs-on: ubuntu-latest
-  #     outputs:
-  #       version: ${{ steps.determine-nightly-version.outputs.version }}
-  #     steps:
-  #       - uses: actions/checkout@v4
-  #       - uses: ./.github/actions/setup-node
-  #       - name: Determine nightly version
-  #         id: determine-nightly-version
-  #         run: |
-  #           npx ts-node .github/bot/src/nightly-version.ts ${{ github.event.inputs.version }} >> $GITHUB_OUTPUT
+  determine-nightly-version:
+    name: "确定 version"
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.determine-nightly-version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node
+      - name: Determine nightly version
+        id: determine-nightly-version
+        run: |
+          ${{ github.event.inputs.version }} >> $GITHUB_OUTPUT
 
   publish-cargo:
     # name: "Publish ${{ needs.determine-nightly-version.outputs.version }}"

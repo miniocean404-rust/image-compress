@@ -333,8 +333,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: "v${{ inputs.version }}"
+        # with:
+        # ref: "v${{ inputs.version }}"
 
       - uses: ./.github/actions/setup-node
 

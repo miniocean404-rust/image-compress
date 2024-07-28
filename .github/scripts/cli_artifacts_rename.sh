@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cd ./packages/
+
 # 将归档的文件重命名移动到另一个文件夹中
 OUTPUT_DIR="./artifacts_rename"
 ENTRY_DIR="./artifacts/*/*.node"

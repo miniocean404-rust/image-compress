@@ -1,4 +1,4 @@
-name: "issue 超时自动锁定"
+name: "超时 Issue 自动锁定"
 
 on:
   schedule:

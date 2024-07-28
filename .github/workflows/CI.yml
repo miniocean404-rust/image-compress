@@ -34,6 +34,7 @@ jobs:
       # We explicitly do this to cache properly.
       - uses: actions-rs/toolchain@v1
         with:
+          toolchain: default
           profile: minimal
           components: rustfmt
 
@@ -51,6 +52,7 @@ jobs:
 
       - uses: actions-rs/toolchain@v1
         with:
+          toolchain: default
           profile: minimal
           components: clippy
 
@@ -67,6 +69,7 @@ jobs:
       - name: 安装 Rust
         uses: actions-rs/toolchain@v1
         with:
+          toolchain: default
           profile: minimal
 
       - name: 安装 cargo-deny
@@ -99,6 +102,7 @@ jobs:
       - name: 安装 Rust
         uses: actions-rs/toolchain@v1
         with:
+          toolchain: default
           profile: minimal
           # MSRV is current stable for ES crates and nightly for other languages
           # toolchain: stable

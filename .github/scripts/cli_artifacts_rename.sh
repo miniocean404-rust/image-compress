@@ -17,8 +17,8 @@ do
 
   echo "-------------------开始准备变量-------------------"
   echo "准备移动 artifacts:"
+  echo "文件路径 $filename"
   echo "二进制名称 $BINDING_NAME"
-  echo "文件名称 $filename"
   echo "Cli 二进制路径 $CLI_BINARY_PATH"
   echo "-------------------变量准备完成-------------------"
 
@@ -29,7 +29,8 @@ do
       mv -v $CLI_BINARY_PATH.exe ./$OUTPUT_DIR/$PROJECT_BINDING_NAME-$BINDING_ABI.exe
   fi
 
-  echo "-------------------开始准备变量-------------------"
-  echo "输出的文件路径：$CLI_BINARY_PATH"
-  echo "-------------------变量准备完成-------------------"
+  echo "-------------------输出-------------------"
+  echo "移动前：$CLI_BINARY_PATH"
+  echo "移动后：./$OUTPUT_DIR/$PROJECT_BINDING_NAME-$BINDING_ABI"
+  echo "-------------------输出-------------------"
 done

@@ -242,7 +242,7 @@ jobs:
       #       echo '================  信息 END  ================'
       #     shell: bash
       # Linux
-      - name: Build armv7-unknown-linux-gnueabihf in Docker
+      - name: Build armv7-unknown-linux-gnueabihf
         if: ${{ matrix.settings.target == 'armv7-unknown-linux-gnueabihf'  }}
         working-directory: ./packages
         shell: bash

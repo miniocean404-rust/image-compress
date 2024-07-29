@@ -49,3 +49,8 @@ rustflags = ["-C", "link-args=/FORCE"]
 rustflags = ["-C", "target-feature=+crt-static"]
 [target.i686-pc-windows-msvc]
 rustflags = ["-C", "target-feature=+crt-static"]
+
+# 修复 Github Actions Napi 中 zig: not found 问题
+[target.aarch64-unknown-linux-musl]
+linker = "aarch64-linux-musl-gcc"
+rustflags = ["-C", "target-feature=-crt-static"]

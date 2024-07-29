@@ -10,7 +10,16 @@ pub fn encode_webp(image: &DynamicImage) -> Result<Vec<u8>, String> {
     Ok(webp_data.to_vec())
 }
 
-fn convert_image(input_path: &str, output_dir: &Option<&str>) -> Result<(), String> {
+/// # 例子
+/// ```
+/// let dir = ["./input/5613.png", "./input/coffee.jpg"];
+/// for file in dir.iter() {
+///     if let Err(e) = convert_any_image(file, &Some("./output")) {
+///         eprintln!("Error: {}", e);
+///     }
+/// }
+/// ```
+pub fn convert_any_image(input_path: &str, output_dir: &Option<&str>) -> Result<(), String> {
     let input_path = Path::new(input_path);
 
     // 打开并解码图像
@@ -32,13 +41,4 @@ fn convert_image(input_path: &str, output_dir: &Option<&str>) -> Result<(), Stri
 
     println!("生成: {}", output_path.display());
     Ok(())
-}
-
-fn to_webp() {
-    let dir = ["./input/5613.png", "./input/coffee.jpg"];
-    for file in dir.iter() {
-        if let Err(e) = convert_image(file, &Some("./output")) {
-            eprintln!("Error: {}", e);
-        }
-    }
 }

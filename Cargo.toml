@@ -2,11 +2,9 @@
 
 resolver = "2"
 # 设置默认执行的 workspace
-default-members = [
-    "crates/core"
-]
+default-members = ["crates/core"]
 members = [
-    "crates/*"
+    "crates/*",
     # "crates/core",
 ]
 
@@ -21,7 +19,7 @@ repository = "https://github.com/miniocean404-rust/image-compress"
 
 [profile.dev]
 opt-level = 0
-codegen-units = 16   # debug build will cause runtime panic if codegen-unints is default
+codegen-units = 16 # debug build will cause runtime panic if codegen-unints is default
 debug = 2
 incremental = true
 
@@ -66,4 +64,3 @@ tracing-appender = "0.2.3"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 tracing-futures = "0.2.5"
 tracing-chrome = "0.7.2"
-

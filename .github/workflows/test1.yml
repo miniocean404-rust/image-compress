@@ -41,6 +41,10 @@ on:
       skipPublishing:
         type: boolean
         required: true
+      profile:
+        type: string
+        required: false
+        default: release
 
 jobs:
   check-if-build-required:
@@ -227,99 +231,87 @@ jobs:
       #           chmod +x ./tag
       #           ls -R ./tag
       #           strip -x ./tag/*.node
-      - name: 构建
-        working-directory: .
-        run: |
-          mkdir tag
-          cargo build --release --target ${{ matrix.settings.target }}
-          echo '================ 信息 START ================'
-          pwd
-          ls -R
-          echo '================  信息 END  ================'
-        shell: bash
+      #   - name: 构建
+      #     working-directory: .
+      #     run: |
+      #       mkdir tag
+      #       cargo build --release --target ${{ matrix.settings.target }}
+      #       echo '================ 信息 START ================'
+      #       pwd
+      #       ls -R
+      #       echo '================  信息 END  ================'
+      #     shell: bash
+      # Linux
 
-      - name: 上传 artifact
-        uses: actions/upload-artifact@v4
+      - name: Build x86_64-unknown-linux-gnu in Docker
+        if: ${{ matrix.settings.target == 'x86_64-unknown-linux-gnu'  }}
+        uses: ./.github/actions/docker-build
         with:
-          # 上传归档的名称
-          name: bindings-${{ matrix.settings.target }}
-          # 归档的文件路径 xx* 代表以 xx 开头的文件
-          path: |
-            tag/image-compress*
-          if-no-files-found: error
+          image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
+          target: ${{ matrix.settings.target }}
+          profile: ${{ inputs.profile }}
+          pre: unset CC_x86_64_unknown_linux_gnu && unset CC # for jemallocator to compile
 
-  publish:
-    needs: build
-    name: 发布 ${{ inputs.version }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        # with:
-        # ref: "v${{ inputs.version }}"
+      - name: Build aarch64-unknown-linux-gnu in Docker
+        if: ${{ matrix.settings.target == 'aarch64-unknown-linux-gnu' }}
+        uses: ./.github/actions/docker-build
+        with:
+          target: ${{ matrix.settings.target }}
+          image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
+          profile: ${{ inputs.profile }}
+          pre: export JEMALLOC_SYS_WITH_LG_PAGE=16 && export CC_aarch64_unknown_linux_gnu=/usr/aarch64-unknown-linux-gnu/bin/aarch64-unknown-linux-gnu-gcc # for jemallocator to compile
 
-      - uses: ./.github/actions/setup-node
+      - name: Build x86_64-unknown-linux-musl in Docker
+        if: ${{ matrix.settings.target == 'x86_64-unknown-linux-musl'  }}
+        uses: ./.github/actions/docker-build
+        with:
+          target: ${{ matrix.settings.target }}
+          image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
+          profile: ${{ inputs.profile }}
 
-      - name: 设置 npm 发行版标签
+      - name: Build aarch64-unknown-linux-musl in Docker
+        if: ${{ matrix.settings.target == 'aarch64-unknown-linux-musl'  }}
+        uses: ./.github/actions/docker-build
+        with:
+          target: ${{ matrix.settings.target }}
+          image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
+          profile: ${{ inputs.profile }}
+          pre: |
+            export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER=aarch64-linux-musl-gcc
+
+      # setup rust target for windows and macos
+      - name: Setup Rust Target
+        if: ${{ !contains(matrix.settings.target, 'linux') }}
+        run: rustup target add ${{ matrix.settings.target }}
+
+      # Windows
+      - name: Build i686-pc-windows-msvc
+        if: ${{ matrix.settings.target == 'i686-pc-windows-msvc'  }}
+        run: RUST_TARGET=${{ matrix.settings.target }} DISABLE_PLUGIN=1 pnpm build:node-dev --target ${{ matrix.settings.target }}
+
+      - name: Build x86_64-pc-windows-msvc
+        if: ${{ matrix.settings.target == 'x86_64-pc-windows-msvc'  }}
+        run: RUST_TARGET=${{ matrix.settings.target }} pnpm build:node-dev --target ${{ matrix.settings.target }}
+
+      - name: Build aarch64-pc-windows-msvc
+        if: ${{ matrix.settings.target == 'aarch64-pc-windows-msvc'  }}
+        run: RUST_TARGET=${{ matrix.settings.target }} DISABLE_PLUGIN=1 pnpm build:node-dev --target ${{ matrix.settings.target }}
+
+      # Mac
+      - name: Build x86_64-apple-darwin
+        if: ${{ matrix.settings.target == 'x86_64-apple-darwin'  }}
         run: |
-          if [[ '${{ inputs.version }}' != *"nightly"* ]]; then
-            echo "NPM_TAG=latest" >> $GITHUB_ENV
-          else
-            echo "NPM_TAG=nightly" >> $GITHUB_ENV
+          RUST_TARGET=${{ matrix.settings.target }} pnpm build:node-dev --target ${{ matrix.settings.target }}
+
+      - name: Build aarch64-apple-darwin
+        if: ${{ matrix.settings.target == 'aarch64-apple-darwin'  }}
+        run: |
+          if [[ "${{ startsWith(runner.name, 'GitHub Actions') }}" == "true" ]]; then
+            # Github runner
+            sudo rm -Rf /Library/Developer/CommandLineTools/SDKs/*;
           fi
-
-      - name: 安装依赖
-        run: corepack enable && pnpm install
-
-      - name: 下载所有 artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: ./packages/artifacts
-
-      - name: 展示 artifacts 文件
-        run: ls -R ./packages/artifacts
-        shell: bash
-
-      - name: 移动 artifacts 文件
-        shell: bash
-        working-directory: .
-        run: |
-          chmod +x ./.github/scripts/cli_artifacts_rename.sh
-          ./.github/scripts/cli_artifacts_rename.sh
-
-      # - name: 设置 npm 包依赖
-      #   shell: bash
-      #   run: |
-      #     node ./scripts/update_fallback_dependencies.js
-
-      # - name: 发布 npm 包及长传 .node 文件到 github release
-      # npm config set provenance true 命令设置发布 npm 包时候自动发布 github release https://docs.npmjs.com/generating-provenance-statements
-      #   if: ${{ !inputs.skipPublishing }}
-      #   run: |
-      #     npm config set provenance true
-      #     echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-      #     echo "npmAlwaysAuth:true\n npmAuthToken: '$NPM_TOKEN'\n" >> ~/.yarnrc
-      #     (cd packages/core && yarn workspaces foreach -Rt npm publish --tolerate-republish --tag $NPM_TAG)
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      # - name: 上传二进制到 gh release
-      #   if: ${{ !inputs.skipPublishing }}
-      #   shell: bash
-      #   env:
-      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     RELEASE_VERSION: "v${{ inputs.version }}"
-      #   run: |
-      #     chmod +x ./.github/scripts/cli_upload_gh_release.sh
-      #     ./.github/scripts/cli_upload_gh_release.sh
-      #       - name: 开始发布
-
-      - name: 通过 Action 上传二进制到 gh release
-        uses: softprops/action-gh-release@v1
-        # 403 错误 设置 Action 权限 github -> setting -> actiong -> general -> Workflow permissions
-        with:
-          generate_release_notes: true
-          tag_name: ${{ github.repository }}
-          body: ${{ github.event.head_commit.message }}
-          token: ${{ github.token }}
-          files: |
-            ./packages/artifacts_rename/*
+          export CC=$(xcrun -f clang);
+          export CXX=$(xcrun -f clang++);
+          SYSROOT=$(xcrun --sdk macosx --show-sdk-path);
+          export CFLAGS="-isysroot $SYSROOT -isystem $SYSROOT";
+          RUST_TARGET=${{ matrix.settings.target }} pnpm build:node-dev --target ${{ matrix.settings.target }}

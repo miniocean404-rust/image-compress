@@ -12,8 +12,8 @@ edition.workspace = true
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-#image-compress = { path = "../core" }
-#explore = { path = "../explore" }
+image-compress = { path = "../core" }
+explore = { path = "../explore" }
 utils = { path = "../utils" }
 
 tokio.workspace = true

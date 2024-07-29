@@ -1,6 +1,7 @@
 # 其他参考文：
 # https://github.com/biomejs/biome/blob/main/.github/workflows/release_cli.yml
 # https://github.com/orhun/git-cliff/blob/main/.github/workflows/cd.yml
+# https://github.com/skyra-project/ai/actions/runs/5556591465/workflow?pr=131
 
 name: "构建 Cargo 包"
 

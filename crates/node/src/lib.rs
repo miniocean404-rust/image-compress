@@ -1,4 +1,4 @@
-pub mod compress;
+// pub mod compress;
 pub mod demo;
 pub mod index;
 pub mod log;

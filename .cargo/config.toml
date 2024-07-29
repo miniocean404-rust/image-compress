@@ -32,23 +32,24 @@ rustflags = [
     "symbol-mangling-version=v0",
 ]
 
-# 修复了测试环境中的 napi 中断问题 <https://github.com/napi-rs/napi-rs/issues/1005#issuecomment-1011034770>
-# 为了能够在 macOS 上运行单元测试，支持编译为“x86_64-apple-darwin”。
-[target.'cfg(target_vendor = "apple")']
-rustflags = ["-C", "link-args=-Wl,-undefined,dynamic_lookup,-no_fixup_chains"]
-
-# 为了能够在 Linux 上运行单元测试，支持编译到“x86_64-unknown-linux-gnu”
-[target.'cfg(target_os = "linux")']
-rustflags = ["-C", "link-args=-Wl,--warn-unresolved-symbols"]
-
-# 为了能够在 Windows 上运行单元测试，支持编译为“x86_64-pc-windows-msvc”。
-[target.'cfg(target_os = "windows")']
-rustflags = ["-C", "link-args=/FORCE"]
+## 修复了测试环境中的 napi 中断问题 <https://github.com/napi-rs/napi-rs/issues/1005#issuecomment-1011034770>
+## 为了能够在 macOS 上运行单元测试，支持编译为“x86_64-apple-darwin”。
+#[target.'cfg(target_vendor = "apple")']
+#rustflags = ["-C", "link-args=-Wl,-undefined,dynamic_lookup,-no_fixup_chains"]
+#
+## 为了能够在 Linux 上运行单元测试，支持编译到“x86_64-unknown-linux-gnu”
+#[target.'cfg(target_os = "linux")']
+#rustflags = ["-C", "link-args=-Wl,--warn-unresolved-symbols"]
+#
+## 为了能够在 Windows 上运行单元测试，支持编译为“x86_64-pc-windows-msvc”。
+#[target.'cfg(target_os = "windows")']
+#rustflags = ["-C", "link-args=/FORCE"]
 
 [target.x86_64-pc-windows-msvc]
 rustflags = ["-C", "target-feature=+crt-static"]
 [target.i686-pc-windows-msvc]
 rustflags = ["-C", "target-feature=+crt-static"]
-# 修复 Github Actions Napi 中 zig: not found 问题
+
 [target.aarch64-unknown-linux-musl]
+linker = "aarch64-linux-musl-gcc"
 rustflags = ["-C", "target-feature=-crt-static"]

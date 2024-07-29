@@ -111,32 +111,32 @@ jobs:
       fail-fast: false
       matrix:
         settings:
-          - host: macos-latest
-            target: x86_64-apple-darwin
-
-          - host: macos-latest
-            target: aarch64-apple-darwin
-
-          - host: windows-latest
-            target: x86_64-pc-windows-msvc
-
-          - host: windows-latest
-            target: i686-pc-windows-msvc
-
-          - host: windows-latest
-            target: aarch64-pc-windows-msvc
-
-          - host: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-
-          - host: ubuntu-latest
-            target: x86_64-unknown-linux-musl
+          #          - host: macos-latest
+          #            target: x86_64-apple-darwin
+          #
+          #          - host: macos-latest
+          #            target: aarch64-apple-darwin
+          #
+          #          - host: windows-latest
+          #            target: x86_64-pc-windows-msvc
+          #
+          #          - host: windows-latest
+          #            target: i686-pc-windows-msvc
+          #
+          #          - host: windows-latest
+          #            target: aarch64-pc-windows-msvc
+          #
+          #          - host: ubuntu-latest
+          #            target: x86_64-unknown-linux-gnu
+          #
+          #          - host: ubuntu-latest
+          #            target: x86_64-unknown-linux-musl
+          #
+          #          - host: ubuntu-latest
+          #            target: armv7-unknown-linux-gnueabihf
 
           - host: ubuntu-latest
             target: aarch64-unknown-linux-gnu
-
-          - host: ubuntu-latest
-            target: armv7-unknown-linux-gnueabihf
 
           - host: ubuntu-latest
             target: aarch64-unknown-linux-musl
@@ -245,27 +245,27 @@ jobs:
       #       echo '================  信息 END  ================'
       #     shell: bash
       # Linux
-      #      - name: Build armv7-unknown-linux-gnueabihf
-      #        if: ${{ matrix.settings.target == 'armv7-unknown-linux-gnueabihf'  }}
-      #        working-directory: ./packages
-      #        run: pnpm build:node-dev --target ${{ matrix.settings.target }} --no-default-features --use-napi-cross
-      #
-      #      - name: Build x86_64-unknown-linux-gnu in Docker
-      #        if: ${{ matrix.settings.target == 'x86_64-unknown-linux-gnu'  }}
-      #        uses: ./.github/actions/docker-build
-      #        with:
-      #          image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
-      #          target: ${{ matrix.settings.target }}
-      #          profile: ${{ inputs.profile }}
-      #          pre: unset CC_x86_64_unknown_linux_gnu && unset CC # for jemallocator to compile
-      #
-      #      - name: Build x86_64-unknown-linux-musl in Docker
-      #        if: ${{ matrix.settings.target == 'x86_64-unknown-linux-musl'  }}
-      #        uses: ./.github/actions/docker-build
-      #        with:
-      #          target: ${{ matrix.settings.target }}
-      #          image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
-      #          profile: ${{ inputs.profile }}
+      - name: Build armv7-unknown-linux-gnueabihf
+        if: ${{ matrix.settings.target == 'armv7-unknown-linux-gnueabihf'  }}
+        working-directory: ./packages
+        run: pnpm build:node-dev --target ${{ matrix.settings.target }} --no-default-features --use-napi-cross
+
+      - name: Build x86_64-unknown-linux-gnu in Docker
+        if: ${{ matrix.settings.target == 'x86_64-unknown-linux-gnu'  }}
+        uses: ./.github/actions/docker-build
+        with:
+          image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
+          target: ${{ matrix.settings.target }}
+          profile: ${{ inputs.profile }}
+          pre: unset CC_x86_64_unknown_linux_gnu && unset CC # for jemallocator to compile
+
+      - name: Build x86_64-unknown-linux-musl in Docker
+        if: ${{ matrix.settings.target == 'x86_64-unknown-linux-musl'  }}
+        uses: ./.github/actions/docker-build
+        with:
+          target: ${{ matrix.settings.target }}
+          image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
+          profile: ${{ inputs.profile }}
 
       - name: Build aarch64-unknown-linux-gnu in Docker
         if: ${{ matrix.settings.target == 'aarch64-unknown-linux-gnu' }}
@@ -284,44 +284,44 @@ jobs:
           profile: ${{ inputs.profile }}
 
 
-#      # setup rust target for windows and macos
-#      - name: Setup Rust Target
-#        if: ${{ !contains(matrix.settings.target, 'linux') }}
-#        run: rustup target add ${{ matrix.settings.target }}
-#
-#      # Windows
-#      - name: Build i686-pc-windows-msvc
-#        if: ${{ matrix.settings.target == 'i686-pc-windows-msvc'  }}
-#        working-directory: ./packages
-#        run: pnpm build:node-dev --target ${{ matrix.settings.target }}
-#
-#      - name: Build x86_64-pc-windows-msvc
-#        working-directory: ./packages
-#        if: ${{ matrix.settings.target == 'x86_64-pc-windows-msvc'  }}
-#        run: pnpm build:node-dev --target ${{ matrix.settings.target }}
-#
-#      - name: Build aarch64-pc-windows-msvc
-#        working-directory: ./packages
-#        shell: bash
-#        if: ${{ matrix.settings.target == 'aarch64-pc-windows-msvc'  }}
-#        run: DISABLE_PLUGIN=1 pnpm build:node-dev --target ${{ matrix.settings.target }}
-#
-#      # Mac
-#      - name: Build x86_64-apple-darwin
-#        if: ${{ matrix.settings.target == 'x86_64-apple-darwin'  }}
-#        run: |
-#          cd packages && RUST_TARGET=${{ matrix.settings.target }} pnpm build:node-dev --target ${{ matrix.settings.target }}
-#
-#      - name: Build aarch64-apple-darwin
-#        if: ${{ matrix.settings.target == 'aarch64-apple-darwin'  }}
-#        run: |
-#          if [[ "${{ startsWith(runner.name, 'GitHub Actions') }}" == "true" ]]; then
-#            # Github runner
-#            sudo rm -Rf /Library/Developer/CommandLineTools/SDKs/*;
-#          fi
-#          export CC=$(xcrun -f clang);
-#          export CXX=$(xcrun -f clang++);
-#          SYSROOT=$(xcrun --sdk macosx --show-sdk-path);
-#          export CFLAGS="-isysroot $SYSROOT -isystem $SYSROOT";
-#          cd packages &&
-#          RUST_TARGET=${{ matrix.settings.target }} pnpm build:node-dev --target ${{ matrix.settings.target }}
+      # setup rust target for windows and macos
+      - name: Setup Rust Target
+        if: ${{ !contains(matrix.settings.target, 'linux') }}
+        run: rustup target add ${{ matrix.settings.target }}
+
+      # Windows
+      - name: Build i686-pc-windows-msvc
+        if: ${{ matrix.settings.target == 'i686-pc-windows-msvc'  }}
+        working-directory: ./packages
+        run: pnpm build:node-dev --target ${{ matrix.settings.target }}
+
+      - name: Build x86_64-pc-windows-msvc
+        working-directory: ./packages
+        if: ${{ matrix.settings.target == 'x86_64-pc-windows-msvc'  }}
+        run: pnpm build:node-dev --target ${{ matrix.settings.target }}
+
+      - name: Build aarch64-pc-windows-msvc
+        working-directory: ./packages
+        shell: bash
+        if: ${{ matrix.settings.target == 'aarch64-pc-windows-msvc'  }}
+        run: DISABLE_PLUGIN=1 pnpm build:node-dev --target ${{ matrix.settings.target }}
+
+      # Mac
+      - name: Build x86_64-apple-darwin
+        if: ${{ matrix.settings.target == 'x86_64-apple-darwin'  }}
+        run: |
+          cd packages && RUST_TARGET=${{ matrix.settings.target }} pnpm build:node-dev --target ${{ matrix.settings.target }}
+
+      - name: Build aarch64-apple-darwin
+        if: ${{ matrix.settings.target == 'aarch64-apple-darwin'  }}
+        run: |
+          if [[ "${{ startsWith(runner.name, 'GitHub Actions') }}" == "true" ]]; then
+            # Github runner
+            sudo rm -Rf /Library/Developer/CommandLineTools/SDKs/*;
+          fi
+          export CC=$(xcrun -f clang);
+          export CXX=$(xcrun -f clang++);
+          SYSROOT=$(xcrun --sdk macosx --show-sdk-path);
+          export CFLAGS="-isysroot $SYSROOT -isystem $SYSROOT";
+          cd packages &&
+          RUST_TARGET=${{ matrix.settings.target }} pnpm build:node-dev --target ${{ matrix.settings.target }}

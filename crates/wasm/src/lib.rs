@@ -1,10 +1,14 @@
+#![cfg(target_arch = "wasm32")]
+
 use std::{cell::RefCell, rc::Rc};
 
+use wasm_bindgen::{JsCast, JsValue};
 // 用于加载 Prelude（预导入）模块
-use wasm_bindgen::{prelude::*, JsCast};
+use wasm_bindgen::prelude::*;
 
 // 操作 DOM
 // start 标识 init() 在 WASM 加载时自动执行
+
 #[wasm_bindgen(start)]
 pub fn init_body() -> Result<(), JsValue> {
     // 使用 web_sys 的 explore 全局对象

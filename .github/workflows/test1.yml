@@ -248,7 +248,7 @@ jobs:
         if: ${{ matrix.settings.target == 'armv7-unknown-linux-gnueabihf'  }}
         working-directory: ./packages
         shell: bash
-        run: set DISABLE_PLUGIN=1 pnpm build:node-dev --target ${{ matrix.settings.target }}
+        run: set DISABLE_PLUGIN=1 pnpm build:node-dev --target ${{ matrix.settings.target }} --no-default-features --use-napi-cross
 
       - name: Build x86_64-unknown-linux-gnu in Docker
         if: ${{ matrix.settings.target == 'x86_64-unknown-linux-gnu'  }}

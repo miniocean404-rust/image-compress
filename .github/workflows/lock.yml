@@ -1,9 +1,9 @@
 name: "超时 Issue 自动锁定"
 
 on:
-  schedule:
-    # 每天运行两次: https://crontab.guru/#0_0,12_*_*_*
-    - cron: "0 0,12 * * *"
+  # schedule:
+  #   # 每天运行两次: https://crontab.guru/#0_0,12_*_*_*
+  #   - cron: "0 0,12 * * *"
   workflow_dispatch:
 
 permissions:

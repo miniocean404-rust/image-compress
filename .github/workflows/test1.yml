@@ -177,7 +177,7 @@ jobs:
 
       # 在 Github Actions 工作流程中使用 Zig 编译器
       - uses: goto-bus-stop/setup-zig@v2
-        if: ${{ matrix.settings.host == 'ubuntu-latest' }}
+        if: ${{ contains(matrix.settings.target,'linux') }}
         with:
           version: 0.13.0
 
@@ -242,6 +242,10 @@ jobs:
       #       echo '================  信息 END  ================'
       #     shell: bash
       # Linux
+      - name: Build armv7-unknown-linux-gnueabihf in Docker
+        if: ${{ matrix.settings.target == 'armv7-unknown-linux-gnueabihf'  }}
+        working-directory: ./packages
+        run: set DISABLE_PLUGIN=1 pnpm build:node-dev --target ${{ matrix.settings.target }}
 
       - name: Build x86_64-unknown-linux-gnu in Docker
         if: ${{ matrix.settings.target == 'x86_64-unknown-linux-gnu'  }}

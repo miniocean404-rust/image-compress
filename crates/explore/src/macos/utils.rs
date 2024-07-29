@@ -21,21 +21,21 @@ pub unsafe fn get_app_bundle_id(app: *mut objc::runtime::Object) -> Option<Strin
     None
 }
 
-// pub unsafe fn get_app_title(app: *mut objc::runtime::Object) -> Option<String> {
-//     // 获取 mainWindow 实例方法
-//     let main_window: *mut objc::runtime::Object = msg_send![app, mainWindow];
+pub unsafe fn get_app_title(app: *mut objc::runtime::Object) -> Option<String> {
+    // 获取 mainWindow 实例方法
+    let main_window: *mut objc::runtime::Object = msg_send![app, mainWindow];
 
-//     dbg!(main_window);
+    dbg!(main_window);
 
-//     // 获取 title 实例方法
-//     let title: *const std::os::raw::c_char = msg_send![main_window, title];
+    // 获取 title 实例方法
+    let title: *const std::os::raw::c_char = msg_send![main_window, title];
 
-//     let title_str = CStr::from_ptr(title).to_string_lossy().into_owned();
+    let title_str = CStr::from_ptr(title).to_string_lossy().into_owned();
 
-//     println!("{}", title_str);
+    println!("{}", title_str);
 
-//     None
-// }
+    None
+}
 
 #[allow(clippy::missing_safety_doc)]
 pub unsafe fn get_app_is_focus(app: *mut objc::runtime::Object) -> bool {

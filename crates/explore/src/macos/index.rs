@@ -7,7 +7,9 @@ use crate::dto::app_info::{AppInfo, Platform};
 
 use super::{
     cmd::get_finder_path,
-    utils::{get_app_bundle_id, get_app_exec_path, get_app_is_focus, get_foreground_app},
+    utils::{
+        get_app_bundle_id, get_app_exec_path, get_app_is_focus, get_app_title, get_foreground_app,
+    },
 };
 
 // 必须！：表示引入 Mac 的 AppKit 这个模块，因为要使用这个模块下的对象
@@ -86,7 +88,7 @@ pub unsafe fn get_foreground_app_info() -> anyhow::Result<AppInfo> {
     let bundle_id = get_app_bundle_id(app);
     let is_active = get_app_is_focus(app);
     let exec = get_app_exec_path(app)?;
-    // get_app_title(app);
+    get_app_title(app);
 
     let info = match bundle_id {
         Some(bundle_id) => AppInfo {

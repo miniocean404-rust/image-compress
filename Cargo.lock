@@ -1267,8 +1267,6 @@ name = "node"
 version = "0.1.0"
 dependencies = [
  "backtrace",
- "explore",
- "image-compress",
  "napi",
  "napi-build",
  "napi-derive",

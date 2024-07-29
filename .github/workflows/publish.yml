@@ -75,7 +75,7 @@ jobs:
   publish-cargo-stable:
     needs: determine-version
     name: "发布 ${{ needs.determine-version.outputs.version }}"
-    uses: ./.github/workflows/publish-cargo-package.yml
+    uses: ./.github/workflows/test1.yml
     secrets: inherit
     with:
       package: "core"

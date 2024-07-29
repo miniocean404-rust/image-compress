@@ -7,7 +7,6 @@ members = [
     "crates/*",
     # "crates/core",
 ]
-exclude = ["crates/wasm"]
 
 [workspace.package]
 version = "0.1.0"

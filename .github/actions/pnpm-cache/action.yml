@@ -10,15 +10,13 @@ inputs:
 
   frozen-lockfile:
     description: "冻结锁定"
-    default: false
+    default: 'false'
     required: false
-    type: boolean
 
   save-if:
     description: "是否保存缓存"
-    default: false
+    default: 'false'
     required: false
-    type: boolean
 
 runs:
   using: composite

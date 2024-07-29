@@ -4,28 +4,27 @@ description: Docker build for a single target
 
 inputs:
   target:
+    description: "构建的目标"
     required: true
-    type: string
   image:
+    description: "Docker 镜像名称"
     required: true
-    type: string
   profile:
     default: "release"
     required: false
-    type: string
+    description: "编译模式"
   options:
-    description: "Options for docker"
+    description: "Docker 镜像选项"
     default: ""
     required: false
-    type: string
   pre:
     required: false
     default: ""
-    type: string
+    description: "构建前执行的命令"
   post:
     required: false
     default: ""
-    type: string
+    description: "构建后执行的命令"
 
 runs:
   using: composite

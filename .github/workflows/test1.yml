@@ -179,8 +179,7 @@ jobs:
 
       # 在 Github Actions 工作流程中使用 Zig 编译器
       - uses: goto-bus-stop/setup-zig@v2
-        # if: ${{ contains(matrix.settings.target,'linux') }}
-        if: ${{ matrix.settings.target == 'armv7-unknown-linux-gnueabihf' }}
+        if: ${{ contains(matrix.settings.target,'linux') }}
         with:
           version: 0.13.0
 

@@ -14,7 +14,7 @@ env:
 
 on:
   push:
-    branches: [master]
+    branches: [ master ]
   # workflow_dispatch 允许手动触发工作流的运行
   workflow_dispatch:
     inputs:
@@ -24,17 +24,12 @@ on:
         type: string
         default: 1.0.0
       skipBuild:
-        description: "跳过构建. Used to debug swc-ecosystem-ci."
+        description: "是否跳过构建"
         required: false
         type: boolean
         default: false
       onlyNightly:
-        description: "是否发布每夜版"
-        required: false
-        type: boolean
-        default: false
-      allowBreakingWasm:
-        description: "允许在 wasm 中进行重大更改"
+        description: "是否发布每日版本"
         required: false
         type: boolean
         default: false
@@ -66,7 +61,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-node
-      - name: 获取发布版本
+      - name: 通过 BOT 获取发布版本
         id: determine-version
         run: |
           npm i -g ts-node

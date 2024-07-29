@@ -969,9 +969,9 @@ dependencies = [
 
 [[package]]
 name = "kurbo"
-version = "0.10.4"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1618d4ebd923e97d67e7cd363d80aef35fe961005cbbbb3d2dad8bdd1bc63440"
+checksum = "6e5aa9f0f96a938266bdb12928a67169e8d22c6a786fda8ed984b85e6ba93c3c"
 dependencies = [
  "arrayvec",
  "smallvec",
@@ -1920,9 +1920,9 @@ dependencies = [
 
 [[package]]
 name = "siphasher"
-version = "0.3.11"
+version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "38b58827f4464d87d377d175e90bf58eb00fd8716ff0a62f80356b5e61555d0d"
+checksum = "56199f7ddabf13fe5074ce809e7d3f42b42ae711800501b5b16ea82ad029c39d"
 
 [[package]]
 name = "smallvec"
@@ -1976,9 +1976,9 @@ dependencies = [
 
 [[package]]
 name = "svgtypes"
-version = "0.14.0"
+version = "0.15.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59d7618f12b51be8171a7cfdda1e7a93f79cbc57c4e7adf89a749cf671125241"
+checksum = "fae3064df9b89391c9a76a0425a69d124aee9c5c28455204709e72c39868a43c"
 dependencies = [
  "kurbo",
  "siphasher",

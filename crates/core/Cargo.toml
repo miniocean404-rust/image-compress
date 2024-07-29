@@ -41,4 +41,4 @@ libc = "0.2.152"
 webp = "0.3.0" # 底层使用的是 rust libwebp-sys
 
 # 处理 svg
-svgtypes = "0.14.0"
+svgtypes = "0.15.1"

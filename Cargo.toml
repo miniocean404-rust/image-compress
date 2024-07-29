@@ -6,12 +6,8 @@ default-members = [
     "crates/core"
 ]
 members = [
-    "crates/core",
-    "crates/node",
-    "crates/wasm",
-    "crates/explore",
-    "crates/utils",
-    # "xx/*"
+    "crates/*"
+    # "crates/core",
 ]
 
 [workspace.package]

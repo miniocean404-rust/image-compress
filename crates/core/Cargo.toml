@@ -21,12 +21,12 @@ walkdir.workspace = true
 num_cpus.workspace = true
 
 rgb = "0.8.37"
+image = "0.25.2"
 
 # 无损压缩 png (optipng、oxipng)
 oxipng = { version = "9.0.0" }
 # 有损压缩 png 把 png24 压缩成 png8 的库 是 pngquant 的包装
 imagequant = { version = "4.2.2", default-features = true }
-# image = "0.24.8"
 lodepng = "3.10.0"
 png = "0.17.11"
 
@@ -38,9 +38,7 @@ gifsicle = "1.94.0"
 libc = "0.2.152"
 
 # webp 无损压缩及有损压缩
-webp = "0.2.6" # 底层使用的是 rust libwebp-sys
+webp = "0.3.0" # 底层使用的是 rust libwebp-sys
 
 # 处理 svg
 svgtypes = "0.14.0"
-
-

@@ -288,17 +288,17 @@ jobs:
       - name: Build i686-pc-windows-msvc
         if: ${{ matrix.settings.target == 'i686-pc-windows-msvc'  }}
         working-directory: ./packages
-        run: RUST_TARGET=${{ matrix.settings.target }} DISABLE_PLUGIN=1 pnpm build:node-dev --target ${{ matrix.settings.target }}
+        run: DISABLE_PLUGIN=1 pnpm build:node-dev --target ${{ matrix.settings.target }}
 
       - name: Build x86_64-pc-windows-msvc
         working-directory: ./packages
         if: ${{ matrix.settings.target == 'x86_64-pc-windows-msvc'  }}
-        run: RUST_TARGET=${{ matrix.settings.target }} pnpm build:node-dev --target ${{ matrix.settings.target }}
+        run: pnpm build:node-dev --target ${{ matrix.settings.target }}
 
       - name: Build aarch64-pc-windows-msvc
         working-directory: ./packages
         if: ${{ matrix.settings.target == 'aarch64-pc-windows-msvc'  }}
-        run: RUST_TARGET=${{ matrix.settings.target }} DISABLE_PLUGIN=1 pnpm build:node-dev --target ${{ matrix.settings.target }}
+        run: DISABLE_PLUGIN=1 pnpm build:node-dev --target ${{ matrix.settings.target }}
 
       # Mac
       - name: Build x86_64-apple-darwin

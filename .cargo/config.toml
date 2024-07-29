@@ -45,6 +45,8 @@ rustflags = [
 #[target.'cfg(target_os = "windows")']
 #rustflags = ["-C", "link-args=/FORCE"]
 
+# target-feature=+crt-static 是 Rust 编译器的一个选项，用于指定目标应使用静态链接的 C 运行时库 (CRT)
+# 这意味着 C 运行时库将直接包含在二进制文件中，而不是在运行时依赖系统的动态库。
 [target.x86_64-pc-windows-msvc]
 rustflags = ["-C", "target-feature=+crt-static"]
 [target.i686-pc-windows-msvc]

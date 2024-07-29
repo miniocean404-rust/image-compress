@@ -48,7 +48,7 @@ runs:
           npm install -g corepack@0.24.1
           corepack enable
 
-          RUST_TARGET=${{ inputs.target }} pnpm build:binding:${{ inputs.profile }}
+          RUST_TARGET=${{ inputs.target }} pnpm build:node-dev --target ${{ matrix.settings.target }}
           ${{ inputs.post }}
         '
         if [[ ! -n "$CARGO_HOME" ]]; then

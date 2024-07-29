@@ -292,9 +292,8 @@ jobs:
       # Windows
       - name: Build i686-pc-windows-msvc
         if: ${{ matrix.settings.target == 'i686-pc-windows-msvc'  }}
-        shell: bash
         working-directory: ./packages
-        run: set DISABLE_PLUGIN=1 pnpm build:node-dev --target ${{ matrix.settings.target }}
+        run: pnpm build:node-dev --target ${{ matrix.settings.target }}
 
       - name: Build x86_64-pc-windows-msvc
         working-directory: ./packages

@@ -32,6 +32,7 @@ png = "0.17.11"
 
 mozjpeg = "= 0.10.6"
 mozjpeg-sys = "2.0.5"
+nasm-rs = "0.3.0"
 
 # gifsicle 是读取以及 有损及无损压缩 gif 的库
 gifsicle = "1.94.0"

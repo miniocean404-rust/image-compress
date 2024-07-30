@@ -7,6 +7,7 @@ members = [
     "crates/*",
     # "crates/core",
 ]
+exclude = []
 
 [workspace.package]
 version = "0.1.0"

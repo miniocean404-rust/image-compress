@@ -2,15 +2,14 @@
 
 #![cfg(target_os = "windows")]
 
-use anyhow::anyhow;
-use windows::core::{ComInterface, IUnknown, IntoParam};
+use windows::core::{IUnknown, Interface, Param, VARIANT};
 use windows::Win32::Foundation::{HWND, S_FALSE};
 use windows::Win32::System::Com::{
-    CoCreateInstance, CoInitializeEx, CoTaskMemFree, CLSCTX_LOCAL_SERVER, COINIT_APARTMENTTHREADED,
-    COINIT_DISABLE_OLE1DDE,
+    CoCreateInstance, CoInitializeEx, CoTaskMemFree, IDispatch, CLSCTX_LOCAL_SERVER,
+    COINIT_APARTMENTTHREADED, COINIT_DISABLE_OLE1DDE,
 };
 use windows::Win32::System::Ole::IEnumVARIANT;
-use windows::Win32::System::Variant::{VARIANT, VT_DISPATCH};
+use windows::Win32::System::Variant::{VARENUM, VT_DISPATCH};
 use windows::Win32::UI::Shell::{
     IPersistIDList, IShellBrowser, IShellItem, IShellWindows, IUnknown_QueryService,
     SHCreateItemFromIDList, SID_STopLevelBrowser, ShellWindows, SIGDN_DESKTOPABSOLUTEPARSING,
@@ -25,7 +24,7 @@ pub struct SubExploreInfo {
 pub fn get_sub_explore() -> anyhow::Result<Vec<SubExploreInfo>> {
     // CoInitialize 是一个 COM 初始化函数，用于初始化 COM 运行时，可以使用 CoInitialize 及 CoInitializeEx。
     let shell_windows: IShellWindows = unsafe {
-        CoInitializeEx(None, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE)?;
+        let _ = CoInitializeEx(None, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
         CoCreateInstance(&ShellWindows, None, CLSCTX_LOCAL_SERVER)?
     };
 
@@ -49,18 +48,13 @@ fn dump_windows(shell_windows: &IShellWindows) -> anyhow::Result<Vec<SubExploreI
         }
 
         // 不是一个 IDispatch 接口？
-        if unsafe { rgvar[0].Anonymous.Anonymous.vt } != VT_DISPATCH {
+        if unsafe { VARENUM(rgvar[0].as_raw().Anonymous.Anonymous.vt) } != VT_DISPATCH {
             continue;
         }
 
         let unk = unsafe {
-            rgvar[0]
-                .Anonymous
-                .Anonymous
-                .Anonymous
-                .pdispVal
-                .as_ref()
-                .ok_or(anyhow!("获取 unk 失败"))?
+            let c_void = rgvar[0].as_raw().Anonymous.Anonymous.Anonymous.pdispVal;
+            &IDispatch::from_raw(c_void)
         };
 
         infos.push(get_browser_info(unk)?);
@@ -76,7 +70,7 @@ fn dump_windows(shell_windows: &IShellWindows) -> anyhow::Result<Vec<SubExploreI
 // 设置参数 hwnd: &mut HWND, 可以通过 &mut Default::default() 获取空窗口句柄指针
 fn get_browser_info<P>(unk: P) -> anyhow::Result<SubExploreInfo>
 where
-    P: IntoParam<IUnknown>,
+    P: Param<IUnknown>,
 {
     let shell_browser: IShellBrowser =
         unsafe { IUnknown_QueryService(unk, &SID_STopLevelBrowser) }?;

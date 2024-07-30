@@ -14,7 +14,7 @@ pub unsafe fn get_explore_info() -> anyhow::Result<AppInfo> {
     let exec = get_window_exec_path(foreground_window)?;
 
     let mut app_info = AppInfo {
-        hwnd_id: foreground_window.0,
+        hwnd_id: foreground_window.0 as isize,
         title: foreground_title.clone(),
         is_active: true,
         exec,

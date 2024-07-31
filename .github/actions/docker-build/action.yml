@@ -39,6 +39,12 @@ runs:
       run: |
         code='
           set -e
+          # 设置缓存
+          if [ -x "$(command -v sccache)" ]; then
+            export RUSTC_WRAPPER=sccache
+            echo "enable sccache"
+          fi
+
           ${{ inputs.pre }}
           rustup target add ${{ inputs.target }}
 
@@ -54,6 +60,7 @@ runs:
         '
 
 
+        # 获取 CARGO_HOME 的路径
         if [[ ! -n "$CARGO_HOME" ]]; then
           CARGO_HOME="$(dirname $(dirname $(which cargo)))"
         fi

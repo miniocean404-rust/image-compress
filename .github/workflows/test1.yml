@@ -230,49 +230,70 @@ jobs:
       #       ls -R
       #       echo '================  信息 END  ================'
       #     shell: bash
+
+      # setup rust target for windows and macos
+      - name: Setup Rust Target
+        if: ${{ !contains(matrix.settings.target, 'linux') }}
+        run: rustup target add ${{ matrix.settings.target }}
+
       # Linux
       - name: Build armv7-unknown-linux-gnueabihf
         if: ${{ matrix.settings.target == 'armv7-unknown-linux-gnueabihf'  }}
         working-directory: ./packages
         run: pnpm build:node-dev --target ${{ matrix.settings.target }}
 
+      # - name: Build x86_64-unknown-linux-gnu in Docker
+      #   if: ${{ matrix.settings.target == 'x86_64-unknown-linux-gnu'  }}
+      #   uses: ./.github/actions/docker-build
+      #   with:
+      #     image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
+      #     target: ${{ matrix.settings.target }}
+      #     profile: ${{ inputs.profile }}
+      #     pre: unset CC_x86_64_unknown_linux_gnu && unset CC # for jemallocator to compile
+
+      # - name: Build x86_64-unknown-linux-musl in Docker
+      #   if: ${{ matrix.settings.target == 'x86_64-unknown-linux-musl'  }}
+      #   uses: ./.github/actions/docker-build
+      #   with:
+      #     target: ${{ matrix.settings.target }}
+      #     image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
+      #     profile: ${{ inputs.profile }}
+
+      # - name: Build aarch64-unknown-linux-gnu in Docker
+      #   if: ${{ matrix.settings.target == 'aarch64-unknown-linux-gnu' }}
+      #   uses: ./.github/actions/docker-build
+      #   with:
+      #     target: ${{ matrix.settings.target }}
+      #     image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
+      #     profile: ${{ inputs.profile }}
+
+      # - name: Build aarch64-unknown-linux-musl in Docker
+      #   if: ${{ matrix.settings.target == 'aarch64-unknown-linux-musl'  }}
+      #   uses: ./.github/actions/docker-build
+      #   with:
+      #     target: ${{ matrix.settings.target }}
+      #     image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
+      #     profile: ${{ inputs.profile }}
+
       - name: Build x86_64-unknown-linux-gnu in Docker
         if: ${{ matrix.settings.target == 'x86_64-unknown-linux-gnu'  }}
-        uses: ./.github/actions/docker-build
-        with:
-          image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
-          target: ${{ matrix.settings.target }}
-          profile: ${{ inputs.profile }}
-          pre: unset CC_x86_64_unknown_linux_gnu && unset CC # for jemallocator to compile
+        working-directory: ./packages
+        run: unset CC_x86_64_unknown_linux_gnu && unset CC pnpm build:node-dev --target ${{ matrix.settings.target }}
 
       - name: Build x86_64-unknown-linux-musl in Docker
         if: ${{ matrix.settings.target == 'x86_64-unknown-linux-musl'  }}
-        uses: ./.github/actions/docker-build
-        with:
-          target: ${{ matrix.settings.target }}
-          image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
-          profile: ${{ inputs.profile }}
+        working-directory: ./packages
+        run: pnpm build:node-dev --target ${{ matrix.settings.target }}
 
       - name: Build aarch64-unknown-linux-gnu in Docker
         if: ${{ matrix.settings.target == 'aarch64-unknown-linux-gnu' }}
-        uses: ./.github/actions/docker-build
-        with:
-          target: ${{ matrix.settings.target }}
-          image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
-          profile: ${{ inputs.profile }}
+        working-directory: ./packages
+        run: pnpm build:node-dev --target ${{ matrix.settings.target }}
 
       - name: Build aarch64-unknown-linux-musl in Docker
         if: ${{ matrix.settings.target == 'aarch64-unknown-linux-musl'  }}
-        uses: ./.github/actions/docker-build
-        with:
-          target: ${{ matrix.settings.target }}
-          image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
-          profile: ${{ inputs.profile }}
-
-      # setup rust target for windows and macos
-      - name: Setup Rust Target
-        if: ${{ !contains(matrix.settings.target, 'linux') }}
-        run: rustup target add ${{ matrix.settings.target }}
+        working-directory: ./packages
+        run: pnpm build:node-dev --target ${{ matrix.settings.target }}
 
       # Windows
       - name: Build i686-pc-windows-msvc

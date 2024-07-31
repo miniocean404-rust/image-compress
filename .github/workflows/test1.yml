@@ -194,7 +194,7 @@ jobs:
           cache: pnpm
           architecture: x64
 
-      - name: 获取 rust toolchain
+      - name: 获取 rust toolchain 版本号
         id: toolchain
         shell: bash
         run: echo "version=$(cat ./rust-toolchain)" >> "$GITHUB_OUTPUT"
@@ -216,7 +216,7 @@ jobs:
             .cargo-cache
           key: ${{ matrix.settings.target }}-cargo-registry
 
-      - name: 设置 toolchain
+      - name: 设置 toolchain 依赖的环境
         run: ${{ matrix.settings.setup }}
         if: ${{ matrix.settings.setup }}
         shell: bash

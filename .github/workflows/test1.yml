@@ -113,33 +113,62 @@ jobs:
         settings:
           - host: macos-latest
             target: x86_64-apple-darwin
+            build: |
+              cd packages && pnpm build:node-dev --target x86_64-apple-darwin
 
           - host: macos-latest
             target: aarch64-apple-darwin
+            build: |
+              sudo rm -Rf /Library/Developer/CommandLineTools/SDKs/*;
+              export CC=$(xcrun -f clang);
+              export CXX=$(xcrun -f clang++);
+              SYSROOT=$(xcrun --sdk macosx --show-sdk-path);
+              export CFLAGS="-isysroot $SYSROOT -isystem $SYSROOT";
+              cd packages &&
+              pnpm build:node-dev --target aarch64-apple-darwin
 
           - host: windows-latest
             target: x86_64-pc-windows-msvc
+            build: |
+              cd packages && pnpm build:node-dev --target x86_64-pc-windows-msvc
 
           - host: windows-latest
             target: i686-pc-windows-msvc
+            build: |
+              cd packages && pnpm build:node-dev --target i686-pc-windows-msvc
 
           - host: windows-latest
             target: aarch64-pc-windows-msvc
+            build: |
+              cd packages && pnpm build:node-dev --target aarch64-pc-windows-msvc
 
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
+            build: >-
 
           - host: ubuntu-latest
             target: x86_64-unknown-linux-musl
-
-          - host: ubuntu-latest
-            target: armv7-unknown-linux-gnueabihf
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
+            build: >-
 
           - host: ubuntu-latest
             target: aarch64-unknown-linux-gnu
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
+            build: >-
 
           - host: ubuntu-latest
             target: aarch64-unknown-linux-musl
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
+            build: >-
+
+          - host: ubuntu-latest
+            target: armv7-unknown-linux-gnueabihf
+            setup: |
+              sudo apt-get update
+              sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf -y
+            build: |
+              cd packages && pnpm build:node-dev --target armv7-unknown-linux-gnueabihf
 
     name: "构建 ${{ inputs.package }} - ${{ matrix.settings.target }} - node@20"
     runs-on: ${{ matrix.settings.host }}
@@ -158,7 +187,7 @@ jobs:
         shell: bash
         run: corepack enable
 
-      - name: Setup node x64
+      - name: 设置 Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -177,33 +206,29 @@ jobs:
           targets: ${{ matrix.settings.target }}
           # toolchain: ${{ steps.toolchain.outputs.version }}
 
-      # 在 Github Actions 工作流程中使用 Zig 编译器
-      - uses: goto-bus-stop/setup-zig@v2
-        if: ${{ contains(matrix.settings.target,'linux') }}
-        with:
-          version: 0.13.0
-
       - name: 缓存 cargo registry
         uses: actions/cache@v4
         with:
-          path: ~/.cargo/registry
-          key: ${{ matrix.settings.target }}-node@20-cargo-registry-trimmed
-
-      - name: 缓存 cargo index
-        uses: actions/cache@v4
-        with:
-          path: ~/.cargo/git
-          key: ${{ matrix.settings.target }}-node@20-cargo-index-trimmed
-        if: ${{ matrix.settings.docker }}
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+            .cargo-cache
+          key: ${{ matrix.settings.target }}-cargo-registry
 
       - name: 设置 toolchain
         run: ${{ matrix.settings.setup }}
         if: ${{ matrix.settings.setup }}
         shell: bash
 
+        # 在 Github Actions 工作流程中使用 Zig 编译器
+      - uses: goto-bus-stop/setup-zig@v2
+        # if: ${{ contains(matrix.settings.target,'linux') }}
+        if: ${{ matrix.settings.target == 'armv7-unknown-linux-gnueabihf' }}
+        with:
+          version: 0.13.0
+
       - name: 安装依赖
-        # 再次运行 corepack enable
-        # 因为在 Windows pnpm 会使用 cmd 来运行 pnpm install。
         shell: bash
         run: |
           corepack enable
@@ -211,126 +236,34 @@ jobs:
           curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
           echo '/usr/local/cargo/bin' >> $GITHUB_PATH
 
-      #   build: |
-      #           cargo build --release --target x86_64-apple-darwin
-      #           cp ./target/release/image-compress ./tag
-      #           cd ./packages && pnpm build:node-dev --target x86_64-apple-darwin &&
-      #           cd ../ &&
-      #           cp -r ./packages/dist/node/* ./tag
-      #           chmod +x ./tag
-      #           ls -R ./tag
-      #           strip -x ./tag/*.node
-      #   - name: 构建
-      #     working-directory: .
-      #     run: |
-      #       mkdir tag
-      #       cargo build --release --target ${{ matrix.settings.target }}
-      #       echo '================ 信息 START ================'
-      #       pwd
-      #       ls -R
-      #       echo '================  信息 END  ================'
-      #     shell: bash
+      - name: 在 Docker 中构建
+        if: ${{ matrix.settings.docker }}
+        uses: ./.github/actions/docker-build
+        with:
+          image: ${{ matrix.settings.docker }}
+          options: --user 0:0  -v ${{ github.workspace }}:/build -w /build
+          post: ${{ matrix.settings.build }}
 
-      # setup rust target for windows and macos
-      - name: Setup Rust Target
-        # if: ${{ !contains(matrix.settings.target, 'linux') }}
-        run: rustup target add ${{ matrix.settings.target }}
-
-      # Linux
-      - name: Build armv7-unknown-linux-gnueabihf
-        if: ${{ matrix.settings.target == 'armv7-unknown-linux-gnueabihf'  }}
-        working-directory: ./packages
-        run: pnpm build:node-dev --target ${{ matrix.settings.target }}
-
-      # - name: Build x86_64-unknown-linux-gnu in Docker
-      #   if: ${{ matrix.settings.target == 'x86_64-unknown-linux-gnu'  }}
-      #   uses: ./.github/actions/docker-build
-      #   with:
-      #     image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
-      #     target: ${{ matrix.settings.target }}
-      #     profile: ${{ inputs.profile }}
-      #     pre: unset CC_x86_64_unknown_linux_gnu && unset CC # for jemallocator to compile
-
-      # - name: Build x86_64-unknown-linux-musl in Docker
-      #   if: ${{ matrix.settings.target == 'x86_64-unknown-linux-musl'  }}
-      #   uses: ./.github/actions/docker-build
-      #   with:
-      #     target: ${{ matrix.settings.target }}
-      #     image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
-      #     profile: ${{ inputs.profile }}
-
-      # - name: Build aarch64-unknown-linux-gnu in Docker
-      #   if: ${{ matrix.settings.target == 'aarch64-unknown-linux-gnu' }}
-      #   uses: ./.github/actions/docker-build
-      #   with:
-      #     target: ${{ matrix.settings.target }}
-      #     image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
-      #     profile: ${{ inputs.profile }}
-
-      # - name: Build aarch64-unknown-linux-musl in Docker
-      #   if: ${{ matrix.settings.target == 'aarch64-unknown-linux-musl'  }}
-      #   uses: ./.github/actions/docker-build
-      #   with:
-      #     target: ${{ matrix.settings.target }}
-      #     image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
-      #     profile: ${{ inputs.profile }}
-
-      - name: Build x86_64-unknown-linux-gnu in Docker
-        if: ${{ matrix.settings.target == 'x86_64-unknown-linux-gnu'  }}
-        working-directory: ./packages
-        run: unset CC_x86_64_unknown_linux_gnu && unset CC pnpm build:node-dev --target ${{ matrix.settings.target }}
-
-      - name: Build x86_64-unknown-linux-musl in Docker
-        if: ${{ matrix.settings.target == 'x86_64-unknown-linux-musl'  }}
-        working-directory: ./packages
-        run: pnpm build:node-dev --target ${{ matrix.settings.target }}
-
-      - name: Build aarch64-unknown-linux-gnu in Docker
-        if: ${{ matrix.settings.target == 'aarch64-unknown-linux-gnu' }}
-        working-directory: ./packages
-        run: |
-          export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER=aarch64-linux-gnu-gcc
-          export CC=aarch64-linux-gnu-gcc
-          pnpm build:node-dev --target ${{ matrix.settings.target }}
-
-      - name: Build aarch64-unknown-linux-musl in Docker
-        if: ${{ matrix.settings.target == 'aarch64-unknown-linux-musl'  }}
-        working-directory: ./packages
-        run: |
-          export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER=aarch64-linux-gnu-gcc
-          export CC=aarch64-linux-gnu-gcc
-          pnpm build:node-dev --target ${{ matrix.settings.target }}
-
-      # Windows
-      - name: Build i686-pc-windows-msvc
-        if: ${{ matrix.settings.target == 'i686-pc-windows-msvc'  }}
-        working-directory: ./packages
-        run: pnpm build:node-dev --target ${{ matrix.settings.target }}
-
-      - name: Build x86_64-pc-windows-msvc
-        working-directory: ./packages
-        if: ${{ matrix.settings.target == 'x86_64-pc-windows-msvc'  }}
-        run: pnpm build:node-dev --target ${{ matrix.settings.target }}
-
-      - name: Build aarch64-pc-windows-msvc
-        working-directory: ./packages
+      - name: 普通构建
+        run: ${{ matrix.settings.build }}
+        if: ${{ !matrix.settings.docker }}
         shell: bash
-        if: ${{ matrix.settings.target == 'aarch64-pc-windows-msvc'  }}
-        run: pnpm build:node-dev --target ${{ matrix.settings.target }}
-
-      # Mac
-      - name: Build x86_64-apple-darwin
-        if: ${{ matrix.settings.target == 'x86_64-apple-darwin'  }}
-        run: |
-          cd packages && RUST_TARGET=${{ matrix.settings.target }} pnpm build:node-dev --target ${{ matrix.settings.target }}
-
-      - name: Build aarch64-apple-darwin
-        if: ${{ matrix.settings.target == 'aarch64-apple-darwin'  }}
-        run: |
-          sudo rm -Rf /Library/Developer/CommandLineTools/SDKs/*;
-          export CC=$(xcrun -f clang);
-          export CXX=$(xcrun -f clang++);
-          SYSROOT=$(xcrun --sdk macosx --show-sdk-path);
-          export CFLAGS="-isysroot $SYSROOT -isystem $SYSROOT";
-          cd packages &&
-          RUST_TARGET=${{ matrix.settings.target }} pnpm build:node-dev --target ${{ matrix.settings.target }}
+#   build: |
+#           cargo build --release --target x86_64-apple-darwin
+#           cp ./target/release/image-compress ./tag
+#           cd ./packages && pnpm build:node-dev --target x86_64-apple-darwin &&
+#           cd ../ &&
+#           cp -r ./packages/dist/node/* ./tag
+#           chmod +x ./tag
+#           ls -R ./tag
+#           strip -x ./tag/*.node
+#   - name: 构建
+#     working-directory: .
+#     run: |
+#       mkdir tag
+#       cargo build --release --target ${{ matrix.settings.target }}
+#       echo '================ 信息 START ================'
+#       pwd
+#       ls -R
+#       echo '================  信息 END  ================'
+#     shell: bash

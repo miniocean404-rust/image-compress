@@ -6,21 +6,26 @@ inputs:
   target:
     description: "构建的目标"
     required: true
+
   image:
     description: "Docker 镜像名称"
     required: true
+
   profile:
+    description: "编译模式"
     default: "release"
     required: false
-    description: "编译模式"
+
   options:
     description: "Docker 镜像选项"
     default: ""
     required: false
+
   pre:
     required: false
     default: ""
     description: "构建前执行的命令"
+
   post:
     required: false
     default: ""
@@ -34,10 +39,6 @@ runs:
       run: |
         code='
           set -e
-          if [ -x "$(command -v sccache)" ]; then
-            export RUSTC_WRAPPER=sccache
-            echo "enable sccache"
-          fi
           ${{ inputs.pre }}
           rustup target add ${{ inputs.target }}
 
@@ -51,6 +52,8 @@ runs:
           RUST_TARGET=${{ inputs.target }} pnpm build:node-dev --target ${{ matrix.settings.target }}
           ${{ inputs.post }}
         '
+
+
         if [[ ! -n "$CARGO_HOME" ]]; then
           CARGO_HOME="$(dirname $(dirname $(which cargo)))"
         fi
@@ -58,16 +61,27 @@ runs:
         docker run \
           --rm \
           --privileged \
+
+          # --user 0:0 用于指定在容器内运行进程的用户和用户组。0:0 表示使用 root 用户和 root 用户组。
           --user 0:0 \
-          -v $CARGO_HOME/registry/index:/usr/local/cargo/registry/index \
-          -v $CARGO_HOME/registry/cache:/usr/local/cargo/registry/cache \
-          -v $CARGO_HOME/git/db:/usr/local/cargo/git/db \
+
+          # -v 代表挂载目（冒号左侧）录到容器（冒号右侧）指定目录下
+          -v ${{ github.workspace }}/.cargo-cache/.cargo/git:/usr/local/cargo/git
+          -v ${{ github.workspace }}/.cargo-cache/.cargo/registry:/usr/local/cargo/registry
           ${{ inputs.options }} \
+
+          # -e 用于设置环境变量
           -e CI=1 \
           -e HOME=$HOME \
+
           -v $HOME/.cache:$HOME/.cache \
           -v ${{ github.workspace }}:/build \
+
+          # -w 用于指定工作目录在容器哪个目录下
           -w /build \
+
           -i \
           ${{ inputs.image }} \
+
+          # 使用 bash shell 执行代码 -c ：是一个选项，指示后面跟随的是要执行的命令字符串。
           bash -c "$code"

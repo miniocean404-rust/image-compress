@@ -1,3 +1,5 @@
+#![cfg(target_os = "windows")]
+
 // windows api 的A、W、ExA和ExW的区别
 // A表示使用ANSI编码作为标准输入与输出流的文本编码
 // W表示使用Unicode作为编码

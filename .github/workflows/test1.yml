@@ -233,7 +233,7 @@ jobs:
 
       # setup rust target for windows and macos
       - name: Setup Rust Target
-        if: ${{ !contains(matrix.settings.target, 'linux') }}
+        # if: ${{ !contains(matrix.settings.target, 'linux') }}
         run: rustup target add ${{ matrix.settings.target }}
 
       # Linux

@@ -1,0 +1,86 @@
+# This action installs the minimal Rust profile and configures Swatinem/rust-cache.
+#
+# It is needed to install as few Rust components as possbile because
+# it takes a few minutes to install some of components on Windows and Mac, especially rust-doc.
+
+name: Rustup
+
+description: Install Rust with cache
+
+inputs:
+  # See https://rust-lang.github.io/rustup/concepts/components.html
+  clippy:
+    default: false
+    required: false
+    type: boolean
+  fmt:
+    default: false
+    required: false
+    type: boolean
+  docs:
+    default: false
+    required: false
+    type: boolean
+  save-cache:
+    default: false
+    required: false
+    type: boolean
+  shared-key:
+    default: "check"
+    required: false
+    type: string
+
+runs:
+  using: composite
+  steps:
+    - name: Print Inputs
+      shell: bash
+      run: |
+        echo 'clippy: ${{ inputs.clippy }}'
+        echo 'fmt: ${{ inputs.fmt }}'
+        echo 'docs: ${{ inputs.docs }}'
+        echo 'save-cache: ${{ inputs.save-cache }}'
+        echo 'shared-key: ${{ inputs.shared-key }}'
+
+    - name: 删除 rust-toolchain.toml 中 `profile` 行 on MacOS
+      shell: bash
+      if: runner.os == 'macOS'
+      # sed ：是一个流编辑器，用于对文本进行编辑操作。
+      # -i '' ：-i 选项表示直接在原文件上进行修改。空字符串 '' 是一些系统（如 macOS）所需的参数，以确保正确的就地编辑行为。在其他系统（如 Linux）中，可能只需要 -i 而不需要后面的空字符串。
+      # /profile/d ：这是一个 sed 的编辑指令。/profile/ 是一个正则表达式模式，表示匹配包含 profile 的行。d 表示删除匹配到的行。
+      run: sed -i '' '/profile/d' rust-toolchain.toml
+
+    - name: 删除 rust-toolchain.toml 中 `profile` 行 on non-MacOS
+      shell: bash
+      if: runner.os != 'macOS'
+      run: sed -i '/profile/d' rust-toolchain.toml
+
+    - name: 设置 rustup 最小可用工具链
+      shell: bash
+      run: rustup set profile minimal
+
+    - name: 添加 Clippy
+      shell: bash
+      if: ${{ inputs.clippy == 'true' }}
+      run: rustup component add clippy
+
+    - name: 添加 Rustfmt
+      shell: bash
+      if: ${{ inputs.fmt == 'true' }}
+      run: rustup component add rustfmt
+
+    - name: 添加 docs
+      shell: bash
+      if: ${{ inputs.docs == 'true' }}
+      run: rustup component add rust-docs
+
+    - name: 查看安装的 Target
+      shell: bash
+      run: rustup show
+
+    - name: 缓存在 ${{ github.ref_name }}
+      uses: Swatinem/rust-cache@v2
+      if: ${{ startsWith(runner.name, 'GitHub Actions') }}
+      with:
+        shared-key: ${{ inputs.shared-key }}
+        save-if: ${{ inputs.save-cache == 'true' }}

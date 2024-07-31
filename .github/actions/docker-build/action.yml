@@ -58,6 +58,7 @@ runs:
           CARGO_HOME="$(dirname $(dirname $(which cargo)))"
         fi
 
+
         docker run \
           --rm \
           --privileged \
@@ -66,8 +67,8 @@ runs:
           --user 0:0 \
 
           # -v 代表挂载目（冒号左侧）录到容器（冒号右侧）指定目录下
-          -v ${{ github.workspace }}/.cargo-cache/.cargo/git:/usr/local/cargo/git
-          -v ${{ github.workspace }}/.cargo-cache/.cargo/registry:/usr/local/cargo/registry
+          -v ${{ github.workspace }}/.cargo-cache/.cargo/git:/usr/local/cargo/git \
+          -v ${{ github.workspace }}/.cargo-cache/.cargo/registry:/usr/local/cargo/registry \
           ${{ inputs.options }} \
 
           # -e 用于设置环境变量

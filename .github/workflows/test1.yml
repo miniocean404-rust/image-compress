@@ -241,7 +241,6 @@ jobs:
         uses: ./.github/actions/docker-build
         with:
           image: ${{ matrix.settings.docker }}
-          options: --user 0:0  -v ${{ github.workspace }}:/build -w /build
           post: ${{ matrix.settings.build }}
 
       - name: 普通构建

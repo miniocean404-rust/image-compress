@@ -288,12 +288,18 @@ jobs:
       - name: Build aarch64-unknown-linux-gnu in Docker
         if: ${{ matrix.settings.target == 'aarch64-unknown-linux-gnu' }}
         working-directory: ./packages
-        run: pnpm build:node-dev --target ${{ matrix.settings.target }}
+        run: |
+          export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER=aarch64-linux-gnu-gcc
+          export CC=aarch64-linux-gnu-gcc
+          pnpm build:node-dev --target ${{ matrix.settings.target }}
 
       - name: Build aarch64-unknown-linux-musl in Docker
         if: ${{ matrix.settings.target == 'aarch64-unknown-linux-musl'  }}
         working-directory: ./packages
-        run: pnpm build:node-dev --target ${{ matrix.settings.target }}
+        run: |
+          export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER=aarch64-linux-gnu-gcc
+          export CC=aarch64-linux-gnu-gcc
+          pnpm build:node-dev --target ${{ matrix.settings.target }}
 
       # Windows
       - name: Build i686-pc-windows-msvc

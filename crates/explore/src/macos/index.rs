@@ -25,7 +25,6 @@ pub unsafe fn get_finder_info() -> anyhow::Result<AppInfo> {
     if info.bundle_id == "com.apple.finder" && info.is_active {
         let path = get_finder_path()?;
         info.dir = path;
-        info.platform = Platform::MacOS;
         return anyhow::Ok(info);
     }
 
@@ -58,12 +57,15 @@ pub unsafe fn get_running_apps_info() -> anyhow::Result<Vec<AppInfo>> {
                 is_active,
                 exec,
                 title,
+                platform: Platform::MacOS,
                 ..Default::default()
             },
             None => AppInfo {
                 bundle_id: "".to_string(),
                 is_active,
                 exec,
+                title,
+                platform: Platform::MacOS,
                 ..Default::default()
             },
         };
@@ -98,12 +100,15 @@ pub unsafe fn get_foreground_app_info() -> anyhow::Result<AppInfo> {
             is_active,
             exec,
             title,
+            platform: Platform::MacOS,
             ..Default::default()
         },
         None => AppInfo {
             bundle_id: "".to_string(),
             is_active,
             exec,
+            title,
+            platform: Platform::MacOS,
             ..Default::default()
         },
     };

@@ -18,7 +18,7 @@ use windows::Win32::UI::WindowsAndMessaging::{
     CreateWindowExW, DefWindowProcW, DispatchMessageW, GetMessageW, GetSystemMetrics, LoadCursorW,
     LoadIconW, PostQuitMessage, RegisterClassW, SetTimer, ShowWindow, TranslateMessage, CS_HREDRAW,
     CS_VREDRAW, CW_USEDEFAULT, IDC_ARROW, IDI_APPLICATION, MSG, SM_CXSCREEN, SM_CYSCREEN,
-    SW_SHOWNORMAL, WNDCLASSW, WS_OVERLAPPEDWINDOW, WS_SYSMENU,
+    SW_SHOWNORMAL, WNDCLASSW, WS_EX_LAYERED, WS_EX_TOOLWINDOW, WS_OVERLAPPEDWINDOW, WS_SYSMENU,
 };
 
 // demo: https://github.com/microsoft/windows-rs/issues/2427
@@ -30,16 +30,15 @@ pub unsafe fn create_window() {
     let class_name = w!("MyWindowClass");
 
     let wndclass = WNDCLASSW {
-        cbClsExtra: 0, // 窗口扩展
-        cbWndExtra: 0, // 窗口实例扩展
-        // GetSysColorBrush(COLOR_WINDOW) 获取系统窗口颜色
-        hbrBackground: CreateSolidBrush(create_colorref(255, 255, 255)), // 窗口背景色
-        hCursor: LoadCursorW(None, IDC_ARROW).unwrap(),                  // 窗口鼠标光标
+        cbClsExtra: 0,                                                   // 窗口扩展
+        cbWndExtra: 0,                                                   // 窗口实例扩展
+        hbrBackground: CreateSolidBrush(create_colorref(255, 255, 255)), // 窗口背景色  // GetSysColorBrush(COLOR_WINDOW) 获取系统窗口颜色
         hInstance: instance,                                             // 实例句柄
         lpfnWndProc: Some(wnd_proc),                                     // 定义窗口处理函数
         lpszClassName: PCWSTR(class_name.as_ptr()),
         style: CS_HREDRAW | CS_VREDRAW, //窗口类的风格 | CS_HREDRAW: 当水平长度改变或移动窗口时，重画整个窗口 | CS_VREDRAW: 当垂直长度改变或移动窗口时，重画整个窗口
         hIcon: LoadIconW(None, IDI_APPLICATION).unwrap(), // 加载默认图标
+        hCursor: LoadCursorW(None, IDC_ARROW).unwrap(), // 窗口鼠标光标
         ..Default::default()
     };
 
@@ -49,15 +48,15 @@ pub unsafe fn create_window() {
     dbg!(cx, cy);
 
     let hwnd = CreateWindowExW(
-        Default::default(),
-        // WS_EX_LAYERED | WS_EX_TOOLWINDOW, // WS_EX_LAYERED：创建一个分层窗口 | WS_EX_TOOLWINDOW：创建工具窗口，即窗口是一个游动的工具条。
+        // Default::default(),
+        WS_EX_LAYERED | WS_EX_TOOLWINDOW, // WS_EX_LAYERED：创建一个分层窗口 | WS_EX_TOOLWINDOW：创建工具窗口，即窗口是一个游动的工具条。
         class_name,                       // 窗口类名,需要先注册窗口类
         w!("窗口名称"),                   // 窗口名
         WS_OVERLAPPEDWINDOW | WS_SYSMENU, // 文档：https://learn.microsoft.com/zh-cn/windows/win32/winmsg/window-styles
         CW_USEDEFAULT,                    // 起点 CW_USEDEFAULT
         CW_USEDEFAULT,
-        300, //大小
-        300,
+        640,  // 窗口宽
+        480,  // 窗口高
         None, //父窗口句柄
         None,
         instance, // 模块句柄

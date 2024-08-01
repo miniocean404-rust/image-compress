@@ -1,6 +1,5 @@
 #![cfg(target_os = "windows")]
-#![allow(renamed_and_removed_lints)]
-#![allow(missing_safety_doc)]
+#![allow(clippy::missing_safety_doc)]
 
 // windows api 的A、W、ExA和ExW的区别
 // A表示使用ANSI编码作为标准输入与输出流的文本编码
@@ -137,7 +136,7 @@ pub unsafe fn get_module_hwnd() -> HMODULE {
     GetModuleHandleW(None).unwrap()
 }
 
-// 获取系统分辨率
+/// 获取系统分辨率
 // GetSystemMetrics：检索指定的系统指标或系统配置设置
 pub unsafe fn get_system_resolution() -> (i32, i32) {
     // SM_CXSCREEN, SM_CYSCREEN 以像素为单位计算的屏幕尺寸

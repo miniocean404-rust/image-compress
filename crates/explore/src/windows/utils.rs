@@ -1,6 +1,5 @@
 #![cfg(target_os = "windows")]
-#![allow(renamed_and_removed_lints)]
-#![allow(missing_safety_doc)]
+#![allow(clippy::missing_safety_doc)]
 
 use std::ffi::OsString;
 use std::os::windows::ffi::OsStringExt;

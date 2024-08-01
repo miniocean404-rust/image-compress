@@ -8,7 +8,7 @@ use crate::dto::app_info::{AppInfo, Platform};
 use super::{
     cmd::get_finder_path,
     utils::{
-        get_app_bundle_id, get_app_exec_path, get_app_is_focus, get_app_title, get_foreground_app,
+        get_app_bundle_id, get_app_exec_path, get_app_is_focus, get_app_name, get_foreground_app,
     },
 };
 
@@ -50,12 +50,14 @@ pub unsafe fn get_running_apps_info() -> anyhow::Result<Vec<AppInfo>> {
         let bundle_id = get_app_bundle_id(app);
         let is_active = get_app_is_focus(app);
         let exec = get_app_exec_path(app)?;
+        let title = get_app_name(app);
 
         let info = match bundle_id {
             Some(bundle_id) => AppInfo {
                 bundle_id,
                 is_active,
                 exec,
+                title,
                 ..Default::default()
             },
             None => AppInfo {
@@ -88,13 +90,14 @@ pub unsafe fn get_foreground_app_info() -> anyhow::Result<AppInfo> {
     let bundle_id = get_app_bundle_id(app);
     let is_active = get_app_is_focus(app);
     let exec = get_app_exec_path(app)?;
-    get_app_title(app);
+    let title = get_app_name(app);
 
     let info = match bundle_id {
         Some(bundle_id) => AppInfo {
             bundle_id,
             is_active,
             exec,
+            title,
             ..Default::default()
         },
         None => AppInfo {

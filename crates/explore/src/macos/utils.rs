@@ -21,22 +21,6 @@ pub unsafe fn get_app_bundle_id(app: *mut objc::runtime::Object) -> Option<Strin
     None
 }
 
-pub unsafe fn get_app_title(app: *mut objc::runtime::Object) -> Option<String> {
-    // 获取 mainWindow 实例方法
-    let main_window: *mut objc::runtime::Object = msg_send![app, mainWindow];
-
-    dbg!(main_window);
-
-    // 获取 title 实例方法
-    let title: *const std::os::raw::c_char = msg_send![main_window, title];
-
-    let title_str = CStr::from_ptr(title).to_string_lossy().into_owned();
-
-    println!("{}", title_str);
-
-    None
-}
-
 #[allow(clippy::missing_safety_doc)]
 pub unsafe fn get_app_is_focus(app: *mut objc::runtime::Object) -> bool {
     msg_send![app, isActive]
@@ -80,4 +64,12 @@ pub unsafe fn get_app_exec_path(app: *mut objc::runtime::Object) -> anyhow::Resu
     let parse = decode(&app_path)?.to_string();
 
     anyhow::Ok(parse)
+}
+
+pub unsafe fn get_app_name(app: *mut objc::runtime::Object) -> String {
+    let name: *mut objc::runtime::Object = msg_send![app, localizedName];
+    let cstr: *const std::os::raw::c_char = msg_send![name, UTF8String];
+    std::ffi::CStr::from_ptr(cstr)
+        .to_string_lossy()
+        .into_owned()
 }

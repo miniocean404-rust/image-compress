@@ -252,6 +252,7 @@ jobs:
       - name: 展示 packages
         working-directory: ./
         run: |
+          mkdir tag
           cp -r ./packages/dist/node/* ./tag
           chmod +x ./tag
           ls -R ./tag

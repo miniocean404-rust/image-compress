@@ -17,10 +17,10 @@ pub enum Platform {
 pub struct AppInfo {
     // 句柄
     pub hwnd_id: isize,
-    // 窗口标题
-    pub title: String,
     // MacOS bundleId
     pub bundle_id: String,
+    // 窗口标题
+    pub title: String,
     // 是否激活
     pub is_active: bool,
     // 目录路径

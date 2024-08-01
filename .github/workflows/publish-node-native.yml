@@ -297,7 +297,7 @@ jobs:
 
       - name: 重命名 artifacts 文件
         run: |
-          cp -r ./packages/artifacts/*/*.node ./packages/artifacts
+          cp -r -v ./packages/artifacts/**/*.node ./packages/artifacts
         shell: bash
 
       #     - name: 移动 artifacts 文件

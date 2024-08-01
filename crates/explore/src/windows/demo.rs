@@ -7,23 +7,19 @@
 // Ex表示拓展, 标注了Ex的winapi函数会比没有标Ex的函数多一些参数什么的, 可以说拓展了一些功能
 // ExA 与 ExW 就是 A,W与Ex的结合了
 
-use windows::core::{w, PCWSTR};
-use windows::Win32::Foundation::{
-    BOOL, COLORREF, HINSTANCE, HMODULE, HWND, LPARAM, LRESULT, WPARAM,
-};
+use std::ptr;
+
+use windows::core::*;
+use windows::Win32::Foundation::*;
 use windows::Win32::Graphics::Gdi::CreateSolidBrush;
 // 需要使用 Win32_System_LibraryLoader future
 use windows::Win32::System::LibraryLoader::GetModuleHandleW;
-use windows::Win32::UI::WindowsAndMessaging::{
-    CreateWindowExW, DefWindowProcW, DispatchMessageW, GetMessageW, GetSystemMetrics, LoadCursorW,
-    LoadIconW, PostQuitMessage, RegisterClassW, SetTimer, ShowWindow, TranslateMessage, CS_HREDRAW,
-    CS_VREDRAW, CW_USEDEFAULT, IDC_ARROW, IDI_APPLICATION, MSG, SM_CXSCREEN, SM_CYSCREEN,
-    SW_SHOWNORMAL, WNDCLASSW, WS_EX_LAYERED, WS_EX_TOOLWINDOW, WS_OVERLAPPEDWINDOW, WS_SYSMENU,
-};
+use windows::Win32::UI::Input::KeyboardAndMouse::SetCapture;
+use windows::Win32::UI::WindowsAndMessaging::*;
 
 // demo: https://github.com/microsoft/windows-rs/issues/2427
 // demo: https://www.bilibili.com/read/cv17317342/
-pub unsafe fn create_window() {
+pub unsafe fn create_window() -> anyhow::Result<()> {
     let instance = HINSTANCE::from(get_module_hwnd());
 
     // PCWSTR(HSTRING::from("MyWindowClass").as_wide().as_ptr())
@@ -47,32 +43,76 @@ pub unsafe fn create_window() {
     let (cx, cy) = get_system_resolution();
     dbg!(cx, cy);
 
-    let hwnd = CreateWindowExW(
-        // Default::default(),
-        WS_EX_LAYERED | WS_EX_TOOLWINDOW, // WS_EX_LAYERED：创建一个分层窗口 | WS_EX_TOOLWINDOW：创建工具窗口，即窗口是一个游动的工具条。
-        class_name,                       // 窗口类名,需要先注册窗口类
-        w!("窗口名称"),                   // 窗口名
+    let hwnd_main = CreateWindowExW(
+        WINDOW_EX_STYLE(0), // WS_EX_LAYERED：创建一个分层窗口 | WS_EX_TOOLWINDOW：创建工具窗口，即窗口是一个游动的工具条。
+        class_name,         // 窗口类名,需要先注册窗口类
+        w!("窗口名称"),     // 窗口名
         WS_OVERLAPPEDWINDOW | WS_SYSMENU, // 文档：https://learn.microsoft.com/zh-cn/windows/win32/winmsg/window-styles
         CW_USEDEFAULT,                    // 起点 CW_USEDEFAULT
         CW_USEDEFAULT,
         640,  // 窗口宽
         480,  // 窗口高
-        None, //父窗口句柄
+        None, // 父窗口句柄
         None,
         instance, // 模块句柄
         // None 或者 std::ptr::null(),
         None,
-    );
+    )?;
 
-    let hwnd = hwnd.unwrap();
+    // 创建文本框
+    let _hwnd_text = CreateWindowExW(
+        WINDOW_EX_STYLE(0),
+        w!("EDIT"),
+        w!("我是文本"),
+        WS_CHILD | WS_VISIBLE | WINDOW_STYLE(ES_LEFT as u32) | WINDOW_STYLE(ES_AUTOHSCROLL as u32),
+        10,
+        10,
+        300,
+        20,
+        hwnd_main,
+        None,
+        instance,
+        None,
+    )?;
 
-    let _ = show_window(hwnd);
+    // 创建按钮
+    let _hwnd_ok = CreateWindowExW(
+        WINDOW_EX_STYLE(0),
+        w!("BUTTON"),
+        w!("Ok"),
+        WS_VISIBLE | WS_CHILD | WINDOW_STYLE(BS_DEFPUSHBUTTON as u32),
+        320,
+        10,
+        80,
+        20,
+        hwnd_main,
+        HMENU(ptr::null_mut()),
+        instance,
+        None,
+    )?;
+
+    let _hwnd_cancel = CreateWindowExW(
+        WINDOW_EX_STYLE(0),
+        w!("BUTTON"),
+        w!("Cancel"),
+        WS_VISIBLE | WS_CHILD | WINDOW_STYLE(BS_DEFPUSHBUTTON as u32),
+        410,
+        10,
+        80,
+        20,
+        hwnd_main,
+        HMENU(ptr::null_mut()),
+        instance,
+        None,
+    )?;
+
+    let _ = show_window(hwnd_main);
 
     // 得到窗口消息、翻译、发送给消息处理函数
     // Run the message loop
     let mut msg = MSG::default();
     loop {
-        let result = GetMessageW(&mut msg, hwnd, 0, 0);
+        let result = GetMessageW(&mut msg, hwnd_main, 0, 0);
         if result == BOOL(0) {
             break;
         } else if result == BOOL(-1) {
@@ -85,6 +125,8 @@ pub unsafe fn create_window() {
 
     // Clean up
     PostQuitMessage(0);
+
+    Ok(())
 }
 
 // 设置窗口位置
@@ -135,7 +177,7 @@ pub unsafe fn get_module_hwnd() -> HMODULE {
     GetModuleHandleW(None).unwrap()
 }
 
-/// 获取系统分辨率
+/// 获取系统分辨率(像素)
 // GetSystemMetrics：检索指定的系统指标或系统配置设置
 pub unsafe fn get_system_resolution() -> (i32, i32) {
     // SM_CXSCREEN, SM_CYSCREEN 以像素为单位计算的屏幕尺寸
@@ -163,8 +205,8 @@ pub unsafe fn set_timeout(hwnd: HWND) {
     SetTimer(hwnd, 1, 1, None);
 }
 
-pub unsafe fn get_mouse_position(_hwnd: HWND) {
-    // SetCapture(hwnd);
+pub unsafe fn get_mouse_position(hwnd: HWND) {
+    SetCapture(hwnd);
     // GetCursorPos(&mut START).unwrap();
 }
 

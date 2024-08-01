@@ -7,7 +7,7 @@ fn main() {
     unsafe {
         // get_os_file_manager_path().unwrap();
         #[cfg(target_os = "windows")]
-        create_window();
+        let _ = create_window();
 
         #[cfg(target_os = "macos")]
         get_finder_info().unwrap();

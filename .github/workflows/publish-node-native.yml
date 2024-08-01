@@ -115,7 +115,7 @@ jobs:
             target: x86_64-apple-darwin
             build: |
               cd packages && pnpm build:node-dev --target x86_64-apple-darwin
-              strip -x ./packages/dist/node/*.node
+              strip -x ./dist/node/*.node
 
           - host: macos-latest
             target: aarch64-apple-darwin
@@ -138,10 +138,10 @@ jobs:
             build: |
               cd packages && pnpm build:node-dev --target i686-pc-windows-msvc
 
-          - host: windows-latest
-            target: aarch64-pc-windows-msvc
-            build: |
-              cd packages && pnpm build:node-dev --target aarch64-pc-windows-msvc
+          # - host: windows-latest
+          #   target: aarch64-pc-windows-msvc
+          #   build: |
+          #     cd packages && pnpm build:node-dev --target aarch64-pc-windows-msvc
 
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
@@ -163,13 +163,13 @@ jobs:
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
             build: >-
 
-          - host: ubuntu-latest
-            target: armv7-unknown-linux-gnueabihf
-            setup: |
-              sudo apt-get update
-              sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf -y
-            build: |
-              cd packages && pnpm build:node-dev --target armv7-unknown-linux-gnueabihf
+          # - host: ubuntu-latest
+          #   target: armv7-unknown-linux-gnueabihf
+          #   setup: |
+          #     sudo apt-get update
+          #     sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf -y
+          #   build: |
+          #     cd packages && pnpm build:node-dev --target armv7-unknown-linux-gnueabihf
 
     name: "构建 ${{ inputs.package }} - ${{ matrix.settings.target }} - node@20"
     runs-on: ${{ matrix.settings.host }}

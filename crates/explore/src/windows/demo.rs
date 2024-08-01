@@ -6,11 +6,11 @@
 // Ex表示拓展, 标注了Ex的winapi函数会比没有标Ex的函数多一些参数什么的, 可以说拓展了一些功能
 // ExA 与 ExW 就是 A,W与Ex的结合了
 
-use windows::core::{w, PCWSTR};
+use windows::core::{w, HSTRING, PCWSTR};
 use windows::Win32::Foundation::{
     BOOL, COLORREF, HINSTANCE, HMODULE, HWND, LPARAM, LRESULT, WPARAM,
 };
-use windows::Win32::Graphics::Gdi::{GetSysColorBrush, COLOR_WINDOW};
+use windows::Win32::Graphics::Gdi::{CreateSolidBrush, GetSysColorBrush, COLOR_WINDOW};
 // 需要使用 Win32_System_LibraryLoader future
 use windows::Win32::System::LibraryLoader::GetModuleHandleW;
 use windows::Win32::UI::WindowsAndMessaging::{
@@ -25,18 +25,18 @@ pub unsafe fn create_window() {
     let instance = HINSTANCE::from(get_module_hwnd());
     // Load the default application icon
     // let h_icon = unsafe { LoadIconW(None, IDI_APPLICATION).unwrap() };
+
+    // PCWSTR(HSTRING::from("MyWindowClass").as_wide().as_ptr())
     let class_name = w!("MyWindowClass");
 
     let wndclass = WNDCLASSW {
         cbClsExtra: 0, // 窗口扩展
         cbWndExtra: 0, // 窗口实例扩展
-        // hbrBackground: CreateSolidBrush(create_colorref(0, 0, 0)), // 窗口背景色
-        hbrBackground: GetSysColorBrush(COLOR_WINDOW), // 窗口背景色
-        hCursor: LoadCursorW(None, IDC_ARROW).unwrap(), // 窗口鼠标光标
-        hInstance: instance,                           // 实例句柄
-        lpfnWndProc: Some(wnd_proc),                   // 定义窗口处理函数
-        // lpszClassName: PCWSTR(HSTRING::from("MyWindowClass").as_wide().as_ptr()), // 窗口类名为“窗口”
-        // lpszClassName: PCWSTR(HSTRING::from("MyWindowClass\0").as_wide().as_ptr()),
+        // GetSysColorBrush(COLOR_WINDOW) 获取系统窗口颜色
+        hbrBackground: CreateSolidBrush(create_colorref(255, 255, 255)), // 窗口背景色
+        hCursor: LoadCursorW(None, IDC_ARROW).unwrap(),                  // 窗口鼠标光标
+        hInstance: instance,                                             // 实例句柄
+        lpfnWndProc: Some(wnd_proc),                                     // 定义窗口处理函数
         lpszClassName: PCWSTR(class_name.as_ptr()),
         style: CS_HREDRAW | CS_VREDRAW, //窗口类的风格 | CS_HREDRAW: 当水平长度改变或移动窗口时，重画整个窗口 | CS_VREDRAW: 当垂直长度改变或移动窗口时，重画整个窗口
         // hIcon:h_icon, // 窗口图标
@@ -45,20 +45,13 @@ pub unsafe fn create_window() {
 
     RegisterClassW(&wndclass);
 
-    let _classname = "MyWindowClass"
-        .encode_utf16()
-        .collect::<Vec<u16>>()
-        .as_ptr();
-    let title = "创建的窗口".encode_utf16().collect::<Vec<u16>>().as_ptr();
-
     let hwnd = CreateWindowExW(
         Default::default(),
         // WS_EX_LAYERED | WS_EX_TOOLWINDOW, // WS_EX_LAYERED：创建一个分层窗口 | WS_EX_TOOLWINDOW：创建工具窗口，即窗口是一个游动的工具条。
-        // PCWSTR::from_raw(classname),      // 窗口类名,需要先注册窗口类
-        class_name,
-        PCWSTR::from_raw(title), // 窗口名
-        WS_POPUP,                // WS_POPUP：创建一个弹出式窗口。
-        0,                       // 起点 CW_USEDEFAULT
+        class_name,     // 窗口类名,需要先注册窗口类
+        w!("窗口名称"), // 窗口名
+        WS_POPUP,       // WS_POPUP：创建一个弹出式窗口。
+        0,              // 起点 CW_USEDEFAULT
         0,
         300, //大小
         300,
@@ -71,12 +64,8 @@ pub unsafe fn create_window() {
 
     let hwnd = hwnd.unwrap();
 
-    // let success = show_window(hwnd.clone());
+    // let success = show_window(hwnd);
     // dbg!(success);
-
-    let success = ShowWindow(hwnd, SW_SHOW);
-    let is_success: bool = success.into();
-    dbg!(is_success);
 
     // 得到窗口消息、翻译、发送给消息处理函数
     // Run the message loop
@@ -158,10 +147,10 @@ pub fn create_colorref(r: u32, g: u32, b: u32) -> COLORREF {
 }
 
 // 显示窗口 SW_SHOWNORMAL 默认显示
-pub unsafe fn show_window(hwnd: HWND) -> bool {
+pub unsafe fn show_window(hwnd: HWND) -> BOOL {
     // SW_SHOWNORMAL
     let is_success = ShowWindow(hwnd, SW_SHOW);
-    is_success.into()
+    is_success
 }
 
 // 设置定时器

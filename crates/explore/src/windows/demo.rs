@@ -1,4 +1,6 @@
 #![cfg(target_os = "windows")]
+#![allow(renamed_and_removed_lints)]
+#![allow(missing_safety_doc)]
 
 // windows api 的A、W、ExA和ExW的区别
 // A表示使用ANSI编码作为标准输入与输出流的文本编码
@@ -6,17 +8,18 @@
 // Ex表示拓展, 标注了Ex的winapi函数会比没有标Ex的函数多一些参数什么的, 可以说拓展了一些功能
 // ExA 与 ExW 就是 A,W与Ex的结合了
 
-use windows::core::{w, HSTRING, PCWSTR};
+use windows::core::{w, PCWSTR};
 use windows::Win32::Foundation::{
     BOOL, COLORREF, HINSTANCE, HMODULE, HWND, LPARAM, LRESULT, WPARAM,
 };
-use windows::Win32::Graphics::Gdi::{CreateSolidBrush, GetSysColorBrush, COLOR_WINDOW};
+use windows::Win32::Graphics::Gdi::CreateSolidBrush;
 // 需要使用 Win32_System_LibraryLoader future
 use windows::Win32::System::LibraryLoader::GetModuleHandleW;
 use windows::Win32::UI::WindowsAndMessaging::{
     CreateWindowExW, DefWindowProcW, DispatchMessageW, GetMessageW, GetSystemMetrics, LoadCursorW,
     PostQuitMessage, RegisterClassW, SetTimer, ShowWindow, TranslateMessage, CS_HREDRAW,
-    CS_VREDRAW, IDC_ARROW, MSG, SM_CXSCREEN, SM_CYSCREEN, SW_SHOW, WNDCLASSW, WS_POPUP,
+    CS_VREDRAW, CW_USEDEFAULT, IDC_ARROW, MSG, SM_CXFULLSCREEN, SM_CXSCREEN, SM_CYSCREEN,
+    SW_SHOWNORMAL, WNDCLASSW, WS_POPUP,
 };
 
 // demo: https://github.com/microsoft/windows-rs/issues/2427
@@ -45,14 +48,17 @@ pub unsafe fn create_window() {
 
     RegisterClassW(&wndclass);
 
+    let (cx, cy) = get_system_resolution();
+    dbg!(cx, cy);
+
     let hwnd = CreateWindowExW(
         Default::default(),
         // WS_EX_LAYERED | WS_EX_TOOLWINDOW, // WS_EX_LAYERED：创建一个分层窗口 | WS_EX_TOOLWINDOW：创建工具窗口，即窗口是一个游动的工具条。
         class_name,     // 窗口类名,需要先注册窗口类
         w!("窗口名称"), // 窗口名
         WS_POPUP,       // WS_POPUP：创建一个弹出式窗口。
-        0,              // 起点 CW_USEDEFAULT
-        0,
+        CW_USEDEFAULT,  // 起点 CW_USEDEFAULT
+        CW_USEDEFAULT,
         300, //大小
         300,
         None, //父窗口句柄
@@ -64,8 +70,7 @@ pub unsafe fn create_window() {
 
     let hwnd = hwnd.unwrap();
 
-    // let success = show_window(hwnd);
-    // dbg!(success);
+    let _ = show_window(hwnd);
 
     // 得到窗口消息、翻译、发送给消息处理函数
     // Run the message loop
@@ -135,22 +140,25 @@ pub unsafe fn get_module_hwnd() -> HMODULE {
 }
 
 // 获取系统分辨率
-pub unsafe fn get_system_resolution() {
-    // SM_CXSCREEN,SM_CYSCREEN 以像素为单位计算的屏幕尺寸
+// GetSystemMetrics：检索指定的系统指标或系统配置设置
+pub unsafe fn get_system_resolution() -> (i32, i32) {
+    // SM_CXSCREEN, SM_CYSCREEN 以像素为单位计算的屏幕尺寸
     let cx = GetSystemMetrics(SM_CXSCREEN);
     let cy = GetSystemMetrics(SM_CYSCREEN);
-    dbg!(cx, cy);
+
+    (cx, cy)
 }
 
 pub fn create_colorref(r: u32, g: u32, b: u32) -> COLORREF {
     COLORREF(r | (g << 8) | (b << 16))
 }
 
-// 显示窗口 SW_SHOWNORMAL 默认显示
+/// 显示窗口 SW_SHOWNORMAL 默认显示 如果窗口以前可见，则返回值为非零值。如果以前隐藏窗口，则返回值为零。
+///
+/// 网址：https://learn.microsoft.com/zh-cn/windows/win32/api/winuser/nf-winuser-showwindow
 pub unsafe fn show_window(hwnd: HWND) -> BOOL {
     // SW_SHOWNORMAL
-    let is_success = ShowWindow(hwnd, SW_SHOW);
-    is_success
+    ShowWindow(hwnd, SW_SHOWNORMAL)
 }
 
 // 设置定时器

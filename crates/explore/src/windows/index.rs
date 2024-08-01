@@ -1,6 +1,8 @@
 // C# https://stackoverflow.com/questions/27590086/c-sharp-get-the-windows-explore-path-which-has-the-focus
 // C# https://stackoverflow.com/questions/8292953/get-current-selection-in-windowsexplorer-from-a-c-sharp-application
 #![cfg(target_os = "windows")]
+#![allow(renamed_and_removed_lints)]
+#![allow(missing_safety_doc)]
 
 use crate::dto::app_info::{AppInfo, Platform};
 use crate::windows::explore::{get_path_from_explore_view, get_sub_explore};

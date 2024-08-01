@@ -5,15 +5,14 @@
 // A表示使用ANSI编码作为标准输入与输出流的文本编码
 // W表示使用Unicode作为编码
 // Ex表示拓展, 标注了Ex的winapi函数会比没有标Ex的函数多一些参数什么的, 可以说拓展了一些功能
-// ExA 与 ExW 就是 A,W与Ex的结合了
-
-use std::ptr;
+// ExA 与 ExW 就是 A,W与 Ex 的结合了
 
 use windows::core::*;
 use windows::Win32::Foundation::*;
 use windows::Win32::Graphics::Gdi::*;
 // 需要使用 Win32_System_LibraryLoader future
 use windows::Win32::System::LibraryLoader::*;
+use windows::Win32::System::SystemServices::*;
 use windows::Win32::UI::Input::KeyboardAndMouse::*;
 use windows::Win32::UI::WindowsAndMessaging::*;
 
@@ -26,11 +25,11 @@ pub unsafe fn create_window() -> anyhow::Result<()> {
     let class_name = w!("MyWindowClass");
 
     let wndclass = WNDCLASSW {
-        cbClsExtra: 0,                                                   // 窗口扩展
-        cbWndExtra: 0,                                                   // 窗口实例扩展
-        hbrBackground: CreateSolidBrush(create_colorref(255, 255, 255)), // 窗口背景色  // GetSysColorBrush(COLOR_WINDOW) 获取系统窗口颜色
-        hInstance: instance,                                             // 实例句柄
-        lpfnWndProc: Some(wnd_proc),                                     // 定义窗口处理函数
+        cbClsExtra: 0,                                       // 窗口扩展
+        cbWndExtra: 0,                                       // 窗口实例扩展
+        hbrBackground: CreateSolidBrush(rgb(255, 255, 255)), // 窗口背景色  // GetSysColorBrush(COLOR_WINDOW) 获取系统窗口颜色
+        hInstance: instance,                                 // 实例句柄
+        lpfnWndProc: Some(wnd_proc),                         // 定义窗口处理函数
         lpszClassName: PCWSTR(class_name.as_ptr()),
         style: CS_HREDRAW | CS_VREDRAW, //窗口类的风格 | CS_HREDRAW: 当水平长度改变或移动窗口时，重画整个窗口 | CS_VREDRAW: 当垂直长度改变或移动窗口时，重画整个窗口
         hIcon: LoadIconW(None, IDI_APPLICATION).unwrap(), // 加载默认图标
@@ -41,18 +40,19 @@ pub unsafe fn create_window() -> anyhow::Result<()> {
     RegisterClassW(&wndclass);
 
     let (cx, cy) = get_system_resolution();
-    dbg!(cx, cy);
+    let main_width = 640;
+    let main_height = 480;
 
     let hwnd_main = CreateWindowExW(
-        WINDOW_EX_STYLE(0), // WS_EX_LAYERED：创建一个分层窗口 | WS_EX_TOOLWINDOW：创建工具窗口，即窗口是一个游动的工具条。
+        WINDOW_EX_STYLE(0), // 这两个条件中 WS_EX_LAYERED：创建一个分层窗口 | WS_EX_TOOLWINDOW：创建工具窗口，即窗口是一个游动的工具条。 需要 SetLayeredWindowAttributes 才会显示
         class_name,         // 窗口类名,需要先注册窗口类
         w!("窗口名称"),     // 窗口名
         WS_OVERLAPPEDWINDOW | WS_SYSMENU, // 文档：https://learn.microsoft.com/zh-cn/windows/win32/winmsg/window-styles
-        CW_USEDEFAULT,                    // 起点 CW_USEDEFAULT
-        CW_USEDEFAULT,
-        640,  // 窗口宽
-        480,  // 窗口高
-        None, // 父窗口句柄
+        (cx - main_width) / 2,            // 起点 CW_USEDEFAULT
+        (cy - main_height) / 2,
+        main_width,  // 窗口宽
+        main_height, // 窗口高
+        None,        // 父窗口句柄
         None,
         instance, // 模块句柄
         // None 或者 std::ptr::null(),
@@ -86,7 +86,7 @@ pub unsafe fn create_window() -> anyhow::Result<()> {
         80,
         20,
         hwnd_main,
-        HMENU(ptr::null_mut()),
+        HMENU(IDOK.0 as _),
         instance,
         None,
     )?;
@@ -101,10 +101,25 @@ pub unsafe fn create_window() -> anyhow::Result<()> {
         80,
         20,
         hwnd_main,
-        HMENU(ptr::null_mut()),
+        HMENU(IDCANCEL.0 as _),
         instance,
         None,
     )?;
+
+    // let _hwnd_stratify = CreateWindowExW(
+    //     WS_EX_LAYERED | WS_EX_TOOLWINDOW,
+    //     w!("Stratify"),
+    //     w!("Stratify"),
+    //     WS_POPUP,
+    //     410,
+    //     10,
+    //     80,
+    //     20,
+    //     None,
+    //     None,
+    //     instance,
+    //     None,
+    // )?;
 
     let _ = show_window(hwnd_main);
 
@@ -116,31 +131,25 @@ pub unsafe fn create_window() -> anyhow::Result<()> {
         if result == BOOL(0) {
             break;
         } else if result == BOOL(-1) {
-            //handle error
+            // handle error
+            PostQuitMessage(0);
+            break;
         } else {
             let _ = TranslateMessage(&msg);
             DispatchMessageW(&msg);
         }
     }
 
-    // Clean up
-    PostQuitMessage(0);
-
     Ok(())
 }
 
-// 设置窗口位置
-// HWND_TOPMOST将窗口置于所有非顶层窗口之上。即使窗口未被激活窗口也将保持顶级位置。 | SWP_NOSIZE：维持当前尺寸（忽略cx和Cy参数）| SWP_NOMOVE：维持当前位置（忽略X和Y参数）。
-// SetWindowPos(
-//     hwnd.clone(),
-//     HWND_TOPMOST,
-//     0,
-//     0,
-//     0,
-//     0,
-//     SWP_NOSIZE | SWP_NOMOVE,
-// )
-// .unwrap();
+pub fn loword(l: usize) -> usize {
+    l & 0xffff
+}
+
+pub fn hiword(l: usize) -> usize {
+    (l >> 16) & 0xffff
+}
 
 // 消息处理函数
 // WM_CREATE窗口创建
@@ -156,19 +165,59 @@ unsafe extern "system" fn wnd_proc(
     w_param: WPARAM,
     l_param: LPARAM,
 ) -> LRESULT {
-    DefWindowProcW(hwnd, message, w_param, l_param) // 系统默认处理
+    let control_id = loword(w_param.0);
+    let notification_code = hiword(w_param.0);
+    let control_handle = l_param;
 
-    // 消息与左键按位与为true，则执行
+    match message {
+        // 按钮消息
+        WM_COMMAND => {
+            // 判断按钮 HMENU ID
+            if control_id == IDOK.0 as usize
+                && notification_code == 0
+                && control_handle.0 == GetDlgItem(hwnd, IDOK.0).unwrap().0 as isize
+            {
+                println!("点击了 OK 按钮!");
+            } else if control_id == IDCANCEL.0 as usize
+                && notification_code == 0
+                && control_handle.0 == GetDlgItem(hwnd, IDCANCEL.0).unwrap().0 as isize
+            {
+                println!("点击了 Cancel 按钮!");
+            }
+        }
+        // 鼠标左键按下
+        WM_LBUTTONDOWN => {
+            if MODIFIERKEYS_FLAGS(control_id as u32) == MK_LBUTTON {
+                // 获取相对于窗口的坐标
+                let _x = loword(control_handle.0 as usize); // 得到鼠标x坐标（l_param 低位）
+                let _y = hiword(control_handle.0 as usize); //得到鼠标y坐标（l_param 高位）
+
+                // 发送重绘窗口消息
+                let _is_success = InvalidateRect(hwnd, None, TRUE);
+
+                // get_mouse_position(hwnd);
+                // set_window_position(hwnd, 300, 300, 100, 100);
+                window_draw(hwnd);
+            }
+        }
+        // 定时器消息，需要 set_timeout(hwnd_main) 开启定时器
+        WM_TIMER => {
+            set_window_transparent(hwnd);
+        }
+        // 窗口销毁
+        WM_DESTROY => {
+            PostQuitMessage(0);
+        }
+        _ => {
+            return DefWindowProcW(hwnd, message, w_param, l_param); // 系统默认处理
+        }
+    };
+
+    LRESULT(0)
+
+    // 消息与按位与为 true，则执行
     // if (w_param.0 as u32 & MK_LBUTTON) != 0 {
-    //     let x = l_param.0 as i32;
-    //     let y = l_param.0 as i32;
-    //     NOW.x = x << 16 >> 16; //得到鼠标x坐标（l_param低位）
-    //     NOW.y = y >> 16; //得到鼠标y坐标（l_param高位）
-    //     I_COUNT += 1;
-    //
-    //     if I_COUNT % 4 == 0 {
-    //         InvalidateRect(hwnd, std::ptr::null(), true); //发送重绘窗口消息
-    //     }
+
     // }
 }
 
@@ -187,7 +236,7 @@ pub unsafe fn get_system_resolution() -> (i32, i32) {
     (cx, cy)
 }
 
-pub fn create_colorref(r: u32, g: u32, b: u32) -> COLORREF {
+pub fn rgb(r: u32, g: u32, b: u32) -> COLORREF {
     COLORREF(r | (g << 8) | (b << 16))
 }
 
@@ -199,41 +248,61 @@ pub unsafe fn show_window(hwnd: HWND) -> BOOL {
     ShowWindow(hwnd, SW_SHOWNORMAL)
 }
 
-// 设置定时器
+// 设置窗口绑定定时器 nidevent：定时器 id,uelapse: 为定时器事件之间的时间间隔，单位为毫秒
 pub unsafe fn set_timeout(hwnd: HWND) {
-    // 发送WM_TIMER消息
-    SetTimer(hwnd, 1, 1, None);
+    // 发送 WM_TIMER 消息
+    SetTimer(hwnd, 1, 1000, None);
 }
 
+// 获取鼠标位置，基于屏幕坐标
 pub unsafe fn get_mouse_position(hwnd: HWND) {
     SetCapture(hwnd);
-    // GetCursorPos(&mut START).unwrap();
+    let point: *mut POINT = &mut POINT { x: 0, y: 0 };
+    GetCursorPos(point).unwrap();
+}
+
+// 设置分层窗口透明度渐变
+pub unsafe fn set_window_transparent(hwnd: HWND) {
+    // dwFlags 为 LWA_ALPHA 时：crKey 参数无效，bAlpha 参数有效；
+    SetLayeredWindowAttributes(hwnd, COLORREF(0), 70, LWA_ALPHA).unwrap();
+    // if I_ALPHA > 128 {
+    //     // 销毁定时器
+    //     KillTimer(hwnd, 1).expect("TODO: panic message");
+    // }
+}
+
+// 设置窗口位置
+pub unsafe fn set_window_position(hwnd: HWND, x: i32, y: i32, width: i32, height: i32) {
+    // hWndInsertAfter：HWND_TOPMOST 将窗口置于所有非顶层窗口之上。即使窗口未被激活窗口也将保持顶级位置。
+    // uFlags: SWP_NOSIZE：维持当前尺寸（忽略cx和Cy参数）| SWP_NOMOVE：维持当前位置（忽略X和Y参数）。
+    SetWindowPos(hwnd, HWND_TOPMOST, x, y, width, height, SWP_FRAMECHANGED).unwrap();
+}
+
+pub unsafe fn send_update_window_message(hwnd: HWND) -> BOOL {
+    // 重绘窗口，并发送一个 WM_PAINT
+    UpdateWindow(hwnd)
+}
+
+// 未实现：窗口绘图操作
+pub unsafe fn window_draw(hwnd: HWND) {
+    let mut ps = PAINTSTRUCT::default();
+
+    let hdc = BeginPaint(hwnd, &mut ps); //开始绘图
+    let h_brush_rect = CreateSolidBrush(rgb(233, 233, 233)); //创建封闭图形填充刷子
+    let h_brush_frame = CreateSolidBrush(rgb(255, 255, 255));
+
+    let mut rect = RECT::default();
+
+    let _ = SetRect(&mut rect, 10, 10, 20, 20); //设置矩形坐标
+    FillRect(hdc, &rect, h_brush_rect); //指定的画刷填充矩形
+    FrameRect(hdc, &rect, h_brush_frame); //用指定的画刷为指定的矩形画边框
+    SetLayeredWindowAttributes(hwnd, COLORREF(0), 70, LWA_COLORKEY | LWA_ALPHA).unwrap(); //设置窗口透明度
+    let _ = DeleteObject(h_brush_frame); //删除画刷
+    let _ = DeleteObject(h_brush_rect);
+    let _ = EndPaint(hwnd, &ps); //结束绘图
 }
 
 pub unsafe fn other() {
-    // 重绘窗口，并发送一个 WM_PAINT
-    // UpdateWindow(hwnd);
-
-    // 设置窗口透明度渐变
-    //LWA_ALPHA时：crKey参数无效，bAlpha参数有效；
-    // SetLayeredWindowAttributes(hwnd, 0, I_ALPHA, LWA_ALPHA);
-    // if I_ALPHA > 128 {
-    //     KillTimer(hwnd, 1);
-    // }
-    // I_ALPHA += 10;
-
-    // 窗口绘图操作
-    // let hdc = BeginPaint(hwnd, &mut ps);//开始绘图
-    // let h_brush_rect = CreateSolidBrush(rgb(233, 233, 233));//创建封闭图形填充刷子
-    // let h_brush_frame = CreateSolidBrush(rgb(255, 255, 255));
-    // SetRect(&mut rect, min(START.x, NOW.x), min(START.y, NOW.y), max(START.x, NOW.x), max(START.y, NOW.y));//设置矩形坐标
-    // FillRect(hdc, &rect, h_brush_rect);//指定的画刷填充矩形
-    // FrameRect(hdc, &rect, h_brush_frame);//用指定的画刷为指定的矩形画边框
-    // SetLayeredWindowAttributes(hwnd, transparent_color, I_ALPHA, LWA_COLORKEY | LWA_ALPHA);//设置窗口透明度
-    // DeleteObject(h_brush_frame);//删除画刷
-    // DeleteObject(h_brush_rect);
-    // EndPaint(hwnd, &ps);//结束绘图
-
     // 得到指定矩形的位图并放入剪切板
     // let hdc = GetDC(None); //得到当前模块DC
     // let absx = (START.x - NOW.x).abs();
@@ -243,9 +312,8 @@ pub unsafe fn other() {
     // let h_bitmap = CreateCompatibleBitmap(hdc, absx, absy); //该函数创建与指定的设备环境相关的设备兼容的位图。位图的absx宽absy高。
     // let hmendc = CreateCompatibleDC(hdc); //该函数创建一个与指定设备兼容的内存设备上下文环境
     // let holdbmp = SelectObject(hmendc, h_bitmap); //给DC送位图，得到holdbmp
-    //
     // BitBlt(hmendc, 0, 0, absx, absy, hdc, minx, miny, SRCCOPY); //SRCCOPY：将源矩形区域直接拷贝到目标矩形区域。
-    //
+
     // //将位图保存至临时文件夹
     // let mut bitmap_info = BITMAPINFO::default();//初始化BITMAPINFO
     // bitmap_info.bmiHeader.biSize = std::mem::size_of::<BITMAPINFOHEADER>() as _;
@@ -254,13 +322,12 @@ pub unsafe fn other() {
     // let mut bitmap_bits: Vec<u8> = vec![0; bitmap_info.bmiHeader.biSizeImage as _];
     // GetDIBits(hmendc, h_bitmap, 0, absy as _, bitmap_bits.as_mut_ptr() as _, &mut bitmap_info, DIB_RGB_COLORS);//第二次调用写入位图数据
     // create_bmp_file(bitmap_info, bitmap_bits);
-    //
+
     // //将位图保存至剪切板
     // OpenClipboard(hwnd); //打开剪切板
     // EmptyClipboard(); //清空剪切板
     // SetClipboardData(CF_BITMAP.0, HANDLE(h_bitmap.0)).unwrap(); //设置剪切板数据
     // CloseClipboard(); //关闭剪切板
-    //
     // ReleaseCapture(); //释放捕获鼠标
     // SelectObject(hmendc, holdbmp); //取回DC位图
     // DeleteDC(hmendc); //删除DC
@@ -268,18 +335,13 @@ pub unsafe fn other() {
     // ReleaseDC(None, hdc); //释放DC
     // DestroyWindow(hwnd);//销毁窗口
 
-    // 窗口关闭消息处理
-    // WM_DESTROY => {
-    //     PostQuitMessage(0);
-    // }
-    // _ => ()
-
     // 位图数据保存为bmp文件
     // 创建文件目录
     // let temp_path = std::env::temp_dir().to_str().unwrap().to_string();
     // if !std::path::Path::new(&(temp_path.to_owned() + "/jietutemp")).exists() {
     //     std::fs::create_dir(temp_path.to_owned() + "/jietutemp").unwrap();
     // }
+
     // //创建文件
     // let mut f = std::fs::File::create(temp_path + "/jietutemp/jietutemp.bmp").unwrap();
     // f.write(b"BM").unwrap();

@@ -17,17 +17,15 @@ use windows::Win32::Graphics::Gdi::CreateSolidBrush;
 use windows::Win32::System::LibraryLoader::GetModuleHandleW;
 use windows::Win32::UI::WindowsAndMessaging::{
     CreateWindowExW, DefWindowProcW, DispatchMessageW, GetMessageW, GetSystemMetrics, LoadCursorW,
-    PostQuitMessage, RegisterClassW, SetTimer, ShowWindow, TranslateMessage, CS_HREDRAW,
-    CS_VREDRAW, CW_USEDEFAULT, IDC_ARROW, MSG, SM_CXFULLSCREEN, SM_CXSCREEN, SM_CYSCREEN,
-    SW_SHOWNORMAL, WNDCLASSW, WS_POPUP,
+    LoadIconW, PostQuitMessage, RegisterClassW, SetTimer, ShowWindow, TranslateMessage, CS_HREDRAW,
+    CS_VREDRAW, CW_USEDEFAULT, IDC_ARROW, IDI_APPLICATION, MSG, SM_CXSCREEN, SM_CYSCREEN,
+    SW_SHOWNORMAL, WNDCLASSW, WS_OVERLAPPEDWINDOW, WS_SYSMENU,
 };
 
 // demo: https://github.com/microsoft/windows-rs/issues/2427
 // demo: https://www.bilibili.com/read/cv17317342/
 pub unsafe fn create_window() {
     let instance = HINSTANCE::from(get_module_hwnd());
-    // Load the default application icon
-    // let h_icon = unsafe { LoadIconW(None, IDI_APPLICATION).unwrap() };
 
     // PCWSTR(HSTRING::from("MyWindowClass").as_wide().as_ptr())
     let class_name = w!("MyWindowClass");
@@ -42,7 +40,7 @@ pub unsafe fn create_window() {
         lpfnWndProc: Some(wnd_proc),                                     // 定义窗口处理函数
         lpszClassName: PCWSTR(class_name.as_ptr()),
         style: CS_HREDRAW | CS_VREDRAW, //窗口类的风格 | CS_HREDRAW: 当水平长度改变或移动窗口时，重画整个窗口 | CS_VREDRAW: 当垂直长度改变或移动窗口时，重画整个窗口
-        // hIcon:h_icon, // 窗口图标
+        hIcon: LoadIconW(None, IDI_APPLICATION).unwrap(), // 加载默认图标
         ..Default::default()
     };
 
@@ -54,10 +52,10 @@ pub unsafe fn create_window() {
     let hwnd = CreateWindowExW(
         Default::default(),
         // WS_EX_LAYERED | WS_EX_TOOLWINDOW, // WS_EX_LAYERED：创建一个分层窗口 | WS_EX_TOOLWINDOW：创建工具窗口，即窗口是一个游动的工具条。
-        class_name,     // 窗口类名,需要先注册窗口类
-        w!("窗口名称"), // 窗口名
-        WS_POPUP,       // WS_POPUP：创建一个弹出式窗口。
-        CW_USEDEFAULT,  // 起点 CW_USEDEFAULT
+        class_name,                       // 窗口类名,需要先注册窗口类
+        w!("窗口名称"),                   // 窗口名
+        WS_OVERLAPPEDWINDOW | WS_SYSMENU, // 文档：https://learn.microsoft.com/zh-cn/windows/win32/winmsg/window-styles
+        CW_USEDEFAULT,                    // 起点 CW_USEDEFAULT
         CW_USEDEFAULT,
         300, //大小
         300,

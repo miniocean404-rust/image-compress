@@ -343,4 +343,4 @@ jobs:
           body: ${{ github.event.head_commit.message }}
           token: ${{ github.token }}
           files: |
-            ./packages/artifacts
+            ./packages/artifacts/*

@@ -111,32 +111,32 @@ jobs:
       fail-fast: false
       matrix:
         settings:
-          - host: macos-latest
-            target: x86_64-apple-darwin
-            build: |
-              cd packages && pnpm build:node-dev --target x86_64-apple-darwin
-              strip -x ./dist/node/*.node
+          # - host: macos-latest
+          #   target: x86_64-apple-darwin
+          #   build: |
+          #     cd packages && pnpm build:node-dev --target x86_64-apple-darwin
+          #     strip -x ./dist/node/*.node
 
-          - host: macos-latest
-            target: aarch64-apple-darwin
-            build: |
-              sudo rm -Rf /Library/Developer/CommandLineTools/SDKs/*;
-              export CC=$(xcrun -f clang);
-              export CXX=$(xcrun -f clang++);
-              SYSROOT=$(xcrun --sdk macosx --show-sdk-path);
-              export CFLAGS="-isysroot $SYSROOT -isystem $SYSROOT";
-              cd packages &&
-              pnpm build:node-dev --target aarch64-apple-darwin
+          # - host: macos-latest
+          #   target: aarch64-apple-darwin
+          #   build: |
+          #     sudo rm -Rf /Library/Developer/CommandLineTools/SDKs/*;
+          #     export CC=$(xcrun -f clang);
+          #     export CXX=$(xcrun -f clang++);
+          #     SYSROOT=$(xcrun --sdk macosx --show-sdk-path);
+          #     export CFLAGS="-isysroot $SYSROOT -isystem $SYSROOT";
+          #     cd packages &&
+          #     pnpm build:node-dev --target aarch64-apple-darwin
 
-          - host: windows-latest
-            target: x86_64-pc-windows-msvc
-            build: |
-              cd packages && pnpm build:node-dev --target x86_64-pc-windows-msvc
+          # - host: windows-latest
+          #   target: x86_64-pc-windows-msvc
+          #   build: |
+          #     cd packages && pnpm build:node-dev --target x86_64-pc-windows-msvc
 
-          - host: windows-latest
-            target: i686-pc-windows-msvc
-            build: |
-              cd packages && pnpm build:node-dev --target i686-pc-windows-msvc
+          # - host: windows-latest
+          #   target: i686-pc-windows-msvc
+          #   build: |
+          #     cd packages && pnpm build:node-dev --target i686-pc-windows-msvc
 
           - host: windows-latest
             target: aarch64-pc-windows-msvc
@@ -196,10 +196,11 @@ jobs:
         run: echo "version=$(cat ./rust-toolchain)" >> "$GITHUB_OUTPUT"
 
       - name: 安装 rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
         if: ${{ !matrix.settings.docker }}
         with:
           targets: ${{ matrix.settings.target }}
+          toolchain: stable
           # toolchain: ${{ steps.toolchain.outputs.version }}
 
       - name: 缓存 cargo registry

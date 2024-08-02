@@ -242,8 +242,6 @@ jobs:
 
       - name: 普通构建
         run: |
-          sudo apt-get update
-          sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf -y
           ${{ matrix.settings.build }}
         if: ${{ !matrix.settings.docker }}
         shell: bash

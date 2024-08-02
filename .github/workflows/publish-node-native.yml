@@ -141,7 +141,6 @@ jobs:
           - host: windows-latest
             target: aarch64-pc-windows-msvc
             build: |
-              rustup target add aarch64-pc-windows-msvc &&
               packages && pnpm build:node-dev --target aarch64-pc-windows-msvc
 
           # - host: ubuntu-latest
@@ -170,7 +169,6 @@ jobs:
               sudo apt-get update
               sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf -y
             build: |
-              rustup target add armv7-unknown-linux-gnueabihf &&
               cd packages && pnpm build:node-dev --target armv7-unknown-linux-gnueabihf
 
     name: "构建 ${{ inputs.package }} - ${{ matrix.settings.target }} - node@20"
@@ -202,7 +200,7 @@ jobs:
         if: ${{ !matrix.settings.docker }}
         with:
           targets: ${{ matrix.settings.target }}
-          toolchain: stable
+          toolchain: nightly-2024-07-21
           # toolchain: ${{ steps.toolchain.outputs.version }}
 
       - name: 缓存 cargo registry

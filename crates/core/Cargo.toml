@@ -21,7 +21,7 @@ walkdir.workspace = true
 num_cpus.workspace = true
 
 rgb = "0.8.37"
-image = "0.25.2"
+image = { version = "0.25.2", features = ["rayon", "webp"] }
 
 # 无损压缩 png (optipng、oxipng)
 oxipng = { version = "9.0.0" }
@@ -32,7 +32,6 @@ png = "0.17.11"
 
 mozjpeg = "= 0.10.9"
 mozjpeg-sys = { version = "2.2.0", features = ["default"] }
-nasm-rs = "0.3.0"
 
 # gifsicle 是读取以及 有损及无损压缩 gif 的库
 gifsicle = "1.94.0"

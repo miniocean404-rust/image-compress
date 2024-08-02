@@ -845,7 +845,6 @@ dependencies = [
  "lodepng",
  "mozjpeg",
  "mozjpeg-sys",
- "nasm-rs",
  "num_cpus",
  "oxipng",
  "png",

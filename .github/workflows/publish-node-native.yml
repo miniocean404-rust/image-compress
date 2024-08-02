@@ -196,7 +196,7 @@ jobs:
         run: echo "version=$(cat ./rust-toolchain)" >> "$GITHUB_OUTPUT"
 
       - name: 安装 rust toolchain
-        uses: dtolnay/rust-toolchain@master
+        uses: dtolnay/rust-toolchain@stable
         if: ${{ !matrix.settings.docker }}
         with:
           targets: ${{ matrix.settings.target }}
@@ -242,8 +242,7 @@ jobs:
           target: ${{ matrix.settings.target }}
 
       - name: 普通构建
-        run: |
-          ${{ matrix.settings.build }}
+        run: ${{ matrix.settings.build }}
         if: ${{ !matrix.settings.docker }}
         shell: bash
 

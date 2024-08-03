@@ -6,4 +6,3 @@ edition.workspace = true
 
 [dependencies]
 image = { version = "=0.25.2" }
-zune-jpeg = "=0.4.11"

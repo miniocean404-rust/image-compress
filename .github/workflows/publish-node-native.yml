@@ -111,62 +111,62 @@ jobs:
       fail-fast: false
       matrix:
         settings:
-          # - host: macos-latest
-          #   target: x86_64-apple-darwin
-          #   build: |
-          #     cd packages && pnpm build:node-dev --target x86_64-apple-darwin
-          #     strip -x ./dist/node/*.node
+          - host: macos-latest
+            target: x86_64-apple-darwin
+            build: |
+              cd packages && pnpm build:node-dev --target x86_64-apple-darwin
+              strip -x ./dist/node/*.node
 
-          # - host: macos-latest
-          #   target: aarch64-apple-darwin
-          #   build: |
-          #     sudo rm -Rf /Library/Developer/CommandLineTools/SDKs/*;
-          #     export CC=$(xcrun -f clang);
-          #     export CXX=$(xcrun -f clang++);
-          #     SYSROOT=$(xcrun --sdk macosx --show-sdk-path);
-          #     export CFLAGS="-isysroot $SYSROOT -isystem $SYSROOT";
-          #     cd packages &&
-          #     pnpm build:node-dev --target aarch64-apple-darwin
+          - host: macos-latest
+            target: aarch64-apple-darwin
+            build: |
+              sudo rm -Rf /Library/Developer/CommandLineTools/SDKs/*;
+              export CC=$(xcrun -f clang);
+              export CXX=$(xcrun -f clang++);
+              SYSROOT=$(xcrun --sdk macosx --show-sdk-path);
+              export CFLAGS="-isysroot $SYSROOT -isystem $SYSROOT";
+              cd packages &&
+              pnpm build:node-dev --target aarch64-apple-darwin
 
-          # - host: windows-latest
-          #   target: x86_64-pc-windows-msvc
-          #   build: |
-          #     cd packages && pnpm build:node-dev --target x86_64-pc-windows-msvc
+          - host: windows-latest
+            target: x86_64-pc-windows-msvc
+            build: |
+              cd packages && pnpm build:node-dev --target x86_64-pc-windows-msvc
 
-          # - host: windows-latest
-          #   target: i686-pc-windows-msvc
-          #   build: |
-          #     cd packages && pnpm build:node-dev --target i686-pc-windows-msvc
+          - host: windows-latest
+            target: i686-pc-windows-msvc
+            build: |
+              cd packages && pnpm build:node-dev --target i686-pc-windows-msvc
 
           - host: windows-latest
             target: aarch64-pc-windows-msvc
             build: |
               cd packages && pnpm build:node-dev --target aarch64-pc-windows-msvc
 
-          # - host: ubuntu-latest
-          #   target: x86_64-unknown-linux-gnu
-          #   docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
-          #   build: >-
-          # - host: ubuntu-latest
-          #   target: x86_64-unknown-linux-musl
-          #   docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
-          #   build: >-
-          # - host: ubuntu-latest
-          #   target: aarch64-unknown-linux-gnu
-          #   docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
-          #   build: >-
-          # - host: ubuntu-latest
-          #   target: aarch64-unknown-linux-musl
-          #   docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
-          #   build: >-
           - host: ubuntu-latest
-            target: armv7-unknown-linux-gnueabihf
-            setup: |
-              sudo apt-get update
-              sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf -y
-            build: |
-              cargo build -p test --release --target armv7-unknown-linux-gnueabihf
-            #              cd packages && pnpm build:node-dev --target armv7-unknown-linux-gnueabihf
+            target: x86_64-unknown-linux-gnu
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
+            build: >-
+          - host: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
+            build: >-
+          - host: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
+            build: >-
+          - host: ubuntu-latest
+            target: aarch64-unknown-linux-musl
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
+            build: >-
+          # - host: ubuntu-latest
+          #   target: armv7-unknown-linux-gnueabihf
+          #   setup: |
+          #     sudo apt-get update
+          #     sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf -y
+          #   build: |
+          #     cargo build -p test --release --target armv7-unknown-linux-gnueabihf
+          #   #              cd packages && pnpm build:node-dev --target armv7-unknown-linux-gnueabihf
 
     name: "构建 ${{ inputs.package }} - ${{ matrix.settings.target }} - node@20"
     runs-on: ${{ matrix.settings.host }}

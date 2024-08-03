@@ -21,7 +21,7 @@ walkdir.workspace = true
 num_cpus.workspace = true
 
 rgb = "0.8.37"
-image = { version = "0.25.0", features = ["rayon", "webp"] }
+image = { version = "=0.25.2", features = ["rayon", "webp"] }
 
 # 无损压缩 png (optipng、oxipng)
 oxipng = { version = "9.0.0" }

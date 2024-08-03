@@ -31,7 +31,7 @@ lodepng = "3.10.0"
 png = "0.17.11"
 
 mozjpeg = "= 0.10.9"
-mozjpeg-sys = { version = "2.2.0", features = ["default"] }
+mozjpeg-sys = { version = "2.2.1", features = ["default"] }
 
 # gifsicle 是读取以及 有损及无损压缩 gif 的库
 gifsicle = "1.94.0"

@@ -6,3 +6,4 @@ pkg
 node_modules
 *.node
 release
+tmp

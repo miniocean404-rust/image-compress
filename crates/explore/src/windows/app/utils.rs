@@ -255,40 +255,40 @@ pub unsafe fn create_bmp_file(bitmap_info: BITMAPINFO, bitmap_bits: Vec<u8>) {
     // 创建文件
     let mut f =
         fs::File::create(target_buf.to_string_lossy().to_string() + "/jietutemp.bmp").unwrap();
-    f.write(b"BM").unwrap();
-    f.write(
+    f.write_all(b"BM").unwrap();
+    f.write_all(
         &(bitmap_info.bmiHeader.biSizeImage
             + size_of::<BITMAPFILEHEADER>() as u32
             + size_of::<BITMAPINFOHEADER>() as u32)
             .to_le_bytes(),
     )
     .unwrap();
-    f.write(&0u16.to_le_bytes()).unwrap();
-    f.write(&0u16.to_le_bytes()).unwrap();
-    f.write(
+    f.write_all(&0u16.to_le_bytes()).unwrap();
+    f.write_all(&0u16.to_le_bytes()).unwrap();
+    f.write_all(
         &(size_of::<BITMAPFILEHEADER>() as u32 + size_of::<BITMAPINFOHEADER>() as u32)
             .to_le_bytes(),
     )
     .unwrap();
-    f.write(&40u32.to_le_bytes()).unwrap();
-    f.write(&bitmap_info.bmiHeader.biWidth.to_le_bytes())
+    f.write_all(&40u32.to_le_bytes()).unwrap();
+    f.write_all(&bitmap_info.bmiHeader.biWidth.to_le_bytes())
         .unwrap();
-    f.write(&bitmap_info.bmiHeader.biHeight.to_le_bytes())
+    f.write_all(&bitmap_info.bmiHeader.biHeight.to_le_bytes())
         .unwrap();
-    f.write(&1u16.to_le_bytes()).unwrap();
-    f.write(&bitmap_info.bmiHeader.biBitCount.to_le_bytes())
+    f.write_all(&1u16.to_le_bytes()).unwrap();
+    f.write_all(&bitmap_info.bmiHeader.biBitCount.to_le_bytes())
         .unwrap();
-    f.write(&bitmap_info.bmiHeader.biCompression.to_le_bytes())
+    f.write_all(&bitmap_info.bmiHeader.biCompression.to_le_bytes())
         .unwrap();
-    f.write(&bitmap_info.bmiHeader.biSizeImage.to_le_bytes())
+    f.write_all(&bitmap_info.bmiHeader.biSizeImage.to_le_bytes())
         .unwrap();
-    f.write(&bitmap_info.bmiHeader.biXPelsPerMeter.to_le_bytes())
+    f.write_all(&bitmap_info.bmiHeader.biXPelsPerMeter.to_le_bytes())
         .unwrap();
-    f.write(&bitmap_info.bmiHeader.biYPelsPerMeter.to_le_bytes())
+    f.write_all(&bitmap_info.bmiHeader.biYPelsPerMeter.to_le_bytes())
         .unwrap();
-    f.write(&0u32.to_le_bytes()).unwrap();
-    f.write(&0u32.to_le_bytes()).unwrap();
-    f.write(&bitmap_bits).unwrap();
+    f.write_all(&0u32.to_le_bytes()).unwrap();
+    f.write_all(&0u32.to_le_bytes()).unwrap();
+    f.write_all(&bitmap_bits).unwrap();
 
     // 方式 2
     // let mut bmf_header = BITMAPFILEHEADER::default();

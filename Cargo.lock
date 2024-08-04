@@ -2129,7 +2129,6 @@ dependencies = [
  "gif",
  "image-webp",
  "mp4parse",
- "num-traits",
  "png",
  "qoi",
  "ravif",

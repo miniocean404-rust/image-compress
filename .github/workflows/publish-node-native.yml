@@ -164,6 +164,8 @@ jobs:
             setup: |
               sudo apt-get update
               sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf -y
+              sudo apt install ninja-build meson nasm
+              sudo apt-get -y install clang llvm
             build: |
               cargo build -p test --release --target armv7-unknown-linux-gnueabihf
             #              cd packages && pnpm build:node-dev --target armv7-unknown-linux-gnueabihf

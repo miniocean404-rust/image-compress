@@ -55,7 +55,7 @@ runs:
           corepack enable
 
           cd packages &&
-          RUST_TARGET=${{ inputs.target }} pnpm build:node-dev --target ${{ matrix.settings.target }}
+          RUST_TARGET=${{ inputs.target }} pnpm build:node --target ${{ matrix.settings.target }}
           ${{ inputs.post }}
         '
 

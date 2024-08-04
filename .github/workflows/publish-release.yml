@@ -1,3 +1,10 @@
+# 参考
+# 1.swc: https://github.com/swc-project/swc/blob/main/.github/workflows/publish-npm-package.yml
+# 2.biome: https://github.com/biomejs/biome/blob/main/.github/workflows/release_cli.yml
+# 3.git-cliff: https://github.com/orhun/git-cliff/blob/main/.github/workflows/cd.yml
+# 4.skyra-project/ai: https://github.com/skyra-project/ai/actions/runs/5556591465/workflow?pr=131
+# 5.node-rs: https://github.com/napi-rs/node-rs/actions/runs/5606629914/workflow
+
 name: "发布 Release"
 
 env:

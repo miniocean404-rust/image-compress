@@ -1,5 +1,4 @@
 use std::env;
-
 use utils::env::is_debug;
 use utils::hook::panic_hook::register_panic_hook;
 

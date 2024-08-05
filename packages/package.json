@@ -29,7 +29,9 @@
     "build:wasm-release": "npm-run-all \"pack -- build ../crates/wasm --release --out-dir ../../packages/dist/wasm\" --",
     "build:node": "napi build --manifest-path ../crates/node/Cargo.toml --platform -p node --release -o dist/node",
     "build:node-dev": "napi build --manifest-path ../Cargo.toml --platform -p node --js ./index.js --dts ./index.d.ts --target-dir ../target -o ./dist/node",
+    "prepack": "napi prepublish -p scripts/npm --tag-style npm",
     "artifacts": "napi dist/node --npm-dir scripts/npm",
+    "version": "napi version --npm-dir dist/node",
     "pack": "wasm-pack"
   },
   "devDependencies": {

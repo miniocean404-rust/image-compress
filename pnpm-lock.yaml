@@ -44,6 +44,10 @@ importers:
         specifier: ^4.1.5
         version: 4.1.5
 
+  packages/core: {}
+
+  packages/explore: {}
+
 packages:
 
   '@cspotcode/source-map-support@0.8.1':

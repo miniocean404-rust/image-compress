@@ -182,6 +182,56 @@ dependencies = [
 ]
 
 [[package]]
+name = "binding_compress_wasm"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "js-sys",
+ "serde",
+ "serde-wasm-bindgen",
+ "wasm-bindgen",
+ "web-sys",
+ "wee_alloc",
+]
+
+[[package]]
+name = "binding_demo_node"
+version = "0.1.0"
+dependencies = [
+ "backtrace",
+ "napi",
+ "napi-build",
+ "napi-derive",
+ "once_cell",
+ "tokio",
+ "tracing",
+ "tracing-appender",
+ "tracing-chrome",
+ "tracing-futures",
+ "tracing-subscriber",
+ "utils",
+]
+
+[[package]]
+name = "binding_explore_node"
+version = "0.1.0"
+dependencies = [
+ "backtrace",
+ "explore",
+ "napi",
+ "napi-build",
+ "napi-derive",
+ "once_cell",
+ "tokio",
+ "tracing",
+ "tracing-appender",
+ "tracing-chrome",
+ "tracing-futures",
+ "tracing-subscriber",
+ "utils",
+]
+
+[[package]]
 name = "bit_field"
 version = "0.10.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -873,6 +923,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "image_compress_node"
+version = "0.1.0"
+dependencies = [
+ "backtrace",
+ "image-compress",
+ "napi",
+ "napi-build",
+ "napi-derive",
+ "once_cell",
+ "tokio",
+ "tracing",
+ "tracing-appender",
+ "tracing-chrome",
+ "tracing-futures",
+ "tracing-subscriber",
+ "utils",
+]
+
+[[package]]
 name = "imagequant"
 version = "4.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1260,26 +1329,6 @@ name = "new_debug_unreachable"
 version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "650eef8c711430f1a879fdd01d4745a7deea475becfb90269c06775983bbf086"
-
-[[package]]
-name = "node"
-version = "0.1.0"
-dependencies = [
- "backtrace",
- "explore",
- "image-compress",
- "napi",
- "napi-build",
- "napi-derive",
- "once_cell",
- "tokio",
- "tracing",
- "tracing-appender",
- "tracing-chrome",
- "tracing-futures",
- "tracing-subscriber",
- "utils",
-]
 
 [[package]]
 name = "nom"
@@ -2354,19 +2403,6 @@ name = "wasi"
 version = "0.11.0+wasi-snapshot-preview1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9c8d87e72b64a3b4db28d11ce29237c246188f4f51057d65a7eab63b7987e423"
-
-[[package]]
-name = "wasm"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "js-sys",
- "serde",
- "serde-wasm-bindgen",
- "wasm-bindgen",
- "web-sys",
- "wee_alloc",
-]
 
 [[package]]
 name = "wasm-bindgen"

@@ -1,5 +1,5 @@
 [package]
-name = "node"
+name = "binding_explore_node"
 build = "build.rs"
 version.workspace = true
 edition.workspace = true
@@ -12,9 +12,8 @@ edition.workspace = true
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-image-compress = { path = "../core" }
-explore = { path = "../explore" }
-utils = { path = "../utils" }
+explore = { path = "../../crates/explore" }
+utils = { path = "../../crates/utils" }
 
 tokio.workspace = true
 
@@ -24,11 +23,11 @@ tracing-subscriber.workspace = true
 tracing-futures.workspace = true
 tracing-chrome.workspace = true
 
-napi = { version = "2.16.8", features = ["async", "serde-json", "napi9"] }
-napi-derive = "2.16.10"
+napi.workspace = true
+napi-derive.workspace = true
 # 用于在 Rust 程序运行时获取堆栈跟踪（回溯）的库
-backtrace = "0.3.69"
-once_cell = "1.19.0"
+backtrace.workspace = true
+once_cell.workspace = true
 
 [build-dependencies]
 napi-build = "2.1.3"

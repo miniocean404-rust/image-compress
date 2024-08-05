@@ -1,5 +1,5 @@
 [package]
-name = "wasm"
+name = "binding_compress_wasm"
 version.workspace = true
 edition.workspace = true
 

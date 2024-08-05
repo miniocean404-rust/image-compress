@@ -1,3 +1,3 @@
-# `@giegie/core-win32-ia32-msvc`
+# `@giegie/explore-win32-ia32-msvc`
 
-This is the **i686-pc-windows-msvc** binary for `@giegie/core`
+This is the **i686-pc-windows-msvc** binary for `@giegie/explore`

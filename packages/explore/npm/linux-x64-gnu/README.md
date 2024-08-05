@@ -1,3 +1,3 @@
-# `@giegie/core-linux-x64-gnu`
+# `@giegie/explore-linux-x64-gnu`
 
-This is the **x86_64-unknown-linux-gnu** binary for `@giegie/core`
+This is the **x86_64-unknown-linux-gnu** binary for `@giegie/explore`

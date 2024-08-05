@@ -1,3 +1,3 @@
-# `@giegie/core-linux-arm64-musl`
+# `@giegie/explore-linux-arm64-musl`
 
-This is the **aarch64-unknown-linux-musl** binary for `@giegie/core`
+This is the **aarch64-unknown-linux-musl** binary for `@giegie/explore`

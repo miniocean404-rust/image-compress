@@ -1,5 +1,5 @@
 {
-  "name": "@giegie/core-linux-arm-gnueabihf",
+  "name": "@giegie/explore-linux-arm-gnueabihf",
   "version": "1.0.0",
   "os": [
     "linux"

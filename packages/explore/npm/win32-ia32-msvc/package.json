@@ -1,5 +1,5 @@
 {
-  "name": "@giegie/core-win32-ia32-msvc",
+  "name": "@giegie/explore-win32-ia32-msvc",
   "version": "1.0.0",
   "os": [
     "win32"

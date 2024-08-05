@@ -1,5 +1,5 @@
 {
-  "name": "@giegie/core-linux-x64-musl",
+  "name": "@giegie/explore-linux-x64-musl",
   "version": "1.0.0",
   "os": [
     "linux"

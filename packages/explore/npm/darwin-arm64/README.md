@@ -1,3 +1,3 @@
-# `@giegie/core-darwin-arm64`
+# `@giegie/explore-darwin-arm64`
 
-This is the **aarch64-apple-darwin** binary for `@giegie/core`
+This is the **aarch64-apple-darwin** binary for `@giegie/explore`

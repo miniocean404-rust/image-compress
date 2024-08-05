@@ -1,3 +1,3 @@
-# `@giegie/core-win32-arm64-msvc`
+# `@giegie/explore-win32-arm64-msvc`
 
-This is the **aarch64-pc-windows-msvc** binary for `@giegie/core`
+This is the **aarch64-pc-windows-msvc** binary for `@giegie/explore`

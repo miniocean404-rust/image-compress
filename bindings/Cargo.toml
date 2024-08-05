@@ -4,7 +4,7 @@ resolver = "2"
 # 设置默认执行的 workspace
 default-members = ["crates/core"]
 members = [
-    "crates/*",
+    "./*",
     # "crates/core",
 ]
 exclude = []

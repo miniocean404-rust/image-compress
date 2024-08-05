@@ -65,12 +65,3 @@ strum_macros = "0.26.4"
 tracing = { version = "0.1.40", features = ["release_max_level_info"] }
 tracing-appender = "0.2.3"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
-tracing-futures = "0.2.5"
-tracing-chrome = "0.7.2"
-
-
-napi = { version = "2.16.8", features = ["async", "serde-json", "napi9"] }
-napi-derive = "2.16.10"
-# 用于在 Rust 程序运行时获取堆栈跟踪（回溯）的库
-backtrace = "0.3.69"
-once_cell = "1.19.0"

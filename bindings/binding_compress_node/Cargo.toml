@@ -29,5 +29,6 @@ napi-derive.workspace = true
 backtrace.workspace = true
 once_cell.workspace = true
 
+
 [build-dependencies]
-napi-build = "2.1.3"
+napi-build.workspace = true

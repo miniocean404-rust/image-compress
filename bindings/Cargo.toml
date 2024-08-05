@@ -1,10 +1,9 @@
 [workspace]
 
 resolver = "2"
-# 设置默认执行的 workspace
-default-members = ["crates/core"]
 members = [
-    "./*",
+    "binding_compress_node",
+    "binding_compress_wasm",
     # "crates/core",
 ]
 exclude = []
@@ -44,22 +43,12 @@ debug-assertions = false
 [workspace.dependencies]
 tokio = { version = "1.33.0", features = ["full"] }
 serde = { version = "1.0.196", features = ["derive"] }
-serde_json = "1.0"
-# 处理时间
-chrono = "0.4.31"
-# 处理错误
 anyhow = "1.0.79"
-# 处理错误 enum 参数
-thiserror = "1.0.50"
-# 推断文件类型
-infer = "0.16.0"
-globset = "0.4.14"
-walkdir = "2.4.0"
-num_cpus = "1.16.0"
-urlencoding = "2.1.3"
 
-strum = "0.26.3"
-strum_macros = "0.26.4"
+
+# 用于在 Rust 程序运行时获取堆栈跟踪（回溯）的库
+backtrace = "0.3.69"
+once_cell = "1.19.0"
 
 # 处理日志及栈追踪
 tracing = { version = "0.1.40", features = ["release_max_level_info"] }
@@ -68,9 +57,29 @@ tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 tracing-futures = "0.2.5"
 tracing-chrome = "0.7.2"
 
+# wasm-pack，一个构建、测试和发布 WASM 的 Rust CLI 工具，我们将使用 wasm-pack 相关的命令来构建 WASM 二进制内容。
+# https://rustwasm.github.io/wasm-pack/installer/
+
+# 是一个简化 Rust WASM 与 JS 之间交互的库。
+# 它能够将如 DOM 操作、console.log 和 performance 等 JS 相关 API 暴露给 Rust 使用
+# 它能够将 Rust 功能导出到 JS 中，如类、函数等
+# wasm-pack cli 依赖这个包进行打包
+wasm-bindgen = { version = "0.2.92", features = ["enable-interning"] }
+# web-sys 的 Crate，它为 Rust 进一步提供了控制 DOM 的能力
+web-sys = { version = "0.3.69", features = [
+    'Document',
+    'Element',
+    'HtmlElement',
+    'Node',
+    'Window',
+    'HtmlInputElement',
+    'Performance',
+    'console',
+] }
+js-sys = "0.3.67"
+serde-wasm-bindgen = "0.6.3"
+wee_alloc = "0.4.5"
 
 napi = { version = "2.16.8", features = ["async", "serde-json", "napi9"] }
 napi-derive = "2.16.10"
-# 用于在 Rust 程序运行时获取堆栈跟踪（回溯）的库
-backtrace = "0.3.69"
-once_cell = "1.19.0"
+napi-build = "2.1.3"

@@ -1,3 +1,4 @@
+pub mod explore;
 pub mod index;
 pub mod log;
-pub mod os;
+pub mod system_info;

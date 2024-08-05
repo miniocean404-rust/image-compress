@@ -1,0 +1,42 @@
+{
+  "name": "@giegie/core-linux-arm-gnueabihf",
+  "version": "1.0.0",
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "arm"
+  ],
+  "main": "giegie.linux-arm-gnueabihf.node",
+  "files": [
+    "giegie.linux-arm-gnueabihf.node",
+    "giegie"
+  ],
+  "description": "Super-fast alternative for babel",
+  "keywords": [
+    "giegie",
+    "giegiepack",
+    "babel",
+    "typescript",
+    "rust",
+    "webpack",
+    "tsc"
+  ],
+  "author": "miniocean404 <1037306928@qq.com>",
+  "homepage": "",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=10"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miniocean404-rust/image-compress.git"
+  },
+  "bugs": {
+    "url": "https://github.com/miniocean404-rust/image-compress/issues"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "@giegie/core-darwin-x64",
+  "version": "1.0.0",
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "main": "giegie.darwin-x64.node",
+  "files": [
+    "giegie.darwin-x64.node",
+    "giegie"
+  ],
+  "description": "Super-fast alternative for babel",
+  "keywords": [
+    "giegie",
+    "giegiepack",
+    "babel",
+    "typescript",
+    "rust",
+    "webpack",
+    "tsc"
+  ],
+  "author": "miniocean404 <1037306928@qq.com>",
+  "homepage": "",
+  "license": "Apache-2.0 AND MIT",
+  "engines": {
+    "node": ">=10"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miniocean404-rust/image-compress.git"
+  },
+  "bugs": {
+    "url": "https://github.com/miniocean404-rust/image-compress/issues"
+  }
+}

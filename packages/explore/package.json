@@ -27,9 +27,9 @@
   "scripts": {
     "build:explore": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p binding_explore_node --release -o ./",
     "build:explore-dev": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p binding_explore_node --js ./index.js --dts ./index.d.ts --target-dir ../../target -o ./",
-    "prepack": "napi prepublish -p scripts/npm --tag-style npm",
-    "artifacts": "napi dist/node --npm-dir scripts/npm",
-    "version": "napi version --npm-dir scripts/npm",
+    "prepack": "napi prepublish -p ./npm --tag-style npm",
+    "artifacts": "napi artifacts --npm-dir ./npm",
+    "version": "napi version --npm-dir ./npm",
     "pack": "wasm-pack",
     "test:node": "node ./tests/index"
   },
@@ -37,5 +37,17 @@
     "@napi-rs/cli": "^3.0.0-alpha.45",
     "@types/node": "^20.14.12",
     "npm-run-all": "^4.1.5"
+  },
+  "optionalDependencies": {
+    "undefined-darwin-x64": "1.0.0",
+    "undefined-win32-x64-msvc": "1.0.0",
+    "undefined-linux-x64-gnu": "1.0.0",
+    "undefined-linux-x64-musl": "1.0.0",
+    "undefined-win32-ia32-msvc": "1.0.0",
+    "undefined-linux-arm-gnueabihf": "1.0.0",
+    "undefined-linux-arm64-gnu": "1.0.0",
+    "undefined-darwin-arm64": "1.0.0",
+    "undefined-linux-arm64-musl": "1.0.0",
+    "undefined-win32-arm64-msvc": "1.0.0"
   }
 }

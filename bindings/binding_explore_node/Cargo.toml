@@ -16,6 +16,7 @@ explore = { path = "../../crates/explore" }
 utils = { path = "../../crates/utils" }
 
 tokio.workspace = true
+anyhow.workspace = true
 
 tracing.workspace = true
 tracing-appender.workspace = true

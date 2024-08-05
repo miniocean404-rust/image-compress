@@ -1,4 +1,4 @@
-const { getOsFileManagerPath, initCustomTraceSubscriber } = require("./dist/node")
+const { getOsFileManagerPath, initCustomTraceSubscriber } = require("../dist/node")
 const path = require("path")
 
 init()

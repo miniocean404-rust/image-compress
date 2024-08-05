@@ -1,12 +1,41 @@
 {
-  "name": "explore",
+  "package": "@giegie/explore",
+  "license": "MIT",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "napi": {
+    "binaryName": "explore",
+    "package": {
+      "name": "explore"
+    },
+    "targets": [
+      "x86_64-apple-darwin",
+      "x86_64-pc-windows-msvc",
+      "x86_64-unknown-linux-gnu",
+      "x86_64-unknown-linux-musl",
+      "i686-pc-windows-msvc",
+      "armv7-unknown-linux-gnueabihf",
+      "aarch64-unknown-linux-gnu",
+      "aarch64-apple-darwin",
+      "aarch64-unknown-linux-musl",
+      "aarch64-pc-windows-msvc"
+    ]
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "scripts": {
+    "build:explore": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p binding_explore_node --release -o ./",
+    "build:explore-dev": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p binding_explore_node --js ./index.js --dts ./index.d.ts --target-dir ../../target -o ./",
+    "prepack": "napi prepublish -p scripts/npm --tag-style npm",
+    "artifacts": "napi dist/node --npm-dir scripts/npm",
+    "version": "napi version --npm-dir scripts/npm",
+    "pack": "wasm-pack",
+    "test:node": "node ./tests/index"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^3.0.0-alpha.45",
+    "@types/node": "^20.14.12",
+    "npm-run-all": "^4.1.5"
+  }
 }

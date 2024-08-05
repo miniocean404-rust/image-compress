@@ -4,6 +4,8 @@ resolver = "2"
 members = [
     "binding_compress_node",
     "binding_compress_wasm",
+    "binding_demo_node",
+    "binding_explore_node",
     # "crates/core",
 ]
 exclude = []

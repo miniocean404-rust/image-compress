@@ -2,6 +2,8 @@ use std::env;
 use utils::env::is_debug;
 use utils::hook::panic_hook::register_panic_hook;
 
+pub mod async_fn;
+pub mod callback;
 pub mod fs;
 pub mod log;
 pub mod variable;

@@ -12,6 +12,7 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 anyhow.workspace = true
 serde.workspace = true
+serde-wasm-bindgen.workspace = true
 
 wasm-bindgen = { workspace = true, features = ["enable-interning"] }
 
@@ -27,7 +28,6 @@ web-sys = { workspace = true, features = [
     'console',
 ] }
 js-sys.workspace = true
-serde-wasm-bindgen.workspace = true
 wee_alloc.workspace = true
 
 [package.metadata.wasm-pack.profile.release]

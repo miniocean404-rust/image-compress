@@ -6,6 +6,12 @@ use wasm_bindgen::prelude::*;
 
 use crate::console_log;
 
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str); // 将 js 命名空间中的 console.log 方法定义在 Rust 中
+}
+
 // 操作 DOM
 // start 标识 init() 在 WASM 加载时自动执行
 
@@ -50,10 +56,4 @@ pub fn init_demo() -> Result<(), JsValue> {
     body.append_child(&out.borrow())?; // 挂载 DOM 元素节点
     console_log!("初始化成功");
     Ok(())
-}
-
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str); // 将 js 命名空间中的 console.log 方法定义在 Rust 中
 }

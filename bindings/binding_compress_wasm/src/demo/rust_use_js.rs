@@ -1,4 +1,3 @@
-// https://juejin.cn/post/7219613068275449893?share_token=9fb9f439-c818-4885-9368-eeb829a89295
 use wasm_bindgen::prelude::*;
 
 // 调用 JS 中的方法

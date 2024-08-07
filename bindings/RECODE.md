@@ -1,7 +1,3 @@
-n-api: https://juejin.cn/post/7322288075850039359?searchId=202402040121440A1FC55F67DF117FA08B
-n-api: https://juejin.cn/post/7243413934765408315?searchId=202402040121440A1FC55F67DF117FA08B
-n-api 使用：https://juejin.cn/post/7226879080415395897?searchId=202402040121440A1FC55F67DF117FA08B
-
 # napi 构建命令
 
 `"@napi-rs/cli": "^3.0.0-alpha.22"`版本命令：
@@ -21,3 +17,10 @@ napi build  --manifest-path ./Cargo.toml --platform -p node --js ./dist/node/bin
 ```shell
 napi build  --manifest-path ./Cargo.toml --platform -p node  -o dist/node
 ```
+
+## 参考文章
+
+n-api: https://juejin.cn/post/7322288075850039359?searchId=202402040121440A1FC55F67DF117FA08B
+n-api: https://juejin.cn/post/7243413934765408315?searchId=202402040121440A1FC55F67DF117FA08B
+n-api 使用：https://juejin.cn/post/7226879080415395897?searchId=202402040121440A1FC55F67DF117FA08B
+如何基于 napi-rs 打造 Rust 前端工具链: https://juejin.cn/post/7243413934765408315?searchId=202308212000304BCD82BB562679DE002A

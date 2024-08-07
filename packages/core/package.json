@@ -32,6 +32,7 @@
     "prepack": "napi prepublish -p ./npm --tag-style npm",
     "artifacts": "napi artifacts --npm-dir ./npm",
     "version": "napi version --npm-dir ./npm",
+    "new": "napi new",
     "pack": "wasm-pack",
     "test:node": "node ./tests/index"
   },

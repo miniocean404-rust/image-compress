@@ -10,6 +10,9 @@ use crate::console_log;
 extern "C" {
     #[wasm_bindgen(js_namespace = console)]
     fn log(s: &str); // 将 js 命名空间中的 console.log 方法定义在 Rust 中
+
+    // 调用：alert("Hello, hello-wasm!");
+    fn alert(s: &str);
 }
 
 // 操作 DOM
@@ -20,6 +23,8 @@ pub fn init_demo() -> Result<(), JsValue> {
     let window = web_sys::window().expect("不存在全局 explore 对象");
     let document = window.document().expect("需要在 explore 上存在 document");
     let body = document.body().expect("document 中需要存在一个 body");
+
+    // let dom = document.query_selector("")?.unwrap();
 
     // 生成 dom 元素
     let input = document

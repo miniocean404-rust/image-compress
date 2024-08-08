@@ -155,7 +155,6 @@ jobs:
     runs-on: ${{ matrix.settings.host }}
     steps:
       - name: 在 Docker 中构建
-        if: ${{ matrix.settings.docker }}
         uses: ./.github/actions/napi-build
         with:
           target: ${{ matrix.settings.target }}

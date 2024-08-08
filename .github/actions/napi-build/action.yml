@@ -1,6 +1,6 @@
-name: Single Docker build
+name: 构建 NAPI
 
-description: Docker build for a single target
+description: 构建 NAPI Action
 
 inputs:
   target:

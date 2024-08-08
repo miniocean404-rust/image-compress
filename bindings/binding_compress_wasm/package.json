@@ -1,0 +1,17 @@
+{
+  "package": "@@giegie/core",
+  "license": "MIT",
+  "version": "1.0.0",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "scripts": {
+    "build:wasm-dev": "npm-run-all \"pack -- build ../crates/wasm --dev --out-dir ../../packages/dist/wasm\" --",
+    "build:wasm-release": "npm-run-all \"pack -- build ../crates/wasm --release --out-dir ../../packages/dist/wasm\" --"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.12",
+    "npm-run-all": "^4.1.5"
+  }
+}

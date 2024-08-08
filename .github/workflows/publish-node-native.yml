@@ -152,9 +152,7 @@ jobs:
     name: "构建 ${{ inputs.package }} - ${{ matrix.settings.target }} - node@20"
     runs-on: ${{ matrix.settings.host }}
     steps:
-      - name: 路径
-        shell: bash
-        run: ls -R
+      - uses: actions/checkout@v4
 
       - name: 使用 Napi Action 构建
         uses: ./.github/actions/napi-build

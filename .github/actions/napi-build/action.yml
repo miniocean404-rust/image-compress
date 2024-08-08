@@ -113,5 +113,5 @@ runs:
         name: bindings-${{ inputs.target }}
         # 归档的文件路径 xx* 代表以 xx 开头的文件
         path: |
-          ${ inputs.path }
+          ${{ inputs.path }}
         if-no-files-found: error

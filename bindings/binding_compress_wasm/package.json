@@ -7,8 +7,9 @@
     "access": "public"
   },
   "scripts": {
-    "build:wasm-dev": "npm-run-all \"pack -- build ../crates/wasm --dev --out-dir ../../packages/dist/wasm\" --",
-    "build:wasm-release": "npm-run-all \"pack -- build ../crates/wasm --release --out-dir ../../packages/dist/wasm\" --"
+    "build:wasm-dev": "pnpm run pack build ./ --dev --out-dir ./dist -p binding_compress_wasm",
+    "build:wasm-release": "npm-run-all \"pack -- build ./ --release --out-dir ./dist\" --",
+    "pack": "wasm-pack"
   },
   "devDependencies": {
     "@types/node": "^20.14.12",

@@ -160,8 +160,9 @@ jobs:
           target: ${{ matrix.settings.target }}
           image: ${{ matrix.settings.docker }}
           pre: ${{ matrix.settings.setup }}
-          # ${{ matrix.settings.pre }} &&
           build: |
+            ${{ matrix.settings.pre }}
+            ls -R
             cd bindings/binding_compress_node && pnpm build:node --target ${{ matrix.settings.target }}
             ${{ matrix.settings.post }}
           path: ./bindings/binding_compress_node/image-compress*

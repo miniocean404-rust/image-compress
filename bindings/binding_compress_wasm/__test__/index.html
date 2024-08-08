@@ -7,11 +7,11 @@
   </head>
   <body>
     <script type="module">
-      ;(async () => {
+      window.addEventListener("DOMContentLoaded",async ()=>{
         const { default: init } = await import('../dist/binding_compress_wasm.js')
-        // const res = await init()
-        // console.log(res);
-      })()
+        const res = await init()
+        console.log(res);
+      })
     </script>
   </body>
 </html>

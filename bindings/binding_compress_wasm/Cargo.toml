@@ -10,6 +10,8 @@ bench = false
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+# image-compress = { path = "../../crates/core" }
+
 anyhow.workspace = true
 serde.workspace = true
 serde-wasm-bindgen.workspace = true

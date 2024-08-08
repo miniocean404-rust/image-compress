@@ -55,23 +55,40 @@ wasm-pack build --target nodejs
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-  <script type="module">
-    ;(async () => {
-      const { default: init } = await import('./pkg/hello_wasm.js')
-      const { fibonacci } = await init()
-      console.time('wasm');
-      console.log(fibonacci(40));
-      console.timeEnd('wasm');
-    })()
-  </script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script type="module">
+      window.addEventListener("DOMContentLoaded",async ()=>{
+        const { default: init } = await import('../dist/binding_compress_wasm.js')
+
+        const res = await init()
+        console.log(res);
+
+
+        // 通过使用 instantiate 调用实例化(打包好得封装的更详细)
+        // 1. 通过使用 instantiateStreaming 调用流式实例化
+        // WebAssembly.instantiateStreaming(fetch("../dist/binding_compress_wasm_bg.wasm"),__wbg_get_imports()).then((obj) => {
+        //    obj.instance.exports.hello_world();
+        // })
+
+        // 2. 不通过流式调用，直接读取二进制文件并对字节进行实例化
+        // fetch("../dist/binding_compress_wasm_bg.wasm")
+        // .then(res => res.arrayBuffer())
+        // .then(bytes => WebAssembly.instantiate(bytes))
+        // .then(results => {
+        //     const fib = results.instance.exports.fib;
+        //     const out = fib(20);
+        //     console.log("rust output: ", out);
+        // })
+      })
+    </script>
+  </body>
 </html>
+
 
 ```
 

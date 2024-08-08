@@ -5,6 +5,7 @@ use demo::dom::init_demo;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
 
+pub mod compress;
 pub mod demo;
 pub mod dom;
 pub mod marco_utils;

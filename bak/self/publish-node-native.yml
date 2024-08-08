@@ -19,8 +19,6 @@ permissions:
   id-token: write
 
 on:
-  push:
-    branches: [dev]
   # 工作流的执行依赖其他 workflow 的调用
   workflow_call:
     inputs:
@@ -109,63 +107,157 @@ jobs:
         settings:
           - host: macos-latest
             target: x86_64-apple-darwin
-            post: strip -x ./dist/node/*.node
+            build: |
+              cd packages && pnpm build:node --target x86_64-apple-darwin
+              strip -x ./dist/node/*.node
 
           - host: macos-latest
             target: aarch64-apple-darwin
-            pre: |
+            build: |
               sudo rm -Rf /Library/Developer/CommandLineTools/SDKs/*;
               export CC=$(xcrun -f clang);
               export CXX=$(xcrun -f clang++);
               SYSROOT=$(xcrun --sdk macosx --show-sdk-path);
               export CFLAGS="-isysroot $SYSROOT -isystem $SYSROOT";
+              cd packages &&
+              pnpm build:node --target aarch64-apple-darwin
 
           - host: windows-latest
             target: x86_64-pc-windows-msvc
+            build: |
+              cd packages && pnpm build:node --target x86_64-pc-windows-msvc
 
           - host: windows-latest
             target: i686-pc-windows-msvc
+            build: |
+              cd packages && pnpm build:node --target i686-pc-windows-msvc
 
           - host: windows-latest
             target: aarch64-pc-windows-msvc
+            build: |
+              cd packages && pnpm build:node --target aarch64-pc-windows-msvc
 
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
+            build: >-
 
           - host: ubuntu-latest
             target: x86_64-unknown-linux-musl
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
+            build: >-
 
           - host: ubuntu-latest
             target: aarch64-unknown-linux-gnu
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
+            build: >-
 
           - host: ubuntu-latest
             target: aarch64-unknown-linux-musl
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
+            build: >-
 
           - host: ubuntu-latest
             target: armv7-unknown-linux-gnueabihf
             setup: |
               sudo apt-get update
               sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf -y
+            build: |
+              cd packages && pnpm build:node --target armv7-unknown-linux-gnueabihf
 
     name: "构建 ${{ inputs.package }} - ${{ matrix.settings.target }} - node@20"
     runs-on: ${{ matrix.settings.host }}
     steps:
+      - uses: actions/checkout@v4
+        # 引用 git tag 版本
+        # with:
+        #   ref: "v${{ inputs.version }}"
+
+      - name: 开启 Node Corepack
+        shell: bash
+        run: corepack enable
+
+      - name: 设置 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          architecture: x64
+
+      - name: 获取 rust toolchain 版本号
+        id: toolchain
+        shell: bash
+        run: echo "version=$(cat ./rust-toolchain)" >> "$GITHUB_OUTPUT"
+
+      - name: 安装 rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        if: ${{ !matrix.settings.docker }}
+        with:
+          targets: ${{ matrix.settings.target }}
+          toolchain: stable
+          # toolchain: ${{ steps.toolchain.outputs.version }}
+
+      - name: 缓存 cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+            .cargo-cache
+          key: ${{ matrix.settings.target }}-cargo-registry
+
+      - name: 设置 toolchain 依赖的环境
+        run: ${{ matrix.settings.setup }}
+        if: ${{ matrix.settings.setup }}
+        shell: bash
+
+        # 在 Github Actions 工作流程中使用 Zig 编译器
+      - uses: goto-bus-stop/setup-zig@v2
+        # if: ${{ contains(matrix.settings.target,'linux') }}
+        if: ${{ matrix.settings.target == 'armv7-unknown-linux-gnueabihf' }}
+        with:
+          version: 0.13.0
+
+      - name: 安装依赖
+        shell: bash
+        run: |
+          corepack enable
+          pnpm install
+          curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+          echo '/usr/local/cargo/bin' >> $GITHUB_PATH
+
       - name: 在 Docker 中构建
         if: ${{ matrix.settings.docker }}
-        uses: ./.github/actions/napi-build
+        uses: ./.github/actions/docker-build
         with:
-          target: ${{ matrix.settings.target }}
           image: ${{ matrix.settings.docker }}
-          pre: ${{ matrix.settings.setup }}
-          build: |
-            ${{ matrix.settings.pre }} &&
-            cd bindings/binding_compress_node && pnpm build:node --target ${{ matrix.settings.target }}
-            ${{ matrix.settings.post }}
-          path: ./bindings/binding_compress_node/image-compress*
+          post: ${{ matrix.settings.build }}
+          target: ${{ matrix.settings.target }}
+
+      - name: 普通构建
+        run: ${{ matrix.settings.build }}
+        if: ${{ !matrix.settings.docker }}
+        shell: bash
+
+      # - name: 展示 packages
+      #   working-directory: ./
+      #   run: |
+      #     mkdir tag
+      #     cp -r ./packages/dist/node/* ./tag
+      #     chmod +x ./tag
+      #     ls -R ./tag
+      #   shell: bash
+
+      - name: 上传 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          # 上传归档的名称
+          name: bindings-${{ matrix.settings.target }}
+          # 归档的文件路径 xx* 代表以 xx 开头的文件
+          path: |
+            ./packages/dist/node/image-compress*
+          if-no-files-found: error
 
   publish:
     needs: build

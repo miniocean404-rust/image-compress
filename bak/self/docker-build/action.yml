@@ -54,7 +54,8 @@ runs:
           npm install -g corepack@0.24.1
           corepack enable
 
-          cd bindings/binding_compress_node &&  RUST_TARGET=${{ inputs.target }} pnpm build:node --target ${{ matrix.settings.target }}
+          cd packages &&
+          RUST_TARGET=${{ inputs.target }} pnpm build:node --target ${{ matrix.settings.target }}
           ${{ inputs.post }}
         '
 

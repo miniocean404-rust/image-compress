@@ -3,9 +3,9 @@
   "license": "MIT",
   "version": "1.0.0",
   "napi": {
-    "binaryName": "explore",
+    "binaryName": "image-compress",
     "package": {
-      "name": "explore"
+      "name": "image-compress"
     },
     "targets": [
       "x86_64-apple-darwin",
@@ -25,10 +25,8 @@
     "access": "public"
   },
   "scripts": {
-    "build:wasm-dev": "npm-run-all \"pack -- build ../crates/wasm --dev --out-dir ../../packages/dist/wasm\" --",
-    "build:wasm-release": "npm-run-all \"pack -- build ../crates/wasm --release --out-dir ../../packages/dist/wasm\" --",
-    "build:node": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p image-compress --release -o ./",
-    "build:node-dev": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p image-compress --js ./index.js --dts ./index.d.ts --target-dir ../../target -o ./",
+    "build:node-dev": "napi build --manifest-path ./Cargo.toml --platform -p image_compress_node --js ./index.js --dts ./index.d.ts --target-dir ../../target -o ./",
+    "build:node": "napi build --manifest-path ./Cargo.toml --platform -p image_compress_node --release -o ./",
     "prepack": "napi prepublish -p ./npm --tag-style npm",
     "artifacts": "napi artifacts --npm-dir ./npm",
     "version": "napi version --npm-dir ./npm",

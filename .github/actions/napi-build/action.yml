@@ -58,7 +58,7 @@ runs:
 
     - name: 安装 rust toolchain
       uses: dtolnay/rust-toolchain@stable
-      if: ${{ inputs.image }}
+      if: ${{ !inputs.image }}
       with:
         targets: ${{ inputs.target }}
         toolchain: stable

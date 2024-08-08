@@ -65,7 +65,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: "master"
+          ref: "dev"
 
       - uses: ./.github/actions/setup-node
 
@@ -152,7 +152,7 @@ jobs:
     name: "构建 ${{ inputs.package }} - ${{ matrix.settings.target }} - node@20"
     runs-on: ${{ matrix.settings.host }}
     steps:
-      - name: 在 Docker 中构建
+      - name: 使用 Napi Action 构建
         uses: ./.github/actions/napi-build
         with:
           target: ${{ matrix.settings.target }}

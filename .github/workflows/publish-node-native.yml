@@ -154,7 +154,7 @@ jobs:
     steps:
       - name: 路径
         shell: bash
-        run: echo ${{ github.workspace }} && pwd
+        run: echo ${{ github.workspace }} && ls -R && cd .. && ls
 
       - name: 使用 Napi Action 构建
         uses: ./.github/actions/napi-build

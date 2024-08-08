@@ -17,6 +17,7 @@ serde.workspace = true
 serde-wasm-bindgen.workspace = true
 
 wasm-bindgen = { workspace = true, features = ["enable-interning"] }
+wasm-bindgen-futures = "0.4.42"
 
 # web-sys 的 Crate，它为 Rust 进一步提供了控制 DOM 的能力
 web-sys = { workspace = true, features = [

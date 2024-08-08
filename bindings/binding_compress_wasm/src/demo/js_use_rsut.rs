@@ -54,3 +54,9 @@ pub fn send_obj_to_js() -> JsValue {
 
     serde_wasm_bindgen::to_value(&obj).unwrap()
 }
+
+// 使用 async
+#[wasm_bindgen]
+pub async fn use_asnyc() {
+    wasm_bindgen_futures::spawn_local(async move {})
+}

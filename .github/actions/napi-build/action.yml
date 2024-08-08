@@ -98,7 +98,7 @@ runs:
       uses: ./.github/actions/docker-build
       with:
         image: ${{ inputs.image }}
-        post: ${{ inputs.build }}
+        build: ${{ inputs.build }}
         target: ${{ inputs.target }}
 
     - name: 普通构建

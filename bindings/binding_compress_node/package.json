@@ -25,8 +25,8 @@
     "access": "public"
   },
   "scripts": {
-    "build:node-dev": "napi build --manifest-path ./Cargo.toml --platform -p image_compress_node --js ./index.js --dts ./index.d.ts --target-dir ../../target -o ./",
-    "build:node": "napi build --manifest-path ./Cargo.toml --platform -p image_compress_node --release -o ./",
+    "build:node-dev": "napi build --manifest-path ../../Cargo.toml --platform -p image_compress_node --js ./index.js --dts ./index.d.ts --target-dir ../../target -o ./",
+    "build:node": "napi build --manifest-path ../../Cargo.toml --platform -p image_compress_node --release -o ./",
     "prepack": "napi prepublish -p ./npm --tag-style npm",
     "artifacts": "napi artifacts --npm-dir ./npm",
     "version": "napi version --npm-dir ./npm",

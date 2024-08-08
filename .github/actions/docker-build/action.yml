@@ -59,6 +59,7 @@ runs:
           npm install -g corepack@0.24.1
           corepack enable
 
+          # RUST_TARGET=${{ inputs.target }} 用于指定目标平台
           ${{ inputs.build }}
 
           ${{ inputs.post }}

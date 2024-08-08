@@ -164,7 +164,7 @@ jobs:
             ${{ matrix.settings.pre }}
             cd bindings/binding_compress_node && pnpm build:node --target ${{ matrix.settings.target }}
             ${{ matrix.settings.post }}
-          path: ./image-compress*
+          path: ./bindings/binding_compress_node/image-compress*
 
   publish:
     needs: build

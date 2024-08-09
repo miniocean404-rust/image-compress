@@ -153,6 +153,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: 使用 WASM-Pack 构建
+        run: pnpm build:wasm
+
       - name: 使用 Napi Action 构建
         uses: ./.github/actions/napi-build
         with:
@@ -161,7 +164,7 @@ jobs:
           pre: ${{ matrix.settings.setup }}
           build: |
             ${{ matrix.settings.pre }}
-            pnpm build --target ${{ matrix.settings.target }}
+            pnpm build:node --target ${{ matrix.settings.target }}
             ${{ matrix.settings.post }}
 
             if [[ '${{ matrix.settings.target }}' == "x86_64-apple-darwin" ]]; then
@@ -172,6 +175,7 @@ jobs:
           path: |
             ./bindings/binding_compress_node/image-compress*
             ./bindings/binding_explore_node/explore*
+            ./bindings/binding_compress_wasm/dist/*.wasm
 
   publish:
     needs: build
@@ -207,6 +211,7 @@ jobs:
       - name: 重命名 artifacts 文件
         run: |
           cp -r -v ./packages/artifacts/**/**/*.node ./packages/artifacts
+          cp -r -v ./packages/artifacts/**/**/**/*.wasm ./packages/artifacts
         shell: bash
 
       #     - name: 移动 artifacts 文件

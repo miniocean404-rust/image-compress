@@ -8,9 +8,6 @@ importers:
 
   .:
     devDependencies:
-      '@giegie/core':
-        specifier: workspace:*
-        version: link:bindings/binding_compress_node
       git-cliff:
         specifier: ^2.4.0
         version: 2.4.0

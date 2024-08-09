@@ -9,7 +9,7 @@
     },
     "scripts": {
         "changelog": "git cliff --output CHANGELOG.md",
-        "build": "pnpm --filter=@giegie/* run build:node-dev"
+        "build": "pnpm --filter=@giegie/* build:node-dev"
     },
     "devDependencies": {
         "git-cliff": "^2.4.0"

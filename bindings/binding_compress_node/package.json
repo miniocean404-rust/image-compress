@@ -2,6 +2,8 @@
   "package": "@giegie/core",
   "license": "MIT",
   "version": "1.0.0",
+  "main": "./index.js",
+  "type": "module",
   "napi": {
     "binaryName": "image-compress",
     "package": {

@@ -153,8 +153,12 @@ jobs:
 
     name: "构建 Image-Compress ${{ inputs.package }} - ${{ matrix.settings.target }} - node@20"
     runs-on: ${{ matrix.settings.host }}
+    env:
+      TEST: TEST1111111111111
     steps:
       - uses: actions/checkout@v4
+
+      - run: echo ${{ env.TEST }}
 
       - name: 使用 Napi Action 构建
         uses: ./.github/actions/napi-build
@@ -203,7 +207,7 @@ jobs:
 
       - name: 重命名 artifacts 文件
         run: |
-          cp -r -v ./packages/artifacts/**/*.node ./packages/artifacts
+          cp -r -v ./packages/artifacts/**/**/*.node ./packages/artifacts
         shell: bash
 
       #     - name: 移动 artifacts 文件

@@ -13,5 +13,6 @@
     },
     "devDependencies": {
         "git-cliff": "^2.4.0"
-    }
+    },
+    "dependencies": {}
 }

@@ -25,8 +25,8 @@
     "access": "public"
   },
   "scripts": {
-    "build:explore": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p binding_explore_node --release -o ./",
-    "build:explore-dev": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p binding_explore_node --js ./index.js --dts ./index.d.ts --target-dir ../../target -o ./",
+    "build:node": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p binding_explore_node --release -o ./",
+    "build:node-dev": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p binding_explore_node --js ./index.js --dts ./index.d.ts --target-dir ../../target -o ./",
     "prepack": "napi prepublish -p ./npm --tag-style npm",
     "artifacts": "napi artifacts --npm-dir ./npm",
     "version": "napi version --npm-dir ./npm",

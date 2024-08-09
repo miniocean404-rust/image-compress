@@ -1,5 +1,5 @@
 {
-  "package": "@@giegie/core-wasm",
+  "package": "@giegie/core-wasm",
   "license": "MIT",
   "version": "1.0.0",
   "publishConfig": {

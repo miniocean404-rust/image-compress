@@ -98,7 +98,7 @@ runs:
           ~/.cargo/git
           target
           .cargo-cache
-        key: ${{ inputs.target || "rust-build" }}-cargo-registry
+        key: ${{ inputs.target || rust-build }}-cargo-registry
 
     - name: 设置 toolchain 依赖的环境
       if: ${{ inputs.isNeedRust }} && ${{ inputs.pre }}

@@ -120,12 +120,12 @@ runs:
     - name: 输出
       shell: bash
       run: |
-        echo "${{ inputs.isNeedRust == 'true' }} && ${{ inputs.image != '' }}"
+        echo "${{ inputs.isNeedRust == 'true' && inputs.image }}"
         echo "${{ inputs.isNeedRust }}"
         echo "${{ inputs.image }}"
 
     - name: 在 Docker 中构建
-      if: ${{ inputs.isNeedRust == 'true' }} && ${{ inputs.image != '' }}
+      if: ${{ inputs.isNeedRust == 'true' && inputs.image }}
       uses: ./.github/actions/rust-build-docker
       with:
         image: ${{ inputs.image }}
@@ -133,12 +133,12 @@ runs:
         target: ${{ inputs.target }}
 
     - name: 普通构建
-      if: ${{ inputs.isNeedRust == 'true' }} && ${{ inputs.build != '' }} && ${{ !inputs.image }}
+      if: ${{ inputs.isNeedRust == 'true' && inputs.build && !inputs.image }}
       run: ${{ inputs.build }}
       shell: bash
 
     - name: 上传 artifact
-      if: ${{ inputs.path }} && ${{ inputs.name }}
+      if: ${{ inputs.path && inputs.name }}
       uses: actions/upload-artifact@v4
       with:
         # 上传归档的名称

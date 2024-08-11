@@ -1,0 +1,52 @@
+name: 创建 tag 提交
+
+description: 创建 tag 提交
+
+inputs:
+  isNeedNode:
+    description: "是否需要 Node 环境"
+    required: false
+    default: false
+
+# https://docs.github.com/zh/actions/creating-actions/creating-a-composite-action
+# outputs:
+#   random-number:
+#     description: "Random number"
+#     value: ${{ steps.random-number-generator.outputs.random-number }}
+
+runs:
+  using: composite
+  steps:
+    # - uses: actions/checkout@v4
+    #   with:
+    #     fetch-depth: 0
+    #     ref: "dev"
+
+    - uses: ./.github/actions/setup-node
+
+    - name: 安装 git-cliff 准备获取 changelog
+      uses: taiki-e/install-action@v2
+      with:
+        tool: git-cliff@1.3.1
+
+    - name: 安装 cargo-edit
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-edit@0.12.2
+
+    - name: "设置 jq 轻量级的命令行 JSON 处理工具"
+      uses: dcarbone/install-jq-action@v2
+      with:
+        version: "1.7"
+        force: true
+
+    # 获取 determine-nightly-version 的 version 通过 ssh 生成 git tag 后，在后边使用
+    - uses: webfactory/ssh-agent@v0.9.0
+      if: needs.check-if-build-required.outputs.need-build == 'true' && !inputs.skipPublishing
+      with:
+        ssh-private-key: ${{ secrets.SWC_BOT_SSH }}
+
+    - name: Create git tag commit
+      if: needs.check-if-build-required.outputs.need-build == 'true' && !inputs.skipPublishing
+      run: |
+        ./scripts/publish.sh ${{ inputs.version }}

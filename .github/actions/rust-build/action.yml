@@ -3,6 +3,16 @@ name: 构建 NAPI
 description: 构建 NAPI Action
 
 inputs:
+  isNeedNode:
+    description: "是否需要 Node 环境"
+    required: false
+    default: false
+
+  isNeedRust:
+    description: "是否需要 Rust 环境"
+    required: false
+    default: true
+
   target:
     description: "构建的目标"
     required: true
@@ -26,6 +36,11 @@ inputs:
     default: ""
     description: "归档的路径"
 
+  name:
+    required: true
+    default: ""
+    description: "归档的名称"
+
 # https://docs.github.com/zh/actions/creating-actions/creating-a-composite-action
 # outputs:
 #   random-number:
@@ -41,30 +56,41 @@ runs:
     #   ref: "v${{ inputs.version }}"
 
     - name: 开启 Node Corepack
+      if: ${{ inputs.isNeedNode }}
       shell: bash
       run: corepack enable
 
     - name: 设置 Node
+      if: ${{ inputs.isNeedNode }}
       uses: actions/setup-node@v4
       with:
         node-version: 20
         cache: pnpm
         architecture: x64
 
+    - name: 安装依赖 corepack、pnpm
+      if: ${{ inputs.isNeedNode }}
+      shell: bash
+      run: |
+        corepack enable
+        pnpm install
+
     - name: 获取 rust toolchain 版本号
+      if: ${{ inputs.isNeedRust }}
       id: toolchain
       shell: bash
       run: echo "version=$(cat ./rust-toolchain)" >> "$GITHUB_OUTPUT"
 
     - name: 安装 rust toolchain
+      if: ${{ inputs.isNeedRust }}
       uses: dtolnay/rust-toolchain@stable
-      if: ${{ !inputs.image }}
       with:
         targets: ${{ inputs.target }}
         toolchain: stable
         # toolchain: ${{ steps.toolchain.outputs.version }}
 
     - name: 缓存 cargo registry
+      if: ${{ inputs.isNeedRust }}
       uses: actions/cache@v4
       with:
         path: |
@@ -72,29 +98,28 @@ runs:
           ~/.cargo/git
           target
           .cargo-cache
-        key: ${{ inputs.target }}-cargo-registry
+        key: ${{ inputs.target || "rust-build" }}-cargo-registry
 
     - name: 设置 toolchain 依赖的环境
+      if: ${{ inputs.isNeedRust }} && ${{ inputs.pre }}
       run: ${{ inputs.pre }}
-      if: ${{ inputs.pre }}
       shell: bash
 
     - uses: goto-bus-stop/setup-zig@v2
       # if: ${{ contains(inputs.target,'linux') }}
-      if: ${{ inputs.target == 'armv7-unknown-linux-gnueabihf' }}
+      if: ${{ inputs.isNeedRust }} && ${{ inputs.target == 'armv7-unknown-linux-gnueabihf' }}
       with:
         version: 0.13.0
 
-    - name: 安装依赖
+    - name: 安装依赖 wasm-pack
+      if: ${{ inputs.isNeedRust }}
       shell: bash
       run: |
-        corepack enable
-        pnpm install
         curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
         echo '/usr/local/cargo/bin' >> $GITHUB_PATH
 
     - name: 在 Docker 中构建
-      if: ${{ inputs.image }}
+      if: ${{ inputs.isNeedRust }} && ${{ inputs.image }}
       uses: ./.github/actions/docker-build
       with:
         image: ${{ inputs.image }}
@@ -102,11 +127,12 @@ runs:
         target: ${{ inputs.target }}
 
     - name: 普通构建
+      if: ${{ inputs.isNeedRust }} && ${{ inputs.build }} && ${{ !inputs.image }}
       run: ${{ inputs.build }}
-      if: ${{ !inputs.image }}
       shell: bash
 
     - name: 上传 artifact
+      if: ${{ inputs.path }} && ${{ inputs.name }}
       uses: actions/upload-artifact@v4
       with:
         # 上传归档的名称

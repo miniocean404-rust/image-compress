@@ -7,7 +7,7 @@
     "access": "public"
   },
   "scripts": {
-    "build:wasm-dev": "pnpm run pack build ./ --dev --out-dir ./dist --target=web",
+    "build:wasm-dev": "pnpm run pack build ./  --dev --out-name image-compress --out-dir ./dist --target=web",
     "build:wasm": "npm-run-all \"pack -- build ./ --release --out-dir ./dist --target=web\" --",
     "pack": "wasm-pack"
   },

@@ -149,7 +149,7 @@ jobs:
 
           - target: bundler
 
-          - target: esm
+          - target: no-modules
     steps:
       - uses: actions/checkout@v4
 

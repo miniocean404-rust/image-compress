@@ -54,6 +54,9 @@ runs:
     # 引用 git tag 版本
     # with:
     #   ref: "v${{ inputs.version }}"
+    - name: 开启 corepack
+      shell: bash
+      run: corepack enable
 
     - name: 设置 Node
       if: ${{ inputs.isNeedNode }}

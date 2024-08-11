@@ -55,11 +55,6 @@ runs:
     # with:
     #   ref: "v${{ inputs.version }}"
 
-    - name: 开启 Node Corepack
-      if: ${{ inputs.isNeedNode }}
-      shell: bash
-      run: corepack enable
-
     - name: 设置 Node
       if: ${{ inputs.isNeedNode }}
       uses: actions/setup-node@v4
@@ -98,7 +93,7 @@ runs:
           ~/.cargo/git
           target
           .cargo-cache
-        key: ${{ inputs.target || rust-build }}-cargo-registry
+        key: ${{ inputs.target || 'rust-build' }}-cargo-registry
 
     - name: 设置 toolchain 依赖的环境
       if: ${{ inputs.isNeedRust }} && ${{ inputs.pre }}

@@ -118,6 +118,7 @@ runs:
         echo '/usr/local/cargo/bin' >> $GITHUB_PATH
 
     - name: 输出
+      shell: bash
       run: |
         echo "${{ inputs.isNeedRust == 'true' }} && ${{ inputs.image != '' }}"
         echo "${{ inputs.isNeedRust }}"

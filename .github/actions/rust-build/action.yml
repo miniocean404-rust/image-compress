@@ -118,7 +118,7 @@ runs:
         echo '/usr/local/cargo/bin' >> $GITHUB_PATH
 
     - name: 在 Docker 中构建
-      if: ${{ inputs.isNeedRust == 'true' }} && ${{ inputs.image }}
+      if: ${{ inputs.isNeedRust == 'true' }} && ${{ inputs.image != '' }}
       uses: ./.github/actions/rust-build-docker
       with:
         image: ${{ inputs.image }}
@@ -126,7 +126,7 @@ runs:
         target: ${{ inputs.target }}
 
     - name: 普通构建
-      if: ${{ inputs.isNeedRust == 'true' }} && ${{ inputs.build }} && ${{ !inputs.image }}
+      if: ${{ inputs.isNeedRust == 'true' }} && ${{ inputs.build != '' }} && ${{ !inputs.image }}
       run: ${{ inputs.build }}
       shell: bash
 

@@ -29,7 +29,7 @@ runs:
       with:
         tool: git-cliff@1.3.1
 
-    - name: 安装 cargo-edit
+    - name: 安装 cargo-edit 修改 Cargo.toml
       uses: taiki-e/install-action@v2
       with:
         tool: cargo-edit@0.12.2

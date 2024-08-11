@@ -5,10 +5,9 @@ set -eu
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 git pull || true
-yarn
+pnpm i
 
 CARGO_PROJECT_NAME="image-compress-core"
-
 version="$1"
 cargo_version="$(cargo tree -i -p $CARGO_PROJECT_NAME --depth 0 | awk '{print $2}')"
 

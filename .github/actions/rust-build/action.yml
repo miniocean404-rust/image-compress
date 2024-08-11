@@ -117,6 +117,12 @@ runs:
         curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
         echo '/usr/local/cargo/bin' >> $GITHUB_PATH
 
+    - name: 输出
+      run: |
+        echo "${{ inputs.isNeedRust == 'true' }} && ${{ inputs.image != '' }}"
+        echo "${{ inputs.isNeedRust }}"
+        echo "${{ inputs.image }}"
+
     - name: 在 Docker 中构建
       if: ${{ inputs.isNeedRust == 'true' }} && ${{ inputs.image != '' }}
       uses: ./.github/actions/rust-build-docker

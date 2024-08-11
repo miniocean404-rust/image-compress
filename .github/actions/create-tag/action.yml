@@ -42,11 +42,9 @@ runs:
 
     # 获取 determine-nightly-version 的 version 通过 ssh 生成 git tag 后，在后边使用
     - uses: webfactory/ssh-agent@v0.9.0
-      if: needs.check-if-build-required.outputs.need-build == 'true' && !inputs.skipPublishing
       with:
         ssh-private-key: ${{ secrets.SWC_BOT_SSH }}
 
-    - name: Create git tag commit
-      if: needs.check-if-build-required.outputs.need-build == 'true' && !inputs.skipPublishing
+    - name: 创建 Git Tag 提交
       run: |
         ./scripts/publish.sh ${{ inputs.version }}

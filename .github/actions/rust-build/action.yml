@@ -36,6 +36,11 @@ inputs:
     default: ""
     description: "归档的名称"
 
+  working-directory:
+    required: false
+    default: "."
+    description: "普通命令工作目录"
+
 # https://docs.github.com/zh/actions/creating-actions/creating-a-composite-action
 # outputs:
 #   random-number:
@@ -112,6 +117,7 @@ runs:
         target: ${{ inputs.target }}
 
     - name: 普通构建
+      working-directory: ${{ inputs.working-directory }}
       if: ${{ inputs.build && !inputs.image }}
       run: ${{ inputs.build }}
       shell: bash

@@ -36,6 +36,11 @@ inputs:
     default: ""
     description: "构建命令"
 
+  working-directory:
+    required: false
+    default: "."
+    description: "命令工作目录"
+
 runs:
   using: composite
   steps:

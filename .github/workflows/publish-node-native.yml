@@ -160,15 +160,18 @@ jobs:
       - name: 构建 WASM
         uses: ./.github/actions/rust-build
         with:
+          working-directory: ./bindings/binding_compress_wasm
           isNeedNode: true
           name: bindings-${{ matrix.settings.target }}-wasm
           path: |
             ./bindings/binding_compress_wasm/dist/*.wasm
           build: |
-            wasm-pack build ./bindings/binding_compress_wasm --out-name wasm --release --target ${{ matrix.settings.target }}
+            wasm-pack build ./ --out-name wasm --release --target ${{ matrix.settings.target }}
 
   publish:
-    needs: build-node
+    needs:
+      - build-node
+      - build-wasm
     name: 发布 ${{ inputs.version }}
     runs-on: ubuntu-latest
     steps:

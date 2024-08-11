@@ -138,35 +138,32 @@ jobs:
 
   build-wasm:
     runs-on: ubuntu-latest
-    name: "构建 Wasm ${{ inputs.package }}"
+    name: "构建 Wasm ${{ inputs.package }} ${{ matrix.settings.target }}"
     strategy:
       fail-fast: false
       matrix:
         settings:
           - target: nodejs
-            out: "pkg"
 
           - target: web
-            out: "pkg"
 
           - target: bundler
-            out: "pkg"
 
           - target: esm
-            out: "esm"
     steps:
       - uses: actions/checkout@v4
 
       - name: 构建 WASM
         uses: ./.github/actions/rust-build
         with:
-          working-directory: ./bindings/binding_compress_wasm
+          # working-directory: ./bindings/binding_compress_wasm
           isNeedNode: true
           name: bindings-${{ matrix.settings.target }}-wasm
           path: |
             ./bindings/binding_compress_wasm/dist/*.wasm
           build: |
             wasm-pack build ./ --out-name wasm --release --target ${{ matrix.settings.target }}
+            ls -R
 
   publish:
     needs:

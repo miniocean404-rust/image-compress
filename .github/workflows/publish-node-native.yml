@@ -149,7 +149,7 @@ jobs:
 
           - target: bundler
 
-          - target: no-modules
+          - target: deno
     steps:
       - uses: actions/checkout@v4
 
@@ -162,7 +162,8 @@ jobs:
             ./bindings/binding_compress_wasm/pkg/*.wasm
           build: |
             # 默认打包在 pkg 目录下
-            wasm-pack build ./bindings/binding_compress_wasm --out-name wasm --release --target ${{ matrix.settings.target }}
+            # 文档：https://rustwasm.github.io/docs/wasm-pack/commands/build.html
+            wasm-pack build ./bindings/binding_compress_wasm --out-name image-compress-${{ matrix.settings.target }} --release --target ${{ matrix.settings.target }} --scope giegie
 
   publish:
     needs:

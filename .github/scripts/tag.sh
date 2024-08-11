@@ -11,14 +11,14 @@ git pull || true
 pnpm i
 
 CARGO_PROJECT_NAME="image-compress-core"
+# $1 shell 脚本第一个参数
 version="$1"
 cargo_version="$(cargo tree -i -p $CARGO_PROJECT_NAME --depth 0 | awk '{print $2}')"
 
 echo "发布 $version with $CARGO_PROJECT_NAME $cargo_version"
 
 # Update swc_core
-(cd ./bindings && ../scripts/update-all-swc-crates.sh || true)
-
+# (cd ./bindings && ../scripts/update-all-swc-crates.sh || true)
 
 # Update version
 (cd ./packages/core && npm version "$version" --no-git-tag-version --allow-same-version || true)

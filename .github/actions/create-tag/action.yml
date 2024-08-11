@@ -3,10 +3,15 @@ name: 创建 tag 提交
 description: 创建 tag 提交
 
 inputs:
-  isNeedNode:
-    description: "是否需要 Node 环境"
-    required: false
-    default: false
+  ssh:
+    description: "SSH 私钥"
+    required: true
+    default: ""
+
+  version:
+    description: "Tag 版本"
+    required: true
+    default: ""
 
 # https://docs.github.com/zh/actions/creating-actions/creating-a-composite-action
 # outputs:
@@ -43,8 +48,9 @@ runs:
     # 获取 determine-nightly-version 的 version 通过 ssh 生成 git tag 后，在后边使用
     - uses: webfactory/ssh-agent@v0.9.0
       with:
-        ssh-private-key: ${{ secrets.SWC_BOT_SSH }}
+        ssh-private-key: ${{ inputs.ssh }}
 
     - name: 创建 Git Tag 提交
+      shell: bash
       run: |
         ./scripts/publish.sh ${{ inputs.version }}

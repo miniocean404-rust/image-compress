@@ -55,10 +55,6 @@ runs:
     # with:
     #   ref: "v${{ inputs.version }}"
 
-    - name: 开启 corepack
-      shell: bash
-      run: corepack enable
-
     - name: 设置 Node
       if: ${{ inputs.isNeedNode }}
       uses: actions/setup-node@v4
@@ -71,7 +67,7 @@ runs:
       if: ${{ inputs.isNeedNode }}
       shell: bash
       run: |
-        corepack enable
+        corepack enable &&
         pnpm install
 
     - name: 获取 rust toolchain 版本号
@@ -119,7 +115,7 @@ runs:
 
     - name: 在 Docker 中构建
       if: ${{ inputs.isNeedRust == 'true' }} && ${{ inputs.image }}
-      uses: ./.github/actions/docker-build
+      uses: ./.github/actions/rust-build-docker
       with:
         image: ${{ inputs.image }}
         build: ${{ inputs.build }}
@@ -135,7 +131,7 @@ runs:
       uses: actions/upload-artifact@v4
       with:
         # 上传归档的名称
-        name: bindings-${{ inputs.target }}
+        name: ${{ inputs.name }}
         # 归档的文件路径 xx* 代表以 xx 开头的文件
         path: |
           ${{ inputs.path }}

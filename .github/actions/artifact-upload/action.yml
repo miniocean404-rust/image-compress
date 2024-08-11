@@ -28,14 +28,15 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Upload artifact
+    - name: 上传归档
       uses: actions/upload-artifact@v4
       if: ${{ inputs.try-local-cache == 'false' }}
       with:
         name: ${{ inputs.name }}
         path: ${{ inputs.path }}
         if-no-files-found: error
-    - name: Upload local
+
+    - name: 上传本地
       id: upload-local
       if: ${{ inputs.try-local-cache == 'true' }}
       shell: bash
@@ -45,19 +46,18 @@ runs:
         if [[ ! -d "$cache_dir" ]]; then
           mkdir -p "$cache_dir"
         fi
-        # clear cache directory older than 3 hours
+
+        # 清除超过 3 小时的缓存目录
         find $cache_dir -type d -maxdepth 1 -mindepth 1 -cmin +180 | xargs rm -rf
 
-        # save file
+        # 保存文件
         save_dir="$cache_dir/${{ github.repository_id }}-${{ github.sha }}-${{ inputs.name }}"
         rm -rf $save_dir
         mkdir $save_dir
+
         if [ "${{ inputs.mv-when-local }}" = "true" ]; then
           mv -f ${{ inputs.path }} $save_dir
           echo "mv -f ${{ inputs.path }} $save_dir"
-        else
-          cp -rf ${{ inputs.path }} $save_dir
-          echo "cp -rf ${{ inputs.path }} $save_dir"
         fi
 
         # TODO 输出机器名称作为 runner 标签

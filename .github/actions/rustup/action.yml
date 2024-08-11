@@ -3,9 +3,9 @@
 # It is needed to install as few Rust components as possbile because
 # it takes a few minutes to install some of components on Windows and Mac, especially rust-doc.
 
-name: Rustup
+name: Rustup 安装并缓存
 
-description: Install Rust with cache
+description: Rustup 安装并缓存
 
 inputs:
   # See https://rust-lang.github.io/rustup/concepts/components.html
@@ -33,7 +33,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Print Inputs
+    - name: 打印输出
       shell: bash
       run: |
         echo 'clippy: ${{ inputs.clippy }}'
@@ -42,7 +42,7 @@ runs:
         echo 'save-cache: ${{ inputs.save-cache }}'
         echo 'shared-key: ${{ inputs.shared-key }}'
 
-    - name: 删除 rust-toolchain.toml 中 `profile` 行 on MacOS
+    - name: 在 MacOS 删除 rust-toolchain.toml 中 `profile` 行
       shell: bash
       if: runner.os == 'macOS'
       # sed ：是一个流编辑器，用于对文本进行编辑操作。
@@ -50,7 +50,7 @@ runs:
       # /profile/d ：这是一个 sed 的编辑指令。/profile/ 是一个正则表达式模式，表示匹配包含 profile 的行。d 表示删除匹配到的行。
       run: sed -i '' '/profile/d' rust-toolchain.toml
 
-    - name: 删除 rust-toolchain.toml 中 `profile` 行 on non-MacOS
+    - name: 在非 MacOS 删除 rust-toolchain.toml 中 `profile` 行
       shell: bash
       if: runner.os != 'macOS'
       run: sed -i '/profile/d' rust-toolchain.toml

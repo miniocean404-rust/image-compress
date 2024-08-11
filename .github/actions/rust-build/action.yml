@@ -50,7 +50,7 @@ inputs:
 runs:
   using: composite
   steps:
-    # - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
     # 引用 git tag 版本
     # with:
     #   ref: "v${{ inputs.version }}"

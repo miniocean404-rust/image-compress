@@ -111,7 +111,7 @@ jobs:
     name: "构建 Node Native ${{ inputs.package }} - ${{ matrix.settings.target }} - node@20"
     runs-on: ${{ matrix.settings.host }}
     steps:
-      - uses: actions/checkout@v4
+      # - uses: actions/checkout@v4
 
       - name: 构建 Napi
         uses: ./.github/actions/rust-build
@@ -157,28 +157,6 @@ jobs:
 
   #     - name: 使用 WASM-Pack 构建
   #       run: pnpm build:wasm
-
-  #     - name: Corepack
-  #       run: corepack enable
-
-  #     - name: Setup node
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 20
-
-  #     - name: Cache
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: |
-  #           ~/.cargo/
-  #           **/target/
-  #         key: ${{ runner.os }}-publish-integration
-
-  #     - name: Install node dependencies
-  #       run: pnpm i
-
-  #     - name: Install wasm-pack
-  #       run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
   #     - name: Build
   #       working-directory: bindings/${{ matrix.settings.crate }}

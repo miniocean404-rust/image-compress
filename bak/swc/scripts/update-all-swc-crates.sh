@@ -2,7 +2,7 @@
 
 set -eu
 
-echo "Listing all swc crates"
+echo "获取所有 crates"
 
 swc_crates=$(cargo metadata --format-version=1 --all-features | jq '.packages .[] | select(.repository == "https://github.com/swc-project/swc.git" or .repository == "https://github.com/swc-project/plugins.git") | .name' -r)
 
@@ -11,7 +11,7 @@ for crate in $swc_crates; do
   command="$command -p $crate"
 done
 
-echo "Running: $command"
+echo "正在运行命令: $command"
 eval $command
 
 all_direct_deps=$(cargo metadata --format-version=1  --all-features | jq -r '.packages[] | select(.source == null) | .dependencies .[] .name' -r)

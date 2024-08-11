@@ -156,6 +156,7 @@ jobs:
       - name: 构建 Napi
         uses: ./.github/actions/rust-build
         with:
+          isNeedNode: true
           path: |
             ./bindings/binding_compress_node/image-compress*
             ./bindings/binding_explore_node/explore*

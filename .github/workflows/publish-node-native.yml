@@ -111,16 +111,18 @@ jobs:
     name: "构建 Node Native ${{ inputs.package }} - ${{ matrix.settings.target }} - node@20"
     runs-on: ${{ matrix.settings.host }}
     steps:
-      # - uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
+        # 引用 git tag 版本
+        # with:
+        #   ref: "v${{ inputs.version }}"
       - name: 构建 Napi
         uses: ./.github/actions/rust-build
         with:
           isNeedNode: true
+          name: bindings-${{ matrix.settings.target }}-node
           path: |
             ./bindings/binding_compress_node/image-compress*
             ./bindings/binding_explore_node/explore*
-          name: bindings-${{ matrix.settings.target }}-node
           target: ${{ matrix.settings.target }}
           image: ${{ matrix.settings.docker }}
           pre: ${{ matrix.settings.setup }}
@@ -134,47 +136,36 @@ jobs:
               strip -x ./bindings/binding_explore_node/*.node
             fi
 
-  # build-wasm:
-  #   runs-on: ubuntu-latest
-  #   name: "构建 Wasm ${{ inputs.package }}"
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       settings:
-  #         - target: nodejs
-  #           out: "pkg"
+  build-wasm:
+    runs-on: ubuntu-latest
+    name: "构建 Wasm ${{ inputs.package }}"
+    strategy:
+      fail-fast: false
+      matrix:
+        settings:
+          - target: nodejs
+            out: "pkg"
 
-  #         - target: web
-  #           out: "pkg"
+          - target: web
+            out: "pkg"
 
-  #         - target: bundler
-  #           out: "pkg"
+          - target: bundler
+            out: "pkg"
 
-  #         - target: esm
-  #           out: "esm"
-  #   steps:
-  #     - uses: actions/checkout@v4
+          - target: esm
+            out: "esm"
+    steps:
+      - uses: actions/checkout@v4
 
-  #     - name: 使用 WASM-Pack 构建
-  #       run: pnpm build:wasm
-
-  #     - name: Build
-  #       working-directory: bindings/${{ matrix.settings.crate }}
-  #       if: ${{ !matrix.settings.build }}
-  #       run: |
-  #         wasm-pack build --out-name wasm --release --scope=swc --target ${{ matrix.settings.target }}
-  #         sed -i -e 's/"name": "@swc\/${{ matrix.settings.crate }}"/"name": "${{ matrix.settings.npm }}"/g' pkg/package.json
-
-  #     - name: Build
-  #       working-directory: bindings/${{ matrix.settings.crate }}
-  #       if: ${{ matrix.settings.build }}
-  #       run: |
-  #         ${{ matrix.settings.build }}
-
-  #     - name: 上传构建结果
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         path: ./bindings/binding_compress_wasm/dist/*.wasm
+      - name: 构建 WASM
+        uses: ./.github/actions/rust-build
+        with:
+          isNeedNode: true
+          name: bindings-${{ matrix.settings.target }}-wasm
+          path: |
+            ./bindings/binding_compress_wasm/dist/*.wasm
+          build: |
+            wasm-pack build ./bindings/binding_compress_wasm --out-name wasm --release --target ${{ matrix.settings.target }}
 
   publish:
     needs: build-node

@@ -8,7 +8,7 @@
   <body>
     <script type="module">
       window.addEventListener("DOMContentLoaded",async ()=>{
-        const { default: init } = await import('../dist/binding_compress_wasm.js')
+        const { default: init } = await import('../dist/image-compress.js')
         const res = await init()
         console.log(res);
       })

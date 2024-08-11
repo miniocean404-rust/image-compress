@@ -8,11 +8,6 @@ inputs:
     required: false
     default: false
 
-  isNeedRust:
-    description: "是否需要 Rust 环境"
-    required: false
-    default: true
-
   target:
     description: "构建的目标"
     required: true
@@ -50,11 +45,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/checkout@v4
-    # 引用 git tag 版本
-    # with:
-    #   ref: "v${{ inputs.version }}"
-
     - name: 开启 corepack
       shell: bash
       run: corepack enable
@@ -75,13 +65,11 @@ runs:
         pnpm i
 
     - name: 获取 rust toolchain 版本号
-      if: ${{ inputs.isNeedRust }}
       id: toolchain
       shell: bash
       run: echo "version=$(cat ./rust-toolchain)" >> "$GITHUB_OUTPUT"
 
     - name: 安装 rust toolchain
-      if: ${{ inputs.isNeedRust }}
       uses: dtolnay/rust-toolchain@stable
       with:
         targets: ${{ inputs.target }}
@@ -89,7 +77,6 @@ runs:
         # toolchain: ${{ steps.toolchain.outputs.version }}
 
     - name: 缓存 cargo registry
-      if: ${{ inputs.isNeedRust }}
       uses: actions/cache@v4
       with:
         path: |
@@ -111,21 +98,13 @@ runs:
         version: 0.13.0
 
     - name: 安装依赖 wasm-pack
-      if: ${{ inputs.isNeedRust }}
       shell: bash
       run: |
         curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
         echo '/usr/local/cargo/bin' >> $GITHUB_PATH
 
-    - name: 输出
-      shell: bash
-      run: |
-        echo "${{ inputs.isNeedRust == 'true' && inputs.image }}"
-        echo "${{ inputs.isNeedRust }}"
-        echo "${{ inputs.image }}"
-
     - name: 在 Docker 中构建
-      if: ${{ inputs.isNeedRust == 'true' && inputs.image }}
+      if: ${{ inputs.image }}
       uses: ./.github/actions/rust-build-docker
       with:
         image: ${{ inputs.image }}
@@ -133,7 +112,7 @@ runs:
         target: ${{ inputs.target }}
 
     - name: 普通构建
-      if: ${{ inputs.isNeedRust == 'true' && inputs.build && !inputs.image }}
+      if: ${{ inputs.build && !inputs.image }}
       run: ${{ inputs.build }}
       shell: bash
 

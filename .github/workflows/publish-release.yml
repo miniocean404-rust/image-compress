@@ -78,7 +78,7 @@ jobs:
     needs: determine-version
     name: "发布 ${{ needs.determine-version.outputs.version }}"
     secrets: inherit
-    uses: ./.github/workflows/publish-node-native.yml
+    uses: ./.github/workflows/publish-node-wasm.yml
     with:
       package: "core"
       version: ${{ needs.determine-version.outputs.version }}

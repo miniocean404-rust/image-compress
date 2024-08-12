@@ -16,8 +16,6 @@ env:
   GIT_AUTHOR_EMAIL: "bot@image-compress.rs"
   GIT_COMMITTER_NAME: "Mini Ocean 404 Bot"
   GIT_COMMITTER_EMAIL: "bot@image-compress.rs"
-  # https://github.com/actions/setup-node/issues/899#issuecomment-1819151595
-  SKIP_YARN_COREPACK_CHECK: 1
 
 on:
   push:

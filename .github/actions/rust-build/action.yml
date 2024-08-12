@@ -45,24 +45,27 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: 开启 corepack
-      shell: bash
-      run: corepack enable
-
-    - name: 设置 Node
+#    - name: 开启 corepack
+#      shell: bash
+#      run: corepack enable
+#
+#    - name: 设置 Node
+#      if: ${{ inputs.isNeedNode }}
+#      uses: actions/setup-node@v4
+#      with:
+#        node-version: 20
+#        cache: pnpm
+#        architecture: x64
+#
+#    - name: 安装依赖 corepack、pnpm
+#      if: ${{ inputs.isNeedNode }}
+#      shell: bash
+#      run: |
+#        corepack enable
+#        pnpm i
+    - name: 安装 Node、pnpm
       if: ${{ inputs.isNeedNode }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
-        cache: pnpm
-        architecture: x64
-
-    - name: 安装依赖 corepack、pnpm
-      if: ${{ inputs.isNeedNode }}
-      shell: bash
-      run: |
-        corepack enable
-        pnpm i
+      uses: ./.github/actions/pnpm-cache
 
     - name: 获取 rust toolchain 版本号
       id: toolchain

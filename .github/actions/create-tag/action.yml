@@ -27,7 +27,7 @@ runs:
     #     fetch-depth: 0
     #     ref: "dev"
 
-    - uses: ./.github/actions/setup-node
+    - uses: ./.github/actions/pnpm-cache
 
     - name: 安装 git-cliff 准备获取 changelog
       uses: taiki-e/install-action@v2

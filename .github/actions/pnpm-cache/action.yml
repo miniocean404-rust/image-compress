@@ -1,6 +1,6 @@
 name: pnpm cache
 
-description: Install Node.js with pnpm global cache
+description: 安装 Node.js 与 pnpm 全局缓存
 
 inputs:
   node-version:

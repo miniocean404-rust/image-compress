@@ -1,4 +1,4 @@
-# 使用方式：- uses: ./.github/actions/setup-node
+# 使用方式：- uses: ./.github/actions/pnpm-cache
 name: "配置 Node.js"
 description: "为 CI 设置 Node.js"
 inputs:

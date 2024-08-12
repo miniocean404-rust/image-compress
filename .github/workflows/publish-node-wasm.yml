@@ -179,7 +179,7 @@ jobs:
         # with:
         # ref: "v${{ inputs.version }}"
 
-      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/pnpm-cache
 
       - name: 设置 npm 发行版标签
         run: |

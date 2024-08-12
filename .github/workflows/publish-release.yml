@@ -65,7 +65,7 @@ jobs:
       version: ${{ steps.determine-version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/pnpm-cache
       - name: 通过 BOT 获取发布版本
         id: determine-version
         run: |

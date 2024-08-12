@@ -10,7 +10,8 @@
     "scripts": {
         "changelog": "git cliff --output CHANGELOG.md",
         "build:node": "pnpm --filter=@giegie/* build:node",
-        "build:wasm": "pnpm --filter=@giegie/* build:wasm"
+        "build:wasm": "pnpm --filter=@giegie/* build:wasm",
+        "publish:test": "pnpm --filter=@giegie/* publish --dry-run --no-git-checks"
     },
     "devDependencies": {
         "git-cliff": "^2.4.0"

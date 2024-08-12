@@ -9,6 +9,7 @@ env:
   MACOSX_DEPLOYMENT_TARGET: "10.13"
   CARGO_INCREMENTAL: 0
   CARGO_PROFILE_RELEASE_LTO: "fat"
+  # ssh 私钥生成：ssh-keygen -t rsa -b 4096 -C "bot@image-compress.rs" 然后输入文件名
   GIT_AUTHOR_NAME: "Mini Ocean 404 Bot"
   GIT_AUTHOR_EMAIL: "bot@image-compress.rs"
   GIT_COMMITTER_NAME: "Mini Ocean 404 Bot"

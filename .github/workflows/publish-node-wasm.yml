@@ -214,35 +214,20 @@ jobs:
       #         chmod +x ./.github/scripts/cli_artifacts_rename.sh
       #         ./.github/scripts/cli_artifacts_rename.sh
 
-      # - name: 设置 npm 包依赖
-      #   shell: bash
-      #   run: |
-      #     node ./scripts/update_fallback_dependencies.js
-
       # - name: 发布 npm 包及长传 .node 文件到 github release
-      # npm config set provenance true 命令设置发布 npm 包时候自动发布 github release https://docs.npmjs.com/generating-provenance-statements
+      #   # npm config set provenance true 命令设置发布 npm 包时候自动发布 GitHub Release: https://docs.npmjs.com/generating-provenance-statements
       #   if: ${{ !inputs.skipPublishing }}
       #   run: |
       #     npm config set provenance true
       #     echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-      #     echo "npmAlwaysAuth:true\n npmAuthToken: '$NPM_TOKEN'\n" >> ~/.yarnrc
+      #     echo "npmAlwaysAuth:true\n npmAuthToken: '$NPM_TOKEN'\n" >> ~/.npmrc
       #     (cd packages/core && yarn workspaces foreach -Rt npm publish --tolerate-republish --tag $NPM_TAG)
       #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     GITHUB_TOKEN: ${{ github.token }}
       #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      # - name: 上传二进制到 gh release
-      #   if: ${{ !inputs.skipPublishing }}
-      #   shell: bash
-      #   env:
-      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     RELEASE_VERSION: "v${{ inputs.version }}"
-      #   run: |
-      #     chmod +x ./.github/scripts/cli_upload_gh_release.sh
-      #     ./.github/scripts/cli_upload_gh_release.sh
-      #       - name: 开始发布
 
       - name: 通过 Action 上传二进制到 gh release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         # 403 错误 设置 Action 权限 github -> setting -> actiong -> general -> Workflow permissions
         with:
           generate_release_notes: true

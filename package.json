@@ -11,6 +11,7 @@
         "changelog": "git cliff --output CHANGELOG.md",
         "build:node": "pnpm --filter=@giegie/* build:node",
         "build:wasm": "pnpm --filter=@giegie/* build:wasm",
+        "prepublishOnly": "pnpm --filter=@giegie/* prepublishOnly",
         "publish:test": "pnpm --filter=@giegie/* publish --dry-run --no-git-checks"
     },
     "devDependencies": {

@@ -191,21 +191,21 @@ jobs:
           fi
 
       - name: 安装依赖
-        run: pnpm install
+        run: pnpm i
 
       - name: 下载所有 artifacts
         uses: actions/download-artifact@v4
         with:
-          path: ./packages/image-compress/artifacts
+          path: ./packages/artifacts
 
       - name: 展示 artifacts 文件
-        run: ls -R ./packages/image-compress/artifacts
+        run: ls -R ./packages/artifacts
         shell: bash
 
       - name: 重命名 artifacts 文件
         run: |
-          cp -r -v ./packages/image-compress/artifacts/**/**/*.node ./packages/image-compress/artifacts
-          cp -r -v ./packages/image-compress/artifacts/**/*.wasm ./packages/image-compress/artifacts
+          cp -r -v ./packages/artifacts/**/**/*.node ./packages/image-compress/artifacts
+          cp -r -v ./packages/artifacts/**/*.wasm ./packages/image-compress/artifacts
         shell: bash
 
       - name: Napi 归档
@@ -220,13 +220,13 @@ jobs:
         run: ls -R ./npm
 
       # - name: 发布 npm 包及长传 .node 文件到 github release
-      #   # npm config set provenance true 命令设置发布 npm 包时候自动发布 GitHub Release: https://docs.npmjs.com/generating-provenance-statements
       #   if: ${{ !inputs.skipPublishing }}
       #   run: |
-      #     npm config set provenance true
+      #     # npm config set provenance true 命令设置发布 npm 包时候自动发布 GitHub Release: https://docs.npmjs.com/generating-provenance-statements
+      #     npm config set provenance false
       #     echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
       #     echo "npmAlwaysAuth:true\n npmAuthToken: '$NPM_TOKEN'\n" >> ~/.npmrc
-      #     (cd packages/core && yarn workspaces foreach -Rt npm publish --tolerate-republish --tag $NPM_TAG)
+      #     (cd packages/image-compress && yarn workspaces foreach -Rt npm publish --tolerate-republish --tag $NPM_TAG)
       #   env:
       #     GITHUB_TOKEN: ${{ github.token }}
       #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

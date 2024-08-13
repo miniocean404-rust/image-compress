@@ -1,5 +1,5 @@
 {
-  "name": "@giegie/core",
+  "name": "@giegie/image-compress",
   "license": "MIT",
   "version": "1.0.0",
   "main": "./index.js",

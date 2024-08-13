@@ -133,8 +133,8 @@ jobs:
             ${{ matrix.settings.post }}
 
             if [[ '${{ matrix.settings.target }}' == "x86_64-apple-darwin" ]]; then
-              strip -x ./bindings/binding_compress_node/*.node
-              strip -x ./bindings/binding_explore_node/*.node
+              strip -x ./packages/image-compress/*.node
+              strip -x ./packages/explore/*.node
             fi
 
   build-wasm:

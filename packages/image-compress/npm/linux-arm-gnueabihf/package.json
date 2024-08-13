@@ -7,6 +7,9 @@
   "cpu": [
     "arm"
   ],
+  "libc": [
+    ""
+  ],
   "main": "giegie.linux-arm-gnueabihf.node",
   "files": [
     "giegie.linux-arm-gnueabihf.node",

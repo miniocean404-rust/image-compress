@@ -7,6 +7,9 @@
   "cpu": [
     "ia32"
   ],
+  "libc": [
+    ""
+  ],
   "main": "giegie.win32-ia32-msvc.node",
   "files": [
     "giegie.win32-ia32-msvc.node",

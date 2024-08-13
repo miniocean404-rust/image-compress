@@ -7,6 +7,9 @@
   "cpu": [
     "arm64"
   ],
+  "libc": [
+    ""
+  ],
   "main": "giegie.darwin-arm64.node",
   "files": [
     "giegie.darwin-arm64.node",

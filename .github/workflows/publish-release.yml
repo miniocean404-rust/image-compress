@@ -80,6 +80,5 @@ jobs:
     with:
       package: "core"
       version: ${{ needs.determine-version.outputs.version }}
-      buildCli: true
       skipBuild: ${{ inputs.skipBuild || false }}
       skipPublishing: false

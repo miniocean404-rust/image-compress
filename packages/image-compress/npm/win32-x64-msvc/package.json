@@ -7,6 +7,9 @@
   "cpu": [
     "x64"
   ],
+  "libc": [
+    ""
+  ],
   "main": "giegie.win32-x64-msvc.node",
   "files": [
     "giegie.win32-x64-msvc.node",

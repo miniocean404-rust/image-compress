@@ -7,6 +7,9 @@
   "cpu": [
     "x64"
   ],
+  "libc": [
+    ""
+  ],
   "main": "giegie.darwin-x64.node",
   "files": [
     "giegie.darwin-x64.node",

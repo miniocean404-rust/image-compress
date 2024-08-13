@@ -122,8 +122,8 @@ jobs:
           isNeedNode: true
           name: bindings-${{ matrix.settings.target }}-node
           path: |
-            ./bindings/binding_compress_node/image-compress*
-            ./bindings/binding_explore_node/explore*
+            ./packages/image-compress/image-compress*
+            ./packages/explore/explore*
           target: ${{ matrix.settings.target }}
           image: ${{ matrix.settings.docker }}
           pre: ${{ matrix.settings.setup }}
@@ -167,6 +167,7 @@ jobs:
             # 默认打包在 pkg 目录下
             # 文档：https://rustwasm.github.io/docs/wasm-pack/commands/build.html
             wasm-pack build ./bindings/binding_compress_wasm --out-name image-compress-${{ matrix.settings.target }} --release --target ${{ matrix.settings.target }} --scope giegie
+            sed -i -e 's/"name": "@giegie\/binding_compress_wasm"/"name": "@giegie\\/image-compress-wasm-web"/g' pkg/package.json
 
   publish:
     needs:
@@ -195,24 +196,28 @@ jobs:
       - name: 下载所有 artifacts
         uses: actions/download-artifact@v4
         with:
-          path: ./packages/artifacts
+          path: ./packages/image-compress/artifacts
 
       - name: 展示 artifacts 文件
-        run: ls -R ./packages/artifacts
+        run: ls -R ./packages/image-compress/artifacts
         shell: bash
 
       - name: 重命名 artifacts 文件
         run: |
-          cp -r -v ./packages/artifacts/**/**/*.node ./packages/artifacts
-          cp -r -v ./packages/artifacts/**/*.wasm ./packages/artifacts
+          cp -r -v ./packages/image-compress/artifacts/**/**/*.node ./packages/image-compress/artifacts
+          cp -r -v ./packages/image-compress/artifacts/**/*.wasm ./packages/image-compress/artifacts
         shell: bash
 
-      #     - name: 移动 artifacts 文件
-      #       shell: bash
-      #       working-directory: .
-      #       run: |
-      #         chmod +x ./.github/scripts/cli_artifacts_rename.sh
-      #         ./.github/scripts/cli_artifacts_rename.sh
+      - name: Napi 归档
+        working-directory: ./packages/image-compress/image-compress
+        run: |
+          # tar -czvf ./packages/artifacts.tar.gz ./packages/artifacts
+          pnpm run artifacts
+
+      - name: 展示 npm 归档
+        working-directory: ./packages/image-compress/image-compress
+        shell: bash
+        run: ls -R ./npm
 
       # - name: 发布 npm 包及长传 .node 文件到 github release
       #   # npm config set provenance true 命令设置发布 npm 包时候自动发布 GitHub Release: https://docs.npmjs.com/generating-provenance-statements

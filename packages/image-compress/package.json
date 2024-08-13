@@ -1,0 +1,58 @@
+{
+  "name": "@giegie/core",
+  "license": "MIT",
+  "version": "1.0.0",
+  "main": "./index.js",
+  "type": "module",
+  "napi": {
+    "binaryName": "image-compress",
+    "package": {
+      "name": "image-compress"
+    },
+    "targets": [
+      "x86_64-apple-darwin",
+      "x86_64-pc-windows-msvc",
+      "x86_64-unknown-linux-gnu",
+      "x86_64-unknown-linux-musl",
+      "i686-pc-windows-msvc",
+      "armv7-unknown-linux-gnueabihf",
+      "aarch64-unknown-linux-gnu",
+      "aarch64-apple-darwin",
+      "aarch64-unknown-linux-musl",
+      "aarch64-pc-windows-msvc"
+    ]
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "scripts": {
+    "build:node-dev": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p image_compress_node --js ./index.js --dts ./index.d.ts --target-dir ../../target -o ./",
+    "build:node": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p image_compress_node --release -o ./",
+    "prepack": "napi prepublish -p ./npm --tag-style npm",
+    "artifacts": "napi artifacts --npm-dir ./npm",
+    "version": "napi version --npm-dir ./npm",
+    "new": "napi new",
+    "build:wasm-dev": "npm-run-all \"pack build ../../bindings/binding_compress_wasm  --dev --out-name image-compress --out-dir ./pkg --target=web --scope giegie\" --",
+    "build:wasm": "npm-run-all \"pack -- build ../../bindings/binding_compress_wasm --release --out-dir ./pkg --target=web --scope giegie\" --",
+    "pack": "wasm-pack",
+    "test:node": "node ./__tests__/index"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^3.0.0-alpha.45",
+    "@types/node": "^20.14.12",
+    "npm-run-all": "^4.1.5"
+  },
+  "optionalDependencies": {
+    "@giegie/core-darwin-x64": "1.0.0",
+    "@giegie/core-win32-x64-msvc": "1.0.0",
+    "@giegie/core-linux-x64-gnu": "1.0.0",
+    "@giegie/core-linux-x64-musl": "1.0.0",
+    "@giegie/core-win32-ia32-msvc": "1.0.0",
+    "@giegie/core-linux-arm-gnueabihf": "1.0.0",
+    "@giegie/core-linux-arm64-gnu": "1.0.0",
+    "@giegie/core-darwin-arm64": "1.0.0",
+    "@giegie/core-linux-arm64-musl": "1.0.0",
+    "@giegie/core-win32-arm64-msvc": "1.0.0"
+  }
+}

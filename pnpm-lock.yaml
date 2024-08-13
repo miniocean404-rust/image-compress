@@ -31,7 +31,7 @@ importers:
         specifier: 5.5.4
         version: 5.5.4
 
-  bindings/binding_compress_node:
+  packages/explore:
     devDependencies:
       '@napi-rs/cli':
         specifier: ^3.0.0-alpha.45
@@ -43,30 +43,7 @@ importers:
         specifier: ^4.1.5
         version: 4.1.5
 
-  bindings/binding_compress_wasm:
-    devDependencies:
-      '@types/node':
-        specifier: ^20.14.12
-        version: 20.14.14
-      npm-run-all:
-        specifier: ^4.1.5
-        version: 4.1.5
-
-  bindings/binding_compress_wasm/pkg: {}
-
-  bindings/binding_demo_node:
-    devDependencies:
-      '@napi-rs/cli':
-        specifier: ^3.0.0-alpha.45
-        version: 3.0.0-alpha.62(@emnapi/runtime@1.2.0)
-      '@types/node':
-        specifier: ^20.14.12
-        version: 20.14.14
-      npm-run-all:
-        specifier: ^4.1.5
-        version: 4.1.5
-
-  bindings/binding_explore_node:
+  packages/image-compress:
     devDependencies:
       '@napi-rs/cli':
         specifier: ^3.0.0-alpha.45

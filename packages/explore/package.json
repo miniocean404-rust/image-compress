@@ -1,13 +1,11 @@
 {
-  "name": "@giegie/demo",
+  "name": "@giegie/explore",
   "license": "MIT",
   "version": "1.0.0",
-  "main": "./index.js",
-  "type": "module",
   "napi": {
-    "binaryName": "demo",
+    "binaryName": "explore",
     "package": {
-      "name": "demo"
+      "name": "explore"
     },
     "targets": [
       "x86_64-apple-darwin",
@@ -27,14 +25,12 @@
     "access": "public"
   },
   "scripts": {
-    "build:dev": "napi build --manifest-path ./Cargo.toml --platform -p binding_demo_node --js ./index.js --dts ./index.d.ts --target-dir ../../target -o ./",
-    "build": "napi build --manifest-path ./Cargo.toml --platform -p binding_demo_node --release -o ./",
+    "build:node-dev": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p binding_explore_node --js ./index.js --dts ./index.d.ts --target-dir ../../target -o ./",
+    "build:node": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p binding_explore_node --release -o ./",
     "prepack": "napi prepublish -p ./npm --tag-style npm",
     "artifacts": "napi artifacts --npm-dir ./npm",
     "version": "napi version --npm-dir ./npm",
-    "new": "napi new",
-    "pack": "wasm-pack",
-    "test:node": "node ./tests/index"
+    "test:node": "node ./__tests__/index"
   },
   "devDependencies": {
     "@napi-rs/cli": "^3.0.0-alpha.45",

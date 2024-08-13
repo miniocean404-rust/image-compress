@@ -19,7 +19,7 @@ env:
 
 on:
   push:
-    branches: [master, dev]
+    branches: [master, dev, feature/publish]
   # workflow_dispatch 允许手动触发工作流的运行
   workflow_dispatch:
     inputs:

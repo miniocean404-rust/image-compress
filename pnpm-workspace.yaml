@@ -1,5 +1,4 @@
 packages:
   - "packages/**"
-  - "bindings/**"
   - ".github/bot"
-  - "!bindings/**/npm/**"
+  - "!packages/**/npm/**"

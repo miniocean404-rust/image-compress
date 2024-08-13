@@ -6,7 +6,7 @@ inputs:
   isNeedNode:
     description: "是否需要 Node 环境"
     required: false
-    default: false
+    default: "false"
 
   target:
     description: "构建的目标"
@@ -45,24 +45,24 @@ inputs:
 runs:
   using: composite
   steps:
-#    - name: 开启 corepack
-#      shell: bash
-#      run: corepack enable
-#
-#    - name: 设置 Node
-#      if: ${{ inputs.isNeedNode }}
-#      uses: actions/setup-node@v4
-#      with:
-#        node-version: 20
-#        cache: pnpm
-#        architecture: x64
-#
-#    - name: 安装依赖 corepack、pnpm
-#      if: ${{ inputs.isNeedNode }}
-#      shell: bash
-#      run: |
-#        corepack enable
-#        pnpm i
+    #    - name: 开启 corepack
+    #      shell: bash
+    #      run: corepack enable
+    #
+    #    - name: 设置 Node
+    #      if: ${{ inputs.isNeedNode }}
+    #      uses: actions/setup-node@v4
+    #      with:
+    #        node-version: 20
+    #        cache: pnpm
+    #        architecture: x64
+    #
+    #    - name: 安装依赖 corepack、pnpm
+    #      if: ${{ inputs.isNeedNode }}
+    #      shell: bash
+    #      run: |
+    #        corepack enable
+    #        pnpm i
     - name: 安装 Node、pnpm
       if: ${{ inputs.isNeedNode }}
       uses: ./.github/actions/pnpm-cache

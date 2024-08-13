@@ -29,7 +29,7 @@
   "scripts": {
     "build:node-dev": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p image_compress_node --js ./index.js --dts ./index.d.ts --target-dir ../../target -o ./",
     "build:node": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p image_compress_node --release -o ./",
-    "prepack": "napi prepublish -p ./npm --tag-style npm",
+    "prepublishOnly": "napi prepublish -p ./npm --tag-style npm",
     "artifacts": "napi artifacts --npm-dir ./npm",
     "version": "napi version --npm-dir ./npm",
     "new": "napi new",
@@ -42,17 +42,5 @@
     "@napi-rs/cli": "^3.0.0-alpha.45",
     "@types/node": "^20.14.12",
     "npm-run-all": "^4.1.5"
-  },
-  "optionalDependencies": {
-    "@giegie/core-darwin-x64": "1.0.0",
-    "@giegie/core-win32-x64-msvc": "1.0.0",
-    "@giegie/core-linux-x64-gnu": "1.0.0",
-    "@giegie/core-linux-x64-musl": "1.0.0",
-    "@giegie/core-win32-ia32-msvc": "1.0.0",
-    "@giegie/core-linux-arm-gnueabihf": "1.0.0",
-    "@giegie/core-linux-arm64-gnu": "1.0.0",
-    "@giegie/core-darwin-arm64": "1.0.0",
-    "@giegie/core-linux-arm64-musl": "1.0.0",
-    "@giegie/core-win32-arm64-msvc": "1.0.0"
   }
 }

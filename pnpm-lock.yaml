@@ -43,26 +43,6 @@ importers:
         specifier: ^4.1.5
         version: 4.1.5
 
-  packages/explore/npm/darwin-arm64: {}
-
-  packages/explore/npm/darwin-x64: {}
-
-  packages/explore/npm/linux-arm-gnueabihf: {}
-
-  packages/explore/npm/linux-arm64-gnu: {}
-
-  packages/explore/npm/linux-arm64-musl: {}
-
-  packages/explore/npm/linux-x64-gnu: {}
-
-  packages/explore/npm/linux-x64-musl: {}
-
-  packages/explore/npm/win32-arm64-msvc: {}
-
-  packages/explore/npm/win32-ia32-msvc: {}
-
-  packages/explore/npm/win32-x64-msvc: {}
-
   packages/image-compress:
     devDependencies:
       '@napi-rs/cli':
@@ -74,26 +54,6 @@ importers:
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
-
-  packages/image-compress/npm/darwin-arm64: {}
-
-  packages/image-compress/npm/darwin-x64: {}
-
-  packages/image-compress/npm/linux-arm-gnueabihf: {}
-
-  packages/image-compress/npm/linux-arm64-gnu: {}
-
-  packages/image-compress/npm/linux-arm64-musl: {}
-
-  packages/image-compress/npm/linux-x64-gnu: {}
-
-  packages/image-compress/npm/linux-x64-musl: {}
-
-  packages/image-compress/npm/win32-arm64-msvc: {}
-
-  packages/image-compress/npm/win32-ia32-msvc: {}
-
-  packages/image-compress/npm/win32-x64-msvc: {}
 
 packages:
 

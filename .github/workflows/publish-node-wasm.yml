@@ -204,8 +204,8 @@ jobs:
 
       - name: 重命名 artifacts 文件
         run: |
-          cp -r -v ./packages/artifacts/**/**/*.node ./packages/image-compress/artifacts
-          cp -r -v ./packages/artifacts/**/*.wasm ./packages/image-compress/artifacts
+          cp -r -v ./packages/artifacts/**/**/*.node ./packages/artifacts
+          cp -r -v ./packages/artifacts/**/*.wasm ./packages/artifacts
         shell: bash
 
       - name: Napi 归档

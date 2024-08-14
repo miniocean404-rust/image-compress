@@ -11,7 +11,7 @@
         "changelog": "git cliff --output CHANGELOG.md",
         "build:node": "pnpm --filter=@giegie/* build:node",
         "build:wasm": "pnpm --filter=@giegie/* build:wasm",
-        "publish": "pnpm --filter=@giegie/explore --filter=@giegie/image-compress publish"
+        "publish": "pnpm --filter=@giegie/explore --filter=@giegie/image-compress publish --no-git-checks"
     },
     "devDependencies": {
         "git-cliff": "^2.4.0"

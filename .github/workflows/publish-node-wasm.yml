@@ -233,12 +233,11 @@ jobs:
         if: ${{ !inputs.skipPublishing }}
         run: |
           # npm config set provenance true 命令设置发布 npm 包时候自动发布 GitHub Release: https://docs.npmjs.com/generating-provenance-statements
+          # npm publish --tolerate-republish --tag $NPM_TAG # --tolerate-republish 代表允许重复发布
           npm config set provenance false
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
           echo "npmAlwaysAuth:true\n npmAuthToken: '$NPM_TOKEN'\n" >> ~/.npmrc
-          pnpm run publish
-          # --tolerate-republish 代表允许重复发布
-          # npm publish --tolerate-republish --tag $NPM_TAG
+          # pnpm run publish
         env:
           GITHUB_TOKEN: ${{ github.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -29,7 +29,7 @@
   "scripts": {
     "build:node-dev": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p image_compress_node --js ./index.js --dts ./index.d.ts --target-dir ../../target -o ./",
     "build:node": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p image_compress_node --release -o ./",
-    "prepublishOnly": "napi prepublish -p ./npm --tag-style npm --gh-release false",
+    "prepublishOnly": "napi prepublish -p ./npm --tag-style npm",
     "artifacts": "napi artifacts -d ../artifacts --npm-dir ./npm",
     "version": "napi version --npm-dir ./npm",
     "new": "napi new",

@@ -236,8 +236,9 @@ jobs:
           npm config set provenance false
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
           echo "npmAlwaysAuth:true\n npmAuthToken: '$NPM_TOKEN'\n" >> ~/.npmrc
-          pnpm run prepublishOnly
-          # (cd packages/image-compress && yarn workspaces foreach -Rt npm publish --tolerate-republish --tag $NPM_TAG)
+          pnpm run publish
+          # --tolerate-republish 代表允许重复发布
+          # npm publish --tolerate-republish --tag $NPM_TAG
         env:
           GITHUB_TOKEN: ${{ github.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

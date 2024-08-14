@@ -27,10 +27,11 @@
   "scripts": {
     "build:node-dev": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p binding_explore_node --js ./index.js --dts ./index.d.ts --target-dir ../../target -o ./",
     "build:node": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p binding_explore_node --release -o ./",
-    "prepublishOnly": "napi prepublish -p ./npm --tag-style npm ",
+    "prepublishOnly": "napi prepublish -p ./npm --tag-style npm --gh-release false --dry-run",
     "artifacts": "napi artifacts -d ../artifacts --npm-dir ./npm",
     "version": "napi version --npm-dir ./npm",
-    "test:node": "node ./__tests__/index"
+    "test:node": "node ./__tests__/index",
+    "test111": "napi prepublish  --gh-release -h"
   },
   "devDependencies": {
     "@napi-rs/cli": "^3.0.0-alpha.45",

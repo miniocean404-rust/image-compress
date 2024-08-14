@@ -208,14 +208,24 @@ jobs:
           cp -r -v ./packages/artifacts/**/*.wasm ./packages/artifacts
         shell: bash
 
-      - name: Napi 归档
+      - name: Napi 归档 image-compress
         working-directory: ./packages/image-compress
         run: |
           # tar -czvf ./packages/artifacts.tar.gz ./packages/artifacts
           pnpm run artifacts
 
+      - name: Napi 归档 image-compress
+        working-directory: ./packages/explore
+        run: |
+          pnpm run artifacts
+
       - name: 展示 npm 归档
         working-directory: ./packages/image-compress
+        shell: bash
+        run: ls -R ./npm
+
+      - name: 展示 npm 归档
+        working-directory: ./packages/explore
         shell: bash
         run: ls -R ./npm
 

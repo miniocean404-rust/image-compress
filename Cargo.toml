@@ -2,10 +2,10 @@
 
 resolver = "2"
 # 设置默认执行的 workspace
-default-members = ["crates/core"]
+default-members = ["crates/core-native"]
 members = [
     "crates/*",
-    # "crates/core",
+    # "crates/xxx",
 ]
 exclude = []
 

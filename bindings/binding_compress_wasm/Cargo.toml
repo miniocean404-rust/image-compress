@@ -13,7 +13,7 @@ bench = false
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-image-compress2 = { path = "../../crates/core2" }
+image-compress-core = { path = "../../crates/core" }
 
 anyhow.workspace = true
 serde.workspace = true

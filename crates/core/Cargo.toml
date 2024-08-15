@@ -1,12 +1,12 @@
 [package]
-name = "image-compress"
+name = "image-compress-core"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-utils = { path = "../utils" }
+# utils = { path = "../utils" }
 
-tokio.workspace = true
+# tokio.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 chrono.workspace = true
@@ -25,21 +25,38 @@ image = { version = "=0.25.2", features = ["rayon", "webp"] }
 resize = "0.8.5"
 
 # 无损压缩 png (optipng、oxipng)
-oxipng = { version = "9.0.0" }
+# 编译 wasm 需要安装 clang 环境
+oxipng = { version = "9.0.0", default-features = false, features = [
+    "freestanding",
+    "filetime",
+    "parallel",
+    "zopfli",
+] }
 # 有损压缩 png 把 png24 压缩成 png8 的库 是 pngquant 的包装
 imagequant = { version = "4.3.1", default-features = true }
-lodepng = "3.10.4"
+# wasm 需要禁止 ffi
+lodepng = { version = "3.10.4", default-features = false, features = [
+    "rust_backend",
+    "deprecated_back_compat_error_type",
+] }
 png = "0.17.11"
 
-mozjpeg = "= 0.10.9"
-mozjpeg-sys = { version = "2.2.1", features = ["default"] }
+# mozjpeg = { version = "0.10.9", default-features = false, features = [
+#     "with_simd",
+# ] }
+# mozjpeg-sys = { version = "2.2.1", features = ["default"] }
 
 # gifsicle 是读取以及 有损及无损压缩 gif 的库
-gifsicle = "1.94.0"
+# gifsicle = "1.94.0"
 libc = "0.2.155"
 
-# webp 无损压缩及有损压缩
-webp = "0.3.0" # 底层使用的是 rust libwebp-sys
+# webp = { version = "0.3.0", default-features = false } # 底层使用的是 rust libwebp-sys# webp 无损压缩及有损压缩
 
 # 处理 svg
 svgtypes = "0.15.1"
+
+
+[features]
+default = ["mem"]
+mem = []
+filesystem = []

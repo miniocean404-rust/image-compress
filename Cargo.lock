@@ -806,7 +806,34 @@ dependencies = [
 ]
 
 [[package]]
-name = "image-compress"
+name = "image-compress-core"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "globset",
+ "image",
+ "imagequant",
+ "infer",
+ "libc",
+ "lodepng",
+ "num_cpus",
+ "oxipng",
+ "png",
+ "resize",
+ "rgb",
+ "serde",
+ "serde_json",
+ "svgtypes",
+ "thiserror",
+ "tracing",
+ "tracing-appender",
+ "tracing-subscriber",
+ "walkdir",
+]
+
+[[package]]
+name = "image-compress-native"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -836,31 +863,6 @@ dependencies = [
  "utils",
  "walkdir",
  "webp",
-]
-
-[[package]]
-name = "image-compress2"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "chrono",
- "globset",
- "image",
- "imagequant",
- "infer",
- "libc",
- "num_cpus",
- "png",
- "resize",
- "rgb",
- "serde",
- "serde_json",
- "svgtypes",
- "thiserror",
- "tracing",
- "tracing-appender",
- "tracing-subscriber",
- "walkdir",
 ]
 
 [[package]]

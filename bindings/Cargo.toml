@@ -1,11 +1,7 @@
 [workspace]
 
 resolver = "2"
-members = [
-    "binding*",
-    # "crates/core",
-
-]
+members = ["binding*"]
 exclude = []
 
 [workspace.package]

@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+# https://github.com/jamsinclair/jSquash/tree/main/packages
 # utils = { path = "../utils" }
 
 # tokio.workspace = true

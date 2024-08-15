@@ -12,6 +12,8 @@ exclude = []
 version = "0.1.0"
 edition = "2021"
 repository = "https://github.com/miniocean404-rust/image-compress"
+description = "图片压缩"
+license = "MIT"
 
 # [[bin]]
 # name = "core"

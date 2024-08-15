@@ -1,0 +1,44 @@
+[package]
+name = "image-compress2"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+utils = { path = "../utils" }
+
+tokio.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+chrono.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+tracing-appender.workspace = true
+tracing-subscriber.workspace = true
+infer.workspace = true
+globset.workspace = true
+walkdir.workspace = true
+num_cpus.workspace = true
+
+rgb = "0.8.37"
+image = { version = "=0.25.2", features = ["rayon", "webp"] }
+
+# 无损压缩 png (optipng、oxipng)
+# oxipng = { version = "9.0.0" }
+# 有损压缩 png 把 png24 压缩成 png8 的库 是 pngquant 的包装
+imagequant = { version = "4.2.2", default-features = true }
+lodepng = "3.10.0"
+png = "0.17.11"
+
+mozjpeg = "= 0.10.9"
+mozjpeg-sys = { version = "2.2.1", features = ["default"] }
+
+# gifsicle 是读取以及 有损及无损压缩 gif 的库
+gifsicle = "1.94.0"
+libc = "0.2.152"
+
+# webp 无损压缩及有损压缩
+webp = "0.3.0" # 底层使用的是 rust libwebp-sys
+
+# 处理 svg
+svgtypes = "0.15.1"

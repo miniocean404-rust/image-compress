@@ -186,6 +186,7 @@ name = "binding_compress_wasm"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "image-compress2",
  "js-sys",
  "serde",
  "serde-wasm-bindgen",
@@ -899,6 +900,37 @@ dependencies = [
  "mozjpeg-sys",
  "num_cpus",
  "oxipng",
+ "png",
+ "rgb",
+ "serde",
+ "serde_json",
+ "svgtypes",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "tracing-appender",
+ "tracing-subscriber",
+ "utils",
+ "walkdir",
+ "webp",
+]
+
+[[package]]
+name = "image-compress2"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "gifsicle",
+ "globset",
+ "image",
+ "imagequant",
+ "infer",
+ "libc",
+ "lodepng",
+ "mozjpeg",
+ "mozjpeg-sys",
+ "num_cpus",
  "png",
  "rgb",
  "serde",

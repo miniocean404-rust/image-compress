@@ -838,6 +838,37 @@ dependencies = [
 ]
 
 [[package]]
+name = "image-compress2"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "gifsicle",
+ "globset",
+ "image",
+ "imagequant",
+ "infer",
+ "libc",
+ "lodepng",
+ "mozjpeg",
+ "mozjpeg-sys",
+ "num_cpus",
+ "png",
+ "rgb",
+ "serde",
+ "serde_json",
+ "svgtypes",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "tracing-appender",
+ "tracing-subscriber",
+ "utils",
+ "walkdir",
+ "webp",
+]
+
+[[package]]
 name = "image-webp"
 version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"

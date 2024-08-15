@@ -1,4 +1,3 @@
 {
-  "rust-analyzer.linkedProjects": ["./Cargo.toml", "./bindings/Cargo.toml"],
-  "npm.exclude": [".github/bot"]
+  "rust-analyzer.linkedProjects": ["./Cargo.toml", "./bindings/Cargo.toml"]
 }

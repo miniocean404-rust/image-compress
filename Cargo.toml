@@ -21,12 +21,13 @@ repository = "https://github.com/miniocean404-rust/image-compress"
 [profile.dev]
 opt-level = 0
 codegen-units = 16 # debug build will cause runtime panic if codegen-unints is default
-debug = 2
+debug = true
 incremental = true
 
 # https://doc.rust-lang.org/cargo/reference/profiles.html
 # 优化方法：https://github.com/johnthagen/min-sized-rust
 [profile.release]
+debug = false
 # 控制 LLVM 链接时间优化,可以使用整个程序分析来生成更好的优化代码，但代价是链接时间更长，例如，这可以删除死代码
 lto = true
 # 控制一个包将被分割成多少个"代码生成单元"。更多的代码生成单元允许并行处理更多的包，可能会减少编译时间，但可能会产生较慢的代码
@@ -65,5 +66,3 @@ strum_macros = "0.26.4"
 tracing = { version = "0.1.40", features = ["release_max_level_info"] }
 tracing-appender = "0.2.3"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
-tracing-futures = "0.2.5"
-tracing-chrome = "0.7.2"

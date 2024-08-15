@@ -16,8 +16,6 @@ env:
   GIT_AUTHOR_EMAIL: "bot@image-compress.rs"
   GIT_COMMITTER_NAME: "Mini Ocean 404 Bot"
   GIT_COMMITTER_EMAIL: "bot@image-compress.rs"
-  # https://github.com/actions/setup-node/issues/899#issuecomment-1819151595
-  SKIP_YARN_COREPACK_CHECK: 1
 
 on:
   push:
@@ -67,7 +65,7 @@ jobs:
       version: ${{ steps.determine-version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/pnpm-cache
       - name: 通过 BOT 获取发布版本
         id: determine-version
         run: |
@@ -78,10 +76,9 @@ jobs:
     needs: determine-version
     name: "发布 ${{ needs.determine-version.outputs.version }}"
     secrets: inherit
-    uses: ./.github/workflows/publish-node-native.yml
+    uses: ./.github/workflows/publish-node-wasm.yml
     with:
       package: "core"
       version: ${{ needs.determine-version.outputs.version }}
-      buildCli: true
       skipBuild: ${{ inputs.skipBuild || false }}
       skipPublishing: false

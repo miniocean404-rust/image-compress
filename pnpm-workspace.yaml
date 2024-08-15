@@ -1,3 +1,4 @@
 packages:
   - "packages/**"
   - ".github/bot"
+  - "!packages/**/npm/**"

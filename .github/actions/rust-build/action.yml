@@ -1,0 +1,131 @@
+name: 构建 NAPI
+
+description: 构建 NAPI Action
+
+inputs:
+  isNeedNode:
+    description: "是否需要 Node 环境"
+    required: false
+    default: "false"
+
+  target:
+    description: "构建的目标"
+    required: true
+
+  image:
+    description: "Docker 的镜像"
+    required: false
+
+  pre:
+    required: false
+    default: ""
+    description: "构建前执行的命令"
+
+  build:
+    required: true
+    default: ""
+    description: "构建的命令"
+
+  path:
+    required: true
+    default: ""
+    description: "归档的路径"
+
+  name:
+    required: true
+    default: ""
+    description: "归档的名称"
+
+# https://docs.github.com/zh/actions/creating-actions/creating-a-composite-action
+# outputs:
+#   random-number:
+#     description: "Random number"
+#     value: ${{ steps.random-number-generator.outputs.random-number }}
+
+runs:
+  using: composite
+  steps:
+    #    - name: 开启 corepack
+    #      shell: bash
+    #      run: corepack enable
+    #
+    #    - name: 设置 Node
+    #      if: ${{ inputs.isNeedNode }}
+    #      uses: actions/setup-node@v4
+    #      with:
+    #        node-version: 20
+    #        cache: pnpm
+    #        architecture: x64
+    #
+    #    - name: 安装依赖 corepack、pnpm
+    #      if: ${{ inputs.isNeedNode }}
+    #      shell: bash
+    #      run: |
+    #        corepack enable
+    #        pnpm i
+    - name: 安装 Node、pnpm
+      if: ${{ inputs.isNeedNode }}
+      uses: ./.github/actions/pnpm-cache
+
+    - name: 获取 rust toolchain 版本号
+      id: toolchain
+      shell: bash
+      run: echo "version=$(cat ./rust-toolchain)" >> "$GITHUB_OUTPUT"
+
+    - name: 安装 rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: ${{ inputs.target }}
+        toolchain: stable
+        # toolchain: ${{ steps.toolchain.outputs.version }}
+
+    - name: 缓存 cargo registry
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+          .cargo-cache
+        key: ${{ inputs.target || 'rust-build' }}-cargo-registry
+
+    - name: 设置 toolchain 依赖的环境
+      if: ${{ inputs.pre }}
+      run: ${{ inputs.pre }}
+      shell: bash
+
+    - uses: goto-bus-stop/setup-zig@v2
+      # if: ${{ contains(inputs.target,'linux') }}
+      if: ${{ inputs.target == 'armv7-unknown-linux-gnueabihf' }}
+      with:
+        version: 0.13.0
+
+    - name: 安装依赖 wasm-pack
+      shell: bash
+      run: |
+        curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+        echo '/usr/local/cargo/bin' >> $GITHUB_PATH
+
+    - name: 在 Docker 中构建
+      if: ${{ inputs.image }}
+      uses: ./.github/actions/rust-build-docker
+      with:
+        image: ${{ inputs.image }}
+        build: ${{ inputs.build }}
+        target: ${{ inputs.target }}
+
+    - name: 普通构建
+      if: ${{ inputs.build && !inputs.image }}
+      run: ${{ inputs.build }}
+      shell: bash
+
+    - name: 上传 artifact
+      if: ${{ inputs.path && inputs.name }}
+      uses: actions/upload-artifact@v4
+      with:
+        # 上传归档的名称
+        name: ${{ inputs.name }}
+        # 归档的文件路径 xx* 代表以 xx 开头的文件
+        path: |
+          ${{ inputs.path }}
+        if-no-files-found: error

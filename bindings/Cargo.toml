@@ -1,0 +1,87 @@
+[workspace]
+
+resolver = "2"
+members = [
+    "binding*",
+    # "crates/core",
+
+]
+exclude = []
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/miniocean404-rust/image-compress"
+description = "图片压缩"
+license = "MIT"
+
+# [[bin]]
+# name = "core"
+# path = "core/src/main.rs"
+
+[profile.dev]
+opt-level = 0
+codegen-units = 16 # debug build will cause runtime panic if codegen-unints is default
+debug = 2
+incremental = true
+
+# https://doc.rust-lang.org/cargo/reference/profiles.html
+# 优化方法：https://github.com/johnthagen/min-sized-rust
+[profile.release]
+# 控制 LLVM 链接时间优化,可以使用整个程序分析来生成更好的优化代码，但代价是链接时间更长，例如，这可以删除死代码
+lto = true
+# 控制一个包将被分割成多少个"代码生成单元"。更多的代码生成单元允许并行处理更多的包，可能会减少编译时间，但可能会产生较慢的代码
+codegen-units = 1
+# 决定 Rust 对程序使用哪种程度的优化，0-3 范围
+opt-level = 3
+# 在 Linux 和 macOS 上，符号信息默认包含在编译.elf文件中。此信息对于正确执行二进制文件不是必需的。手动删除：strip target/release/min-sized-rust
+# 自动从二进制文件中去除符号（调试信息）优化打包大小
+strip = true
+# 默认情况下，当 Rust 代码遇到必须调用的情况时panic!()，它会展开堆栈并生成有用的回溯。但是，展开代码确实需要额外的二进制大小。rustc可以指示立即中止而不是展开，这样就不需要额外的展开代码了。
+panic = "abort"
+# 是否开启断言调试
+debug-assertions = false
+
+[workspace.dependencies]
+tokio = { version = "1.33.0", features = ["full"] }
+serde = { version = "1.0.196", features = ["derive"] }
+anyhow = "1.0.79"
+
+
+# 用于在 Rust 程序运行时获取堆栈跟踪（回溯）的库
+backtrace = "0.3.69"
+once_cell = "1.19.0"
+
+# 处理日志及栈追踪
+tracing = { version = "0.1.40", features = ["release_max_level_info"] }
+tracing-appender = "0.2.3"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+tracing-futures = "0.2.5"
+tracing-chrome = "0.7.2"
+
+# wasm-pack，一个构建、测试和发布 WASM 的 Rust CLI 工具，我们将使用 wasm-pack 相关的命令来构建 WASM 二进制内容。
+# https://rustwasm.github.io/wasm-pack/installer/
+
+# 是一个简化 Rust WASM 与 JS 之间交互的库。
+# 它能够将如 DOM 操作、console.log 和 performance 等 JS 相关 API 暴露给 Rust 使用
+# 它能够将 Rust 功能导出到 JS 中，如类、函数等
+# wasm-pack cli 依赖这个包进行打包
+wasm-bindgen = { version = "0.2.92", features = ["enable-interning"] }
+# web-sys 的 Crate，它为 Rust 进一步提供了控制 DOM 的能力
+web-sys = { version = "0.3.69", features = [
+    'Document',
+    'Element',
+    'HtmlElement',
+    'Node',
+    'Window',
+    'HtmlInputElement',
+    'Performance',
+    'console',
+] }
+js-sys = "0.3.67"
+serde-wasm-bindgen = "0.6.3"
+wee_alloc = "0.4.5"
+
+napi = { version = "2.16.8", features = ["async", "serde-json", "napi9"] }
+napi-derive = "2.16.10"
+napi-build = "2.1.3"

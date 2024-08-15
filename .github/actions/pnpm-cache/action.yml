@@ -1,6 +1,6 @@
 name: pnpm cache
 
-description: Install Node.js with pnpm global cache
+description: 安装 Node.js 与 pnpm 全局缓存
 
 inputs:
   node-version:
@@ -9,13 +9,13 @@ inputs:
     required: false
 
   frozen-lockfile:
-    description: "冻结锁定"
+    description: "是否严格按照 pnpm-lock.yaml 文件中记录的版本和依赖信息进行安装"
     default: "false"
     required: false
 
   save-if:
     description: "是否保存缓存"
-    default: "false"
+    default: "true"
     required: false
 
 runs:
@@ -32,28 +32,31 @@ runs:
       uses: pnpm/action-setup@v4
       with:
         dest: ${{ runner.tool_cache }}/pnpm
-        # Use `@pnpm/exe` for Node 16
+        # Node 16 使用 `@pnpm/exe`
+        # 将安装 @pnpm/exe（Node.js 捆绑包），从而可以在没有 Node.js 的情况下使用 pnpm
         standalone: ${{ inputs.node-version == '16' }}
 
     - name: 获取 pnpm 缓存目录
       id: pnpm-cache
       shell: bash
       run: |
-        # set store-dir to $(pnpm config get store-dir)/$(pnpm -v)
+        # 设置 pnpm 包全局缓存目录 to $(pnpm config get store-dir)/$(pnpm -v)
         global_store_path=$(pnpm config get store-dir)
         if [ -z "${global_store_path}" ] || [ "${global_store_path}" = "undefined" ]; then
           global_store_path=~/.cache/pnpm
         fi
         pnpm config set store-dir $global_store_path/$(pnpm -v) --location project
-        echo "STORE_PATH is $(pnpm store path)"
+        echo "Store 全局缓存路径在 is $(pnpm store path)"
         echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
 
     - name: 恢复 pnpm 缓存
       id: restore
       if: ${{ startsWith(runner.name, 'GitHub Actions') }}
+      # 仓库为 https://github.com/actions/cache
       uses: actions/cache/restore@v4
       with:
         path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+        # hashFiles：根据文件内容生成哈希值
         key: node-cache-${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
         restore-keys: |
           node-cache-${{ runner.os }}-pnpm-
@@ -62,13 +65,16 @@ runs:
       shell: bash
       run: |
         # 是否生成锁定文件 true 不生成
+        # --frozen-lockfile: 表示严格按照 pnpm-lock.yaml 文件中记录的版本和依赖信息进行安装，不允许对依赖版本进行任何自动的更新或调整
+        # --prefer-offline: 表示优先使用本地缓存，不进行网络请求
         if [[ "${{ inputs.frozen-lockfile}}" == 'true' ]]; then
-          pnpm install --frozen-lockfile --prefer-offline
+          pnpm i --frozen-lockfile --prefer-offline
         else
-          pnpm install --no-frozen-lockfile --prefer-offline
+          pnpm i --no-frozen-lockfile --prefer-offline
         fi
 
-    - name: Save pnpm cache
+    - name: 保存 pnpm 缓存
+      # 仓库为 https://github.com/actions/cache
       uses: actions/cache/save@v4
       if: ${{ inputs.save-if == 'true' && steps.restore.outputs.cache-hit != 'true' }}
       with:

@@ -1,0 +1,47 @@
+{
+  "name": "@giegie/explore",
+  "license": "MIT",
+  "version": "1.0.0",
+  "main": "index.js",
+  "napi": {
+    "binaryName": "explore",
+    "package": {
+      "name": "explore"
+    },
+    "targets": [
+      "x86_64-apple-darwin",
+      "x86_64-pc-windows-msvc",
+      "x86_64-unknown-linux-gnu",
+      "x86_64-unknown-linux-musl",
+      "i686-pc-windows-msvc",
+      "armv7-unknown-linux-gnueabihf",
+      "aarch64-unknown-linux-gnu",
+      "aarch64-apple-darwin",
+      "aarch64-unknown-linux-musl",
+      "aarch64-pc-windows-msvc"
+    ]
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "scripts": {
+    "build:node-dev": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p binding_explore_node --js ./index.js --dts ./index.d.ts --target-dir ../../target -o ./",
+    "build:node": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p binding_explore_node --release -o ./",
+    "prepack": "napi prepublish -p ./npm --tag-style npm --no-gh-release",
+    "artifacts": "napi artifacts -d ../artifacts --npm-dir ./npm",
+    "version": "napi version --npm-dir ./npm",
+    "test:node": "node ./__tests__/index"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "package.json",
+    "LICENSE"
+  ],
+  "devDependencies": {
+    "@napi-rs/cli": "^3.0.0-alpha.45",
+    "@types/node": "22.3.0",
+    "npm-run-all": "^4.1.5"
+  }
+}

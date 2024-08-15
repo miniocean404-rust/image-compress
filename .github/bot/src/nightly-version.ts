@@ -1,7 +1,7 @@
 // npx ts-node .github/bot/src/nightly-version.ts $version
 
 import { octokit, owner, repo } from "./util/octokit";
-import pkg from "../../../packages/package.json";
+import pkg from "../../../package.json";
 
 function addZ(n: number) {
   return n < 10 ? "0" + n : "" + n;

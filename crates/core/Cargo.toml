@@ -26,7 +26,7 @@ resize = "0.8.5"
 
 # 无损压缩 png (optipng、oxipng)
 # 编译 wasm 需要安装 clang 环境
-oxipng = { version = "9.0.0", default-features = false, features = [
+oxipng = { version = "9.1.2", default-features = false, features = [
     "freestanding",
     "filetime",
     "parallel",

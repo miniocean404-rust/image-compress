@@ -10,10 +10,10 @@ use zune_image::{
     traits::EncoderTrait,
 };
 
-/// Alias to [`oxipng::Options`]
+/// [`oxipng::Options`] 别名
 pub type OxiPngOptions = oxipng::Options;
 
-/// A OxiPNG encoder
+/// OxiPNG 编码器
 #[derive(Default)]
 pub struct OxiPngEncoder {
     options: OxiPngOptions,

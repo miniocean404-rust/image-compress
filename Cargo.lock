@@ -801,7 +801,7 @@ dependencies = [
  "rayon",
  "rgb",
  "tiff",
- "zune-core",
+ "zune-core 0.4.12",
  "zune-jpeg",
 ]
 
@@ -830,6 +830,8 @@ dependencies = [
  "tracing-appender",
  "tracing-subscriber",
  "walkdir",
+ "zune-core 0.5.0-rc2",
+ "zune-image",
 ]
 
 [[package]]
@@ -2596,6 +2598,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3f423a2c17029964870cfaabb1f13dfab7d092a62a29a89264f4d36990ca414a"
 
 [[package]]
+name = "zune-core"
+version = "0.5.0-rc2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0fa5491574238487afaf76a17d1907b47eaace69e97720b8486d584dfca013dc"
+
+[[package]]
+name = "zune-image"
+version = "0.5.0-rc0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c29cd015d9786939132d9ffc1400f5fc4000dae1b6865c916376f22899e0421c"
+dependencies = [
+ "bytemuck",
+ "zune-core 0.5.0-rc2",
+]
+
+[[package]]
 name = "zune-inflate"
 version = "0.2.54"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2610,5 +2628,5 @@ version = "0.4.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "16099418600b4d8f028622f73ff6e3deaabdff330fb9a2a131dea781ee8b0768"
 dependencies = [
- "zune-core",
+ "zune-core 0.4.12",
 ]

@@ -55,6 +55,8 @@ libc = "0.2.155"
 # 处理 svg
 svgtypes = "0.15.1"
 
+zune-core = "0.5.0-rc2"
+zune-image = { version = "0.5.0-rc0", default-features = false }
 
 [features]
 default = ["mem"]

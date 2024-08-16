@@ -36,13 +36,17 @@ impl EncoderTrait for OxiPngEncoder {
     }
 
     fn encode_inner<T: ZByteWriterTrait>(&mut self, image: &Image, sink: T) -> Result<usize, ImageErrors> {
+        // 获取图片宽高
         let (width, height) = image.dimensions();
 
         // inlined `to_u8` method because its private
         let colorspace = image.colorspace();
+
         let data = if image.depth() == BitDepth::Eight {
+            // 如果是 8 个字节就拍平
             image.flatten_frames::<u8>()
         } else if image.depth() == BitDepth::Sixteen {
+            // 如果是 16 个字节就转为 本机字节序
             image.frames_ref().iter().map(|z| z.u16_to_native_endian(colorspace)).collect()
         } else {
             unreachable!()
@@ -58,10 +62,8 @@ impl EncoderTrait for OxiPngEncoder {
             match image.colorspace() {
                 ColorSpace::Luma => oxipng::ColorType::Grayscale { transparent_shade: None },
                 ColorSpace::RGB => oxipng::ColorType::RGB { transparent_color: None },
-
                 ColorSpace::LumaA => oxipng::ColorType::GrayscaleAlpha,
                 ColorSpace::RGBA => oxipng::ColorType::RGBA,
-
                 cs => {
                     return Err(ImageErrors::EncodeErrors(ImgEncodeErrors::UnsupportedColorspace(
                         cs,
@@ -72,7 +74,7 @@ impl EncoderTrait for OxiPngEncoder {
             match image.depth() {
                 BitDepth::Eight => oxipng::BitDepth::Eight,
                 BitDepth::Sixteen => oxipng::BitDepth::Sixteen,
-                d => return Err(ImageErrors::EncodeErrors(ImgEncodeErrors::Generic(format!("{d:?} is not supported")))),
+                d => return Err(ImageErrors::EncodeErrors(ImgEncodeErrors::Generic(format!("{d:?} 字节深度不支持")))),
             },
             data,
         )

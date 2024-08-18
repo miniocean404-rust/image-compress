@@ -62,3 +62,10 @@ zune-image = { version = "0.5.0-rc0", default-features = false }
 default = ["mem"]
 mem = []
 filesystem = []
+metadata = []
+
+
+[dev-dependencies]
+zune-core = { version = "0.5.0-rc2", features = ["std"] }
+zune-image = "0.5.0-rc0"
+cargo_metadata.workspace = true

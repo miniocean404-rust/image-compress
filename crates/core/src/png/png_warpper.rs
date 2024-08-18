@@ -1,5 +1,5 @@
 use rgb::{
-    alt::{GRAY8, GRAYA8},
+    alt::{Gray, GrayAlpha},
     AsPixels, FromSlice, RGB8, RGBA8,
 };
 
@@ -38,8 +38,8 @@ pub fn decode(mut data: &[u8]) -> Vec<u8> {
     match info.color_type {
         png::ColorType::Rgba => {}
         png::ColorType::Rgb => expand_pixels(&mut buf, RGB8::into),
-        png::ColorType::GrayscaleAlpha => expand_pixels(&mut buf, GRAYA8::into),
-        png::ColorType::Grayscale => expand_pixels(&mut buf, |gray: GRAY8| GRAYA8::from(gray).into()),
+        png::ColorType::GrayscaleAlpha => expand_pixels(&mut buf, Gray::<u8>::into),
+        png::ColorType::Grayscale => expand_pixels(&mut buf, |gray: GrayAlpha<u8>| gray.into()),
         png::ColorType::Indexed => {
             unreachable!("找到已索引的颜色类型，但期望它已经展开")
         }

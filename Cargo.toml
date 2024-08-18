@@ -59,6 +59,8 @@ walkdir = "2.4.0"
 num_cpus = "1.16.0"
 urlencoding = "2.1.3"
 
+cargo_metadata = "0.18.1"
+
 strum = "0.26.3"
 strum_macros = "0.26.4"
 

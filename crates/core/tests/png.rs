@@ -1,12 +1,12 @@
 #![allow(unused_imports)]
 mod mock;
 
-use std::{fs, io::Cursor};
-use std::path::Path;
 use cargo_metadata::MetadataCommand;
-use zune_core::bit_depth::BitDepth;
 use image_compress_core::png::oxipng_lossless::OxiPngEncoder;
 use mock::create_test_image_u8;
+use std::path::Path;
+use std::{fs, io::Cursor};
+use zune_core::bit_depth::BitDepth;
 use zune_core::colorspace::ColorSpace;
 use zune_image::codecs::ImageFormat;
 use zune_image::image::Image;

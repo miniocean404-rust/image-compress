@@ -22,17 +22,38 @@ impl OxiPngEncoder {
         }
     }
 
-    pub fn compress_with_mem(&self, mem: &Vec<u8>) -> anyhow::Result<Vec<u8>> {
+    pub fn compress_lossless_with_mem(&self, mem: &Vec<u8>) -> anyhow::Result<Vec<u8>> {
         // oxipng_options.deflate = Zopfli {
         //     iterations: NonZeroU8::new(15).ok_or("")?,
         // };
         // let mut oxipng_options = Options::from_preset(level);
         // oxipng_options.deflate = Libdeflater { compression: 6 };
         // oxipng_options.interlace = Some(Interlacing::None);
+
+        // let options = Options::max_compression(); // 设置压缩级别，范围是 0 到 6
         Ok(oxipng::optimize_from_memory(mem.as_slice(), &self.options)?)
     }
 
-    pub fn encode(&self, image: &DynamicImage) -> anyhow::Result<Vec<u8>> {
+    #[cfg(feature = "filesystem")]
+    pub fn compress_lossless_with_file(&self, input: &str, output: &str) -> Result<(), Box<dyn std::error::Error>> {
+        use oxipng::InFile;
+        use oxipng::OutFile;
+        use std::path::PathBuf;
+
+        // let in_file = fs::read(input)?;
+        // let png_vec = self.optimize_from_memory(&in_file)?;
+        // 写入文件
+        // let mut output_file = File::create(output)?;
+        // output_file.write_all(png_vec.as_slice())?;
+
+        let input = InFile::Path(PathBuf::from(input));
+        let output = OutFile::from_path(PathBuf::from(output));
+        oxipng::optimize(&input, &output, &self.options).map_err(|e| return Err(anyhow!("压缩失败: {}", e.to_string())))?;
+
+        Ok(())
+    }
+
+    pub fn encode_lossless(&self, image: &DynamicImage) -> anyhow::Result<Vec<u8>> {
         let (width, height) = image.dimensions();
         let color_space = image.color();
 

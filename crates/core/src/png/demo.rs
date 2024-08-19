@@ -37,15 +37,18 @@ impl OxiPngEncoder {
         let color_space = image.color();
 
         let data = match image {
-            DynamicImage::ImageLuma8(img) => img.to_vec(),
-            DynamicImage::ImageLumaA8(img) => img.to_vec(),
-            DynamicImage::ImageRgb8(img) => img.to_vec(),
-            DynamicImage::ImageRgba8(img) => img.to_vec(),
-            DynamicImage::ImageLuma16(img) => img.to_vec().iter().flat_map(|&num| num.to_ne_bytes()).collect(),
-            DynamicImage::ImageLumaA16(img) => img.to_vec().iter().flat_map(|&num| num.to_ne_bytes()).collect(),
-            DynamicImage::ImageRgb16(img) => img.to_vec().iter().flat_map(|&num| num.to_ne_bytes()).collect(),
-            DynamicImage::ImageRgba16(img) => img.to_vec().iter().flat_map(|&num| num.to_ne_bytes()).collect(),
-            _ => return Err(anyhow!("不支持的颜色空间")),
+            // DynamicImage::ImageLuma8(img) => img.to_vec(),
+            // DynamicImage::ImageLumaA8(img) => img.to_vec(),
+            // DynamicImage::ImageRgb8(img) => img.to_vec(),
+            // DynamicImage::ImageRgba8(img) => img.to_vec(),
+            // DynamicImage::ImageLuma16(img) => img.to_vec().iter().flat_map(|&num| num.to_ne_bytes()).collect(),
+            // DynamicImage::ImageLumaA16(img) => img.to_vec().iter().flat_map(|&num| num.to_ne_bytes()).collect(),
+            // DynamicImage::ImageRgb16(img) => img.to_vec().iter().flat_map(|&num| num.to_ne_bytes()).collect(),
+            // DynamicImage::ImageRgba16(img) => img.to_vec().iter().flat_map(|&num| num.to_ne_bytes()).collect(),
+            // _ => return Err(anyhow!("不支持的颜色空间")),
+            DynamicImage::ImageRgb32F(_) => return Err(anyhow!("不支持的颜色空间")),
+            DynamicImage::ImageRgba32F(_) => return Err(anyhow!("不支持的颜色空间")),
+            img => img.clone().into_bytes(),
         };
 
         #[allow(unused_mut)]

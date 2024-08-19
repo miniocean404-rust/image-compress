@@ -47,7 +47,7 @@ pub fn mem(input: &Vec<u8>, quality: u8) -> anyhow::Result<Vec<u8>> {
         _ => Err(anyhow!("错误的解码 Png 图片")),
     }?;
 
-    let rgb = image.buffer;
+    let buffer = image.buffer;
     let width = image.width;
     let height = image.height;
 
@@ -56,7 +56,7 @@ pub fn mem(input: &Vec<u8>, quality: u8) -> anyhow::Result<Vec<u8>> {
     quant.set_quality(0, quality)?;
     // lib.set_max_colors(128)?;
 
-    let mut img = quant.new_image(rgb, width, height, 0.0)?;
+    let mut img = quant.new_image(buffer, width, height, 0.0)?;
     let mut quantize_res = quant.quantize(&mut img)?;
     // res.set_dithering_level(1.0)?;
 

@@ -3,7 +3,7 @@ use image::{DynamicImage, GenericImageView};
 
 pub type Options = oxipng::Options;
 
-// 无损压缩
+// 无损压缩 lossless
 #[derive(Debug, Default)]
 pub struct OxiPngEncoder {
     pub options: Options,

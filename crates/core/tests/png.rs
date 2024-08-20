@@ -2,6 +2,7 @@
 mod mock;
 
 use cargo_metadata::MetadataCommand;
+use image_compress_core::png::codec::imagequant::ImageQuantEncoder;
 use image_compress_core::png::oxipng_lossless::OxiPngEncoder;
 use mock::create_test_image_u8;
 use std::path::Path;
@@ -32,5 +33,23 @@ fn compress_u8() {
 
     println!("压缩后字节数: {}", byte_len);
 
+    // fs::write(Path::new(&workspace_root).join("assets/compress/test.png"), buf.into_inner()).unwrap();
+}
+
+#[test]
+fn image_quant_compress_lossy() {
+    // 246 字节
+    let metadata = MetadataCommand::new().exec().unwrap();
+    let workspace_root = metadata.workspace_root;
+    let path = Path::new(&workspace_root).join("assets/image/png/time-icon.png");
+    let image = image::open(&path).unwrap();
+
+    let buf = fs::read(path).unwrap();
+    println!("原始字节数: {}", buf.len());
+
+    let encoder = ImageQuantEncoder::new();
+    let byte_len = encoder.encode(&image).unwrap();
+
+    println!("压缩后字节数: {}", byte_len.len());
     // fs::write(Path::new(&workspace_root).join("assets/compress/test.png"), buf.into_inner()).unwrap();
 }

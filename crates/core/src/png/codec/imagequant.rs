@@ -103,12 +103,9 @@ impl ImageQuantEncoder {
         let mut quantize_res = attr.quantize(&mut img)?;
         // 设置图片抖动
         quantize_res.set_dithering_level(self.options.dithering)?;
-
         // 颜色从输入 Gamma 转换为此 Gamma
         quantize_res.set_output_gamma(self.options.gamma)?;
-
         let (_palette, pixels) = quantize_res.remapped(&mut img)?;
-
         // 获取调色板并用新像素覆盖以前的像素，也可以使用 remapped 获取调色板
         let palette = quantize_res.palette();
 

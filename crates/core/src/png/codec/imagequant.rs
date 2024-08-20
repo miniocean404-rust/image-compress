@@ -22,7 +22,8 @@ pub struct ImageQuantOptions {
     // 设置为 1.0 以获得平滑的图像，越小压缩越小
     pub dithering: f32,
 
-    // 默认值是sRGB (~1/2.2)，效果未知
+    // 默认值是sRGB (~1/2.2)，，越小压缩越小，不知道做什么的
+    // 0 - 1
     pub gamma: f64,
 
     // 将透明颜色移动到调色板中的最后一个条目
@@ -39,7 +40,7 @@ impl Default for ImageQuantOptions {
             speed: 1,
             min_posterization: 4,
             dithering: 0.0,
-            gamma: 0.0,
+            gamma: 0.1,
             last_index_transparent: false,
         }
     }
@@ -104,7 +105,7 @@ impl ImageQuantEncoder {
         quantize_res.set_dithering_level(self.options.dithering)?;
 
         // 颜色从输入 Gamma 转换为此 Gamma
-        // quantize_res.set_output_gamma(1.0)?;
+        quantize_res.set_output_gamma(self.options.gamma)?;
 
         let (_palette, pixels) = quantize_res.remapped(&mut img)?;
 
@@ -124,6 +125,10 @@ impl ImageQuantEncoder {
         // imgbuf.write_to(w, image::ImageOutputFormat::Png)?;
 
         Ok(png_vec)
+    }
+
+    pub fn format(&self) -> image::ImageFormat {
+        image::ImageFormat::Png
     }
 }
 

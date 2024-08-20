@@ -14,8 +14,8 @@ pub struct ImageQuantOptions {
     // default: 4
     pub speed: i32,
 
-    // 要忽略的最低有效位的数目。用于生成 VGA, 15 位纹理或其他复古平台的调色板
-    pub posterization: u32,
+    // 要忽略的最低有效 bit 的数目。用于生成 VGA, 15 位纹理或其他复古平台的调色板
+    pub min_posterization: u8,
 
     // 设置为 1.0 以获得平滑的图像
     pub dithering: f32,
@@ -34,7 +34,7 @@ impl Default for ImageQuantOptions {
             min_quality: 70,
             max_quality: 99,
             speed: 1,
-            posterization: 0,
+            min_posterization: 0,
             dithering: 1.0,
             gamma: 0.0,
             last_index_transparent: false,
@@ -92,9 +92,8 @@ impl ImageQuantEncoder {
         attr.set_speed(self.options.speed)?;
         attr.set_quality(self.options.min_quality, self.options.max_quality)?;
         attr.set_last_index_transparent(self.options.last_index_transparent);
-        // attr.set_min_posterization(0)?;
-        // 最好使用 set_quality，而不是 set_max_colors
-        // attr.set_max_colors()?;
+        // 要忽略的最低有效位数
+        attr.set_min_posterization(self.options.min_posterization)?;
 
         // 为图像生成调色板
         let mut quantize_res = attr.quantize(&mut img)?;

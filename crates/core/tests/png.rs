@@ -3,6 +3,7 @@ mod mock;
 
 use cargo_metadata::MetadataCommand;
 use image_compress_core::png::codec::imagequant::ImageQuantEncoder;
+use image_compress_core::png::codec::oxipng::OxiPngEncoder as OxiPngEncoderNew;
 use image_compress_core::png::oxipng_lossless::OxiPngEncoder;
 use mock::create_test_image_u8;
 use std::path::Path;
@@ -11,6 +12,8 @@ use zune_core::bit_depth::BitDepth;
 use zune_core::colorspace::ColorSpace;
 use zune_image::codecs::ImageFormat;
 use zune_image::image::Image;
+
+use image::{DynamicImage, ImageBuffer, Rgba};
 
 #[test]
 fn compress_u8() {
@@ -32,6 +35,24 @@ fn compress_u8() {
     let byte_len = image.write_with_encoder(encoder, &mut buf).unwrap();
 
     println!("压缩后字节数: {}", byte_len);
+
+    // fs::write(Path::new(&workspace_root).join("assets/compress/test.png"), buf.into_inner()).unwrap();
+}
+
+#[test]
+fn compress_u8_new() {
+    let metadata = MetadataCommand::new().exec().unwrap();
+    let workspace_root = metadata.workspace_root;
+    let path = Path::new(&workspace_root).join("assets/image/png/time-icon.png");
+    let buf = fs::read(path).unwrap();
+    println!("原始字节数: {}", buf.len());
+
+    let img = image::load_from_memory(&buf).unwrap();
+    // let img = image::open(path).unwrap();
+
+    let encoder = OxiPngEncoderNew::new_with_options(oxipng::Options::max_compression());
+    let result = encoder.encode(&img).unwrap();
+    println!("压缩后字节数: {}", result.len());
 
     // fs::write(Path::new(&workspace_root).join("assets/compress/test.png"), buf.into_inner()).unwrap();
 }

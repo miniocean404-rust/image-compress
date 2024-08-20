@@ -43,6 +43,10 @@ panic = "abort"
 debug-assertions = false
 
 [workspace.dependencies]
+# cli
+clap = { version = "4.5.16" }
+indoc = { version = "2.0.5" }
+
 tokio = { version = "1.33.0", features = ["full"] }
 serde = { version = "1.0.196", features = ["derive"] }
 serde_json = "1.0"

@@ -1,0 +1,10 @@
+[package]
+name = "cli"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+
+[dependencies]
+clap = { workspace = true, features = ["cargo"] }
+indoc = { workspace = true }
+anyhow = { workspace = true }

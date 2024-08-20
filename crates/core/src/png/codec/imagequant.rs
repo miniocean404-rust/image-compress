@@ -96,16 +96,17 @@ impl ImageQuantEncoder {
         // 最好使用 set_quality，而不是 set_max_colors
         // attr.set_max_colors()?;
 
-        // 量化图片
+        // 为图像生成调色板
         let mut quantize_res = attr.quantize(&mut img)?;
         // 设置图片抖动
         quantize_res.set_dithering_level(self.options.dithering)?;
 
+        // 颜色从输入 Gamma 转换为此 Gamma
         // quantize_res.set_output_gamma(1.0)?;
 
         let (_palette, pixels) = quantize_res.remapped(&mut img)?;
 
-        // 获取调色板并用新像素覆盖以前的像素
+        // 获取调色板并用新像素覆盖以前的像素，也可以使用 remapped 获取调色板
         let palette = quantize_res.palette();
 
         let mut enc = lodepng::Encoder::new();

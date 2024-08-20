@@ -38,6 +38,20 @@ impl ImageQuantEncoder {
         let mut quantize_res = quant.quantize(&mut img)?;
         let (palette, pixels) = quantize_res.remapped(&mut img)?;
 
+        // 将量化后的图像数据转换为 ImageBuffer
+        // let mut imgbuf: ImageBuffer<Rgba<u8>, Vec<u8>> = ImageBuffer::new(width, height);
+        // for (i, pixel) in pixels.iter().enumerate() {
+        //     let x = (i as u32) % width;
+        //     let y = (i as u32) / width;
+        //     let color = palette[*pixel as usize];
+        //     imgbuf.put_pixel(x, y, Rgba([color.r, color.g, color.b, color.a]));
+        // }
+
+        // // 将 ImageBuffer 编码为 PNG 并保存到文件
+        // let file = File::create("output.png")?;
+        // let ref mut w = BufWriter::new(file);
+        // imgbuf.write_to(w, image::ImageOutputFormat::Png)?;
+
         Ok(vec![])
     }
 }

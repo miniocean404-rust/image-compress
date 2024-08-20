@@ -1,3 +1,4 @@
+// jSquash 写法
 use rgb::{
     alt::{Gray, GrayAlpha},
     AsPixels, FromSlice, RGB8, RGBA8,

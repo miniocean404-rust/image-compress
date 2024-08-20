@@ -4,7 +4,7 @@ use std::{fs, io::Cursor, path::Path};
 
 use cargo_metadata::MetadataCommand;
 use image::{DynamicImage, ImageBuffer, Rgba};
-use image_compress_core::png::demo::OxiPngEncoder;
+use image_compress_core::png::codec::oxipng::OxiPngEncoder;
 
 #[test]
 fn compress_u8_demo() {
@@ -18,7 +18,7 @@ fn compress_u8_demo() {
     // let img = image::open(path).unwrap();
 
     let encoder = OxiPngEncoder::new_with_options(oxipng::Options::max_compression());
-    let result = encoder.encode_lossless(&img).unwrap();
+    let result = encoder.encode(&img).unwrap();
     println!("压缩后字节数: {}", result.len());
 
     // fs::write(Path::new(&workspace_root).join("assets/compress/test.png"), buf.into_inner()).unwrap();

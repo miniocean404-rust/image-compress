@@ -3,6 +3,7 @@ use image::{DynamicImage, GenericImageView};
 
 pub type Options = oxipng::Options;
 
+// 无损压缩
 #[derive(Debug, Default)]
 pub struct OxiPngEncoder {
     pub options: Options,
@@ -22,7 +23,7 @@ impl OxiPngEncoder {
         }
     }
 
-    pub fn compress_lossless_with_mem(&self, mem: &Vec<u8>) -> anyhow::Result<Vec<u8>> {
+    pub fn compress_with_mem(&self, mem: &Vec<u8>) -> anyhow::Result<Vec<u8>> {
         // oxipng_options.deflate = Zopfli {
         //     iterations: NonZeroU8::new(15).ok_or("")?,
         // };
@@ -35,7 +36,7 @@ impl OxiPngEncoder {
     }
 
     #[cfg(feature = "filesystem")]
-    pub fn compress_lossless_with_file(&self, input: &str, output: &str) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn compress_with_file(&self, input: &str, output: &str) -> Result<(), Box<dyn std::error::Error>> {
         use oxipng::InFile;
         use oxipng::OutFile;
         use std::path::PathBuf;
@@ -53,7 +54,7 @@ impl OxiPngEncoder {
         Ok(())
     }
 
-    pub fn encode_lossless(&self, image: &DynamicImage) -> anyhow::Result<Vec<u8>> {
+    pub fn encode(&self, image: &DynamicImage) -> anyhow::Result<Vec<u8>> {
         let (width, height) = image.dimensions();
         let color_space = image.color();
 

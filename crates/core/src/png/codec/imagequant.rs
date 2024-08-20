@@ -41,3 +41,9 @@ impl ImageQuantEncoder {
         Ok(vec![])
     }
 }
+
+// impl From<RGBA> for image::Rgba<u8> {
+//     fn from(rgba: RGBA) -> Self {
+//         image::Rgba([rgba.r, rgba.g, rgba.b, rgba.a])
+//     }
+// }

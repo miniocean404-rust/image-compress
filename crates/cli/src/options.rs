@@ -13,7 +13,7 @@ use crate::sub_commands::png::PNGCodecCommand;
 #[command(arg_required_else_help = true)]
 #[command(after_help = indoc! {
 r#"
-展示支持的编码 codecs:
+支持的编码 codecs:
 
     | Image Format  | Input | Output | Note            |
     | ------------- | ----- | ------ | --------------- |

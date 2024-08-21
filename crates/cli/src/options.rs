@@ -1,5 +1,6 @@
 use clap::arg;
 use clap::{command, Parser};
+use indoc::indoc;
 
 use crate::sub_commands::png::PNGCodecCommand;
 
@@ -9,6 +10,33 @@ use crate::sub_commands::png::PNGCodecCommand;
 #[command(name="图片压缩" ,author = "MiniOcean404", version = "1.0.0", about = "支持 png", long_about = None)]
 #[command(propagate_version = true)] // 为了 --version 在所有子命令中也有效
 #[command(next_line_help = true)] // 更改展示方式为两行
+#[command(arg_required_else_help = true)]
+#[command(after_help = indoc! {
+r#"
+展示支持的编码 codecs:
+
+    | Image Format  | Input | Output | Note            |
+    | ------------- | ----- | ------ | --------------- |
+    | avif          | O     | O      | Static only     |
+    | bmp           | O     | X      |                 |
+    | farbfeld      | O     | O      |                 |
+    | hdr           | O     | O      |                 |
+    | jpeg          | O     | O      |                 |
+    | jpeg_xl(jxl)  | O     | O      |                 |
+    | mozjpeg(moz)  | O     | O      |                 |
+    | oxipng(oxi)   | O     | O      | Static only     |
+    | png           | O     | O      | Static only     |
+    | ppm           | O     | O      |                 |
+    | psd           | O     | X      |                 |
+    | qoi           | O     | O      |                 |
+    | webp          | O     | O      | Static only     |
+
+支持的预处理选项:
+
+    - Resize
+    - Quantization
+    - Alpha premultiply
+"#})]
 pub struct CompressOptions {
     /// 压缩 png 图片的选项
     #[arg(short = 'p', long = "png")]

@@ -14,13 +14,13 @@ use crate::commands::png::codec::PNGCodecSubCommand;
 #[command(
     name = "图片压缩",
     author = "MiniOcean404",
-    version = "1.0.0",
+    version,
     about = "这是一个图片压缩的 cli 工具",
     long_about = "这是一个图片压缩的 cli 工具, 支持多种编码格式的图片压缩"
 )]
 #[command(propagate_version = true)] // 为了 --version 在所有子命令中也有效
-#[command(next_line_help = true)] // 更改展示方式为两行
-#[command(arg_required_else_help = true)]
+#[command(next_line_help = false)] // true 将所有参数和子命令的帮助字符串放在下一行上它们后面的行上
+#[command(arg_required_else_help = true)] // 如果不存在任何参数，则优雅退出
 #[command(after_help = indoc! {
 r#"
 支持的编码 codecs:
@@ -50,19 +50,19 @@ r#"
 pub struct CompressOptions {
     /// 压缩的文件路径
     #[clap(long, short = 'f', group = "input")]
-    filename: Option<PathBuf>,
+    pub filename: Option<PathBuf>,
 
     /// 压缩的文件路径
     #[clap(long, group = "input")]
-    entry_dir: Option<PathBuf>,
+    pub entry_dir: Option<PathBuf>,
 
     /// 输出文件路径
     #[clap(long, group = "output")]
-    out_file: Option<PathBuf>,
+    pub out_file: Option<PathBuf>,
 
     /// 输出目录
     #[clap(long, group = "output")]
-    out_dir: Option<PathBuf>,
+    pub out_dir: Option<PathBuf>,
 
     #[command(subcommand)]
     pub command: Command,

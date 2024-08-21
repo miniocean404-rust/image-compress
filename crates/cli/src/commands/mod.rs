@@ -1,13 +1,23 @@
-use clap::arg;
+pub mod jpeg;
+pub mod png;
+
+use std::path::PathBuf;
+
+use clap::Subcommand;
 use clap::{command, Parser};
 use indoc::indoc;
+use jpeg::JpegCodecOptions;
 
-use crate::sub_commands::png::PNGCodecCommand;
+use crate::commands::png::codec::PNGCodecSubCommand;
 
-// cargo run -- --name Mineral --files a b --files c --debug --set setted --test --test
-// cargo run -- --help 获取帮助信息
 #[derive(Parser, Debug)]
-#[command(name="图片压缩" ,author = "MiniOcean404", version = "1.0.0", about = "支持 png", long_about = None)]
+#[command(
+    name = "图片压缩",
+    author = "MiniOcean404",
+    version = "1.0.0",
+    about = "这是一个图片压缩的 cli 工具",
+    long_about = "这是一个图片压缩的 cli 工具, 支持多种编码格式的图片压缩"
+)]
 #[command(propagate_version = true)] // 为了 --version 在所有子命令中也有效
 #[command(next_line_help = true)] // 更改展示方式为两行
 #[command(arg_required_else_help = true)]
@@ -38,34 +48,36 @@ r#"
     - Alpha premultiply
 "#})]
 pub struct CompressOptions {
-    /// 压缩 png 图片的选项
-    #[arg(short = 'p', long = "png")]
-    png: String,
+    /// 压缩的文件路径
+    #[clap(long, short = 'f', group = "input")]
+    filename: Option<PathBuf>,
 
-    // clap::ArgAction::Append 多次执行的值叠加
-    /// 这是一串 file 的名字
-    // #[arg(short, long, num_args = 1.., action = ArgAction::Append)]
-    // files: Vec<String>,
+    /// 压缩的文件路径
+    #[clap(long, group = "input")]
+    entry_dir: Option<PathBuf>,
 
-    /// 这是一个带默认参数的 count
-    // #[arg(short, long, default_value_t = 1)]
-    // count: u8,
+    /// 输出文件路径
+    #[clap(long, group = "output")]
+    out_file: Option<PathBuf>,
 
-    /// 可选的操作
-    // name1: Option<String>,
-
-    /// 隐式的 Action Set
-    // #[arg(short, long, value_name = "File Path")]
-    // info: Option<PathBuf>,
-
-    /// --test 执行次数
-    // #[arg(short, long, action = ArgAction::Count)]
-    // test: u8,
-
-    /// clap::ArgAction::Set 只能设置一次
-    // #[arg(short, long, default_value_t = String::from(""), action = ArgAction::Set)]
-    // set: String,
+    /// 输出目录
+    #[clap(long, group = "output")]
+    out_dir: Option<PathBuf>,
 
     #[command(subcommand)]
-    command: Option<PNGCodecCommand>,
+    pub command: Command,
+}
+
+#[derive(Subcommand, Debug)]
+pub enum Command {
+    /// 是否需要压缩 Png 图片
+    #[command(subcommand)]
+    Png(PNGCodecSubCommand),
+
+    /// 是否需要压缩 jpeg 图片
+    Jpeg(JpegCodecOptions),
+}
+
+pub trait CommandRunner {
+    fn execute(&self) -> anyhow::Result<()>;
 }

@@ -1,4 +1,4 @@
-use clap::{parser, CommandFactory, Parser};
+use clap::Parser;
 use cli::options::CompressOptions;
 
 // 运行：cargo r -p cli --

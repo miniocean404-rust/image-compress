@@ -50,7 +50,7 @@ r#"
 pub struct CompressOptions {
     /// 压缩的文件路径
     #[clap(long, short = 'f', group = "input")]
-    pub filename: Option<PathBuf>,
+    pub entry_file: Option<PathBuf>,
 
     /// 压缩的文件路径
     #[clap(long, group = "input")]
@@ -70,14 +70,14 @@ pub struct CompressOptions {
 
 #[derive(Subcommand, Debug)]
 pub enum Command {
-    /// 是否需要压缩 Png 图片
+    /// 压缩 png 图片
     #[command(subcommand)]
     Png(PNGCodecSubCommand),
 
-    /// 是否需要压缩 jpeg 图片
+    /// 压缩 jpeg 图片
     Jpeg(JpegCodecOptions),
 }
 
 pub trait CommandRunner {
-    fn execute(&self) -> anyhow::Result<()>;
+    fn execute(&self, compress_options: &CompressOptions) -> anyhow::Result<()>;
 }

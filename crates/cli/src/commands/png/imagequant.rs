@@ -1,6 +1,5 @@
+use crate::commands::{CommandRunner, CompressOptions};
 use clap::Parser;
-
-use crate::commands::CommandRunner;
 
 #[derive(Parser, Debug)]
 pub struct ImagequantOptions {
@@ -41,8 +40,17 @@ pub struct ImagequantOptions {
 }
 
 impl CommandRunner for ImagequantOptions {
-    fn execute(&self) -> anyhow::Result<()> {
-        println!("{}", self.max_quality);
+    fn execute(&self, _compress_options: &CompressOptions) -> anyhow::Result<()> {
+        let file = &_compress_options.entry_file;
+
+        if let Some(_file) = file {
+            // let image = image::open(file)?;
+
+            // let encoder = ImageQuantEncoder::new();
+            // let lossy_vec = encoder.encode(&image).unwrap();
+
+            // println!("压缩后字节数: {}", lossy_vec.len());
+        }
 
         Ok(())
     }

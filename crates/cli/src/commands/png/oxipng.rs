@@ -1,6 +1,6 @@
 use clap::Parser;
 
-use crate::commands::CommandRunner;
+use crate::commands::{CommandRunner, CompressOptions};
 
 #[derive(Parser, Debug)]
 pub struct OxipngOptions {
@@ -98,7 +98,7 @@ pub struct OxipngOptions {
 }
 
 impl CommandRunner for OxipngOptions {
-    fn execute(&self) -> anyhow::Result<()> {
+    fn execute(&self, _compress_options: &CompressOptions) -> anyhow::Result<()> {
         println!("OxipngOptions");
 
         Ok(())

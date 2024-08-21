@@ -1,5 +1,7 @@
 use clap::{Parser, ValueEnum};
 
+use super::CompressOptions;
+
 #[derive(Parser, Debug)]
 pub struct JpegCodecOptions {
     /// mozjpeg 压缩 jpeg 图片的选项
@@ -17,7 +19,7 @@ pub enum PluginTargetType {
 }
 
 impl super::CommandRunner for JpegCodecOptions {
-    fn execute(&self) -> anyhow::Result<()> {
+    fn execute(&self, _compress_options: &CompressOptions) -> anyhow::Result<()> {
         println!("JpegCodecOptions");
         Ok(())
     }

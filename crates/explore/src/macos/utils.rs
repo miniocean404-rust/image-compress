@@ -65,7 +65,7 @@ pub unsafe fn get_app_exec_path(app: *mut objc::runtime::Object) -> anyhow::Resu
 
     anyhow::Ok(parse)
 }
-
+#[allow(clippy::missing_safety_doc)]
 pub unsafe fn get_app_name(app: *mut objc::runtime::Object) -> String {
     let name: *mut objc::runtime::Object = msg_send![app, localizedName];
     let cstr: *const std::os::raw::c_char = msg_send![name, UTF8String];

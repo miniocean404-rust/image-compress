@@ -54,7 +54,9 @@ impl OxiPngEncoder {
         Ok(())
     }
 
-    pub fn encode(&self, image: &DynamicImage) -> anyhow::Result<Vec<u8>> {
+    pub fn encode(&self, buffer: &Vec<u8>) -> anyhow::Result<Vec<u8>> {
+        let image = image::load_from_memory(buffer)?;
+
         let (width, height) = image.dimensions();
         let color_space = image.color();
 

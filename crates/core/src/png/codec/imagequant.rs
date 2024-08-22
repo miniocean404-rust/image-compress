@@ -1,4 +1,4 @@
-use image::{DynamicImage, GenericImageView};
+use image::GenericImageView;
 use imagequant::RGBA;
 
 #[derive(Debug)]
@@ -75,7 +75,7 @@ impl ImageQuantEncoder {
         // encoder.encode_file(output, pixels.as_slice(), width, height)?;
     }
 
-    pub fn encode(&self, buffer: &Vec<u8>) -> anyhow::Result<Vec<u8>> {
+    pub fn encode(&self, buffer: &[u8]) -> anyhow::Result<Vec<u8>> {
         let image = image::load_from_memory(buffer)?;
 
         let (width, height) = image.dimensions();

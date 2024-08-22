@@ -54,7 +54,7 @@ impl OxiPngEncoder {
         Ok(())
     }
 
-    pub fn encode(&self, buffer: &Vec<u8>) -> anyhow::Result<Vec<u8>> {
+    pub fn encode(&self, buffer: &[u8]) -> anyhow::Result<Vec<u8>> {
         let image = image::load_from_memory(buffer)?;
 
         let (width, height) = image.dimensions();

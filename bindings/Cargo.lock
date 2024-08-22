@@ -905,7 +905,6 @@ dependencies = [
  "serde_json",
  "svgtypes",
  "thiserror",
- "tiff",
  "tracing",
  "tracing-appender",
  "tracing-subscriber",

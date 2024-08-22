@@ -35,7 +35,7 @@ impl OxiPngEncoder {
         Ok(oxipng::optimize_from_memory(mem.as_slice(), &self.options)?)
     }
 
-    #[cfg(feature = "filesystem")]
+    #[cfg(feature = "native")]
     pub fn compress_with_file(&self, input: &str, output: &str) -> Result<(), Box<dyn std::error::Error>> {
         use oxipng::InFile;
         use oxipng::OutFile;

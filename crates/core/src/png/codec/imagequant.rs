@@ -66,7 +66,7 @@ impl ImageQuantEncoder {
         }
     }
 
-    #[cfg(feature = "filesystem")]
+    #[cfg(feature = "native")]
     pub fn encode_with_file() {
         // let mut encoder = lodepng::Encoder::new();
         // encoder.set_palette(palette.as_slice())?;

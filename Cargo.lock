@@ -414,6 +414,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "cmake"
+version = "0.1.51"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fb1e43aa7fd152b1f968787f7dbcdeb306d1867ff373c69955211876c053f91a"
+dependencies = [
+ "cc",
+]
+
+[[package]]
 name = "cocoa"
 version = "0.26.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -867,15 +876,20 @@ dependencies = [
  "anyhow",
  "cargo_metadata",
  "chrono",
+ "gifsicle",
  "globset",
  "image",
  "imagequant",
  "infer",
+ "libavif",
  "libc",
  "lodepng",
+ "mozjpeg",
+ "mozjpeg-sys",
  "num_cpus",
  "oxipng",
  "png",
+ "ravif",
  "resize",
  "rgb",
  "serde",
@@ -887,6 +901,7 @@ dependencies = [
  "tracing-appender",
  "tracing-subscriber",
  "walkdir",
+ "webp",
  "zune-core 0.5.0-rc2",
  "zune-image",
 ]
@@ -1214,6 +1229,35 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "03087c2bad5e1034e8cace5926dec053fb3790248370865f5117a7d0213354c8"
 
 [[package]]
+name = "libaom-sys"
+version = "0.17.0+libaom.3.9.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cba7f0c21a491ce72470f31026d2cd8ddda1032fb09b69ef61b8a9076b6a184f"
+dependencies = [
+ "cmake",
+]
+
+[[package]]
+name = "libavif"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0b710faf0de92da0e32a9a9c89bbf849e37277fd447b4f17b0f0f798796ae1f2"
+dependencies = [
+ "libavif-sys",
+]
+
+[[package]]
+name = "libavif-sys"
+version = "0.17.0+libavif.1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "490ca74b61e773140bebb086c81facb23273a99364a9ab0c92ab1532b90ade35"
+dependencies = [
+ "cmake",
+ "libaom-sys",
+ "libc",
+]
+
+[[package]]
 name = "libc"
 version = "0.2.155"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1333,6 +1377,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ea1f30cedd69f0a2954655f7188c6a834246d2bcf1e315e2ac40c4b24dc9519"
 dependencies = [
  "cfg-if",
+ "rayon",
 ]
 
 [[package]]
@@ -1391,7 +1436,7 @@ dependencies = [
  "cc",
  "dunce",
  "libc",
- "nasm-rs",
+ "nasm-rs 0.3.0",
 ]
 
 [[package]]
@@ -1399,6 +1444,15 @@ name = "mutate_once"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "16cf681a23b4d0a43fc35024c176437f9dcd818db34e0f42ab456a0ee5ad497b"
+
+[[package]]
+name = "nasm-rs"
+version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fe4d98d0065f4b1daf164b3eafb11974c94662e5e2396cf03f32d0bb5c17da51"
+dependencies = [
+ "rayon",
+]
 
 [[package]]
 name = "nasm-rs"
@@ -1751,6 +1805,7 @@ dependencies = [
  "av1-grain",
  "bitstream-io",
  "built",
+ "cc",
  "cfg-if",
  "interpolate_name",
  "itertools",
@@ -1758,6 +1813,7 @@ dependencies = [
  "libfuzzer-sys",
  "log",
  "maybe-rayon",
+ "nasm-rs 0.2.5",
  "new_debug_unreachable",
  "noop_proc_macro",
  "num-derive",
@@ -1785,6 +1841,7 @@ dependencies = [
  "loop9",
  "quick-error",
  "rav1e",
+ "rayon",
  "rgb",
 ]
 

@@ -41,7 +41,7 @@ impl OxiPngEncoder {
         oxipng::optimize_from_memory(mem.as_slice(), &self.options)
     }
 
-    #[cfg(feature = "filesystem")]
+    #[cfg(feature = "native")]
     pub fn to_file(&self, input: &str, output: &str) -> Result<(), Box<dyn std::error::Error>> {
         use std::fs;
         use std::fs::File;

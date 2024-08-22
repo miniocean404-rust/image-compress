@@ -10,26 +10,36 @@ path = "./src/main.rs"
 required-features = ["build-binary"]
 
 [features]
-default = ["log", "fs"]
+default = ["log", "env"]
 
 build-binary = ["dep:tracing", "dep:tracing-appender", "dep:tracing-subscriber"]
 
-log = ["dep:tracing", "dep:tracing-appender", "dep:tracing-subscriber"]
+log = [
+    "dep:tracing",
+    "dep:tracing-appender",
+    "dep:tracing-subscriber",
+    "dep:chrono",
+]
 fs = ["dep:globset", "dep:walkdir"]
+hook = ["dep:backtrace"]
+file = ["dep:infer"]
+env = []
+sleep = ["dep:tokio"]
 
 [dependencies]
-tokio = { version = "1.33.0", features = ["full"] }
 # 处理错误
 anyhow = { version = "1.0.79" }
 
 # 处理时间
-chrono = { version = "0.4.31" }
+chrono = { version = "0.4.31", optional = true }
+
+tokio = { version = "1.33.0", features = ["full"], optional = true }
 
 # 用于在 Rust 程序运行时获取堆栈跟踪的库
-backtrace = { version = "0.3.69" }
+backtrace = { version = "0.3.69", optional = true }
 
 # 获取 mime 信息
-infer = { version = "0.16.0" }
+infer = { version = "0.16.0", optional = true }
 
 # 跨平台单一 glob 和 glob 集匹配。 Glob 集匹配是同时将一个或多个 glob 模式与单个候选路径进行匹配并返回所有匹配的 glob 的过程
 globset = { version = "0.4.14", optional = true }

@@ -2393,7 +2393,6 @@ dependencies = [
  "chrono",
  "globset",
  "infer",
- "tokio",
  "tracing",
  "tracing-appender",
  "tracing-subscriber",

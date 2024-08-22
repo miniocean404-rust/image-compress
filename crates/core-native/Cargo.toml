@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-utils = { workspace = true }
+utils = { workspace = true, features = ["file", "fs"] }
 
 tokio.workspace = true
 serde.workspace = true

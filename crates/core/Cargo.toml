@@ -20,7 +20,10 @@ tiff = ["dep:tiff"]
 [dependencies]
 # utils = { path = "../utils" }
 
-# tokio = { workspace = true, features = ["sync", "rt"] }
+# tokio = { workspace = true, default-features = false, features = [
+#     "rt-multi-thread",
+#     "rt",
+# ] }
 serde.workspace = true
 serde_json.workspace = true
 chrono.workspace = true
@@ -76,6 +79,7 @@ ravif = { version = "0.11.10", optional = true }
 libavif = { version = "0.14.0", default-features = false, features = [
     "codec-aom",
 ], optional = true }
+
 
 tiff = { version = "0.9.1", default-features = false, optional = true }
 

@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["wasm","jpeg"]
+default = ["wasm"]
 wasm = ["mem", "png"]
 mem = []
 native = ["jpeg", "webp", "gif"]
@@ -20,6 +20,7 @@ tiff = ["dep:tiff"]
 [dependencies]
 # utils = { path = "../utils" }
 
+# tokio = { workspace = true, features = ["sync", "rt"] }
 serde.workspace = true
 serde_json.workspace = true
 chrono.workspace = true

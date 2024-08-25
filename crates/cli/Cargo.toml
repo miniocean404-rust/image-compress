@@ -4,6 +4,10 @@ version.workspace = true
 edition.workspace = true
 repository.workspace = true
 
+[lib]
+bench = false
+name = "image_compress_cli"
+
 [dependencies]
 image-compress-core = { workspace = true }
 

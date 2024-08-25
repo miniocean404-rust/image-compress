@@ -1,4 +1,4 @@
 // 运行：cargo r -p cli --
 fn main() -> anyhow::Result<()> {
-    cli::run()
+    image_compress_cli::run()
 }

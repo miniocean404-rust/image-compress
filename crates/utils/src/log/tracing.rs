@@ -3,6 +3,7 @@
 use std::{env, fmt::Debug, io, vec};
 
 use tracing::{level_filters::LevelFilter, Level};
+use tracing_appender::non_blocking::WorkerGuard;
 use tracing_subscriber::{
     fmt::{
         self,
@@ -142,7 +143,7 @@ impl LogUtil {
             .init(); // 初始化并将SubScriber设置为全局SubScriber
     }
 
-    pub fn init_with_layer(&self) -> anyhow::Result<()> {
+    pub fn init_with_layer(&self) -> anyhow::Result<WorkerGuard> {
         // 使用 tracing_appender，指定日志的输出目标位置
         // 参考: https://docs.rs/tracing-appender/0.2.0/tracing_appender/
 
@@ -157,8 +158,8 @@ impl LogUtil {
         filter = filter.add_directive(LevelFilter::from_level(self.level).into());
 
         let file_appender = tracing_appender::rolling::daily(&self.path, "tracing.log");
-        // guard 必须为它添加 _ 前缀，否则将导致 WorkerGuard 立即被 drop
-        let (_non_blocking, _guard) = tracing_appender::non_blocking(file_appender);
+        // guard 必须返回给主函数
+        let (non_blocking, guard) = tracing_appender::non_blocking(file_appender);
 
         let tty = tracing_subscriber::fmt::layer()
             .with_writer(io::stdout)
@@ -166,14 +167,14 @@ impl LogUtil {
         // .json()
 
         let file = tracing_subscriber::fmt::layer()
-            .with_writer(_non_blocking)
+            .with_writer(non_blocking)
             .event_format(self.get_formart(false));
 
         let registry = Registry::default().with(filter).with(tty).with(file);
 
         registry.init();
 
-        Ok(())
+        Ok(guard)
     }
 
     fn get_formart(&self, color: bool) -> Format<Full, LocalTimer> {

@@ -13,7 +13,7 @@ fn log_with_default() -> anyhow::Result<()> {
 
 #[test]
 fn log_with_file() -> anyhow::Result<()> {
-    log::config()
+    let _guard = log::config()
         .with_path("../../logs")
         .with_level(Level::INFO)
         .with_filter_create(vec!["log"])

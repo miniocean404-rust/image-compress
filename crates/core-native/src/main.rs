@@ -1,7 +1,7 @@
 use utils::log;
 
 fn main() -> anyhow::Result<()> {
-    log::config().init_with_layer()?;
+    let _guard = log::config().init_with_layer()?;
 
     let rt = tokio::runtime::Builder::new_multi_thread()
         // 开启所有特性

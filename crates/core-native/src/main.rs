@@ -1,7 +1,8 @@
-use utils::log::tracing::init_tracing;
+use tracing::level_filters::LevelFilter;
+use utils::log::tracing::LogUtil;
 
 fn main() -> anyhow::Result<()> {
-    let _guard = init_tracing("./logs");
+    let _guard = LogUtil::init_with_layer("./logs", LevelFilter::INFO)?;
 
     let rt = tokio::runtime::Builder::new_multi_thread()
         // 开启所有特性

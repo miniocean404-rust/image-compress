@@ -18,6 +18,8 @@ log = [
     "dep:tracing",
     "dep:tracing-appender",
     "dep:tracing-subscriber",
+    "dep:tracing-futures",
+    "dep:tracing-serde",
     "dep:chrono",
 ]
 fs = ["dep:globset", "dep:walkdir"]
@@ -53,4 +55,10 @@ tracing = { version = "0.1.40", features = [
 tracing-appender = { version = "0.2.3", optional = true }
 tracing-subscriber = { version = "0.3.18", features = [
     "env-filter",
+    "json",
 ], optional = true }
+tracing-futures = { version = "0.2.5", optional = true } # 用于检测基于 future 的代码的实用程序
+tracing-serde = { version = "0.1.3", optional = true }
+
+[dev-dependencies]
+tokio = { version = "1.39.3", features = ["full"] }

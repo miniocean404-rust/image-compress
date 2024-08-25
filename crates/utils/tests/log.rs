@@ -1,19 +1,24 @@
 #![allow(unused_imports)]
-use tracing::{event, info, instrument, level_filters::LevelFilter, trace, Instrument, Level};
+use tracing::{event, info, instrument, trace, Instrument, Level};
 use tracing_futures::WithSubscriber;
 use tracing_serde::AsSerde;
-use utils::log::tracing::LogUtil;
+use utils::log::{self, tracing::LogUtil};
 
 #[test]
 fn log_with_default() -> anyhow::Result<()> {
-    LogUtil::init();
+    log::config().init();
     tokio_main()?;
     Ok(())
 }
 
 #[test]
 fn log_with_file() -> anyhow::Result<()> {
-    let _guard = LogUtil::init_with_layer("../../logs", LevelFilter::INFO)?;
+    log::config()
+        .with_path("../../logs")
+        .with_level(Level::INFO)
+        .with_filter_create(vec!["log"])
+        .init_with_layer()?;
+
     tokio_main()?;
     Ok(())
 }
@@ -41,7 +46,7 @@ async fn async_main() -> anyhow::Result<()> {
     // #[instrument]属性表示函数整体在一个span区间内，因此函数内的每一个event信息中都会额外带有函数参数
     // 在函数中，只需发出日志即可
     event!(Level::TRACE, custom_params = 1, "key1: value1");
-    trace!(custom_params = 2, "key2: value3");
-    info!(custom_params = 3, "key3: value2");
+    trace!(custom_params = 2, "key2: value2");
+    info!(custom_params = 3, "key3: value3");
     Ok(())
 }

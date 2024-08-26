@@ -6,23 +6,23 @@ use zune_image::{codecs::ImageFormat, errors::ImageErrors, image::Image, traits:
 
 /// Advanced options for MozJpeg encoding
 pub struct MozJpegOptions {
-    /// Quality, values 60-80 are recommended. `1..=100`
+    /// 质量, 推荐 60-80. 范围：`1..=100`
     pub quality: f32,
-    /// Sets progressive mode for image
+    /// 设置图像的渐进模式
     pub progressive: bool,
-    /// Set to false to make files larger for no reason
+    /// 设置为 false 可以毫无理由地使文件变大
     pub optimize_coding: bool,
-    /// If `1..=100` (non-zero), it will use MozJPEG's smoothing.
+    /// 非 0 （1..=100） 它将使用MozJPEG的平滑。
     pub smoothing: u8,
-    /// Set color space of JPEG being written, different from input color space
+    /// 设置正在写入的 JPEG 的颜色空间，不同于输入的颜色空间
     pub color_space: mozjpeg::ColorSpace,
-    /// Specifies whether multiple scans should be considered during trellis quantization.
+    /// 指定在网格量化期间是否应考虑多次扫描。
     pub trellis_multipass: bool,
-    /// Sets chroma subsampling, leave as `None` to use auto subsampling
+    /// 设置色度子采样，保留为“None”以使用自动子采样
     pub chroma_subsample: Option<u8>,
-    /// Instead of quality setting, use a specific quantization table.
+    /// 使用特定的量化表。替代质量（quality）设置。
     pub luma_qtable: Option<QTable>,
-    /// Instead of quality setting, use a specific quantization table for color.
+    /// 使用特定的量化表的颜色。替代质量（quality）设置。
     pub chroma_qtable: Option<QTable>,
 }
 

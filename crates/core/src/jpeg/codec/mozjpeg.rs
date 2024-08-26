@@ -8,20 +8,28 @@ use zune_image::{codecs::ImageFormat, errors::ImageErrors, image::Image, traits:
 pub struct MozJpegOptions {
     /// 质量, 推荐 60-80. 范围：`1..=100`
     pub quality: f32,
+
     /// 设置图像的渐进模式
     pub progressive: bool,
+
     /// 设置为 false 可以毫无理由地使文件变大
     pub optimize_coding: bool,
+
     /// 非 0 （1..=100） 它将使用MozJPEG的平滑。
     pub smoothing: u8,
+
     /// 设置正在写入的 JPEG 的颜色空间，不同于输入的颜色空间
     pub color_space: mozjpeg::ColorSpace,
+
     /// 指定在网格量化期间是否应考虑多次扫描。
     pub trellis_multipass: bool,
+
     /// 设置色度子采样，保留为“None”以使用自动子采样
     pub chroma_subsample: Option<u8>,
+
     /// 使用特定的量化表。替代质量（quality）设置。
     pub luma_qtable: Option<QTable>,
+
     /// 使用特定的量化表的颜色。替代质量（quality）设置。
     pub chroma_qtable: Option<QTable>,
 }
@@ -36,6 +44,7 @@ struct TempVt<T: ZByteWriterTrait> {
     inner: T,
     bytes_written: usize,
 }
+
 impl<T: ZByteWriterTrait> io::Write for TempVt<T> {
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
         let bytes_written = self.inner.write_bytes(buf).map_err(|e| match e {

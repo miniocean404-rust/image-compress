@@ -896,6 +896,8 @@ dependencies = [
  "infer",
  "libc",
  "lodepng",
+ "mozjpeg",
+ "mozjpeg-sys",
  "num_cpus",
  "oxipng",
  "png",

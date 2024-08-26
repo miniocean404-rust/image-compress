@@ -4,11 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["wasm"]
+default = ["wasm", "jpeg"]
 wasm = ["mem", "png"]
-mem = []
 native = ["jpeg", "webp", "gif"]
 metadata = []
+mem = []
 
 png = ["dep:oxipng", "dep:imagequant", "dep:lodepng", "dep:png"]
 webp = ["dep:webp"]
@@ -19,11 +19,12 @@ tiff = ["dep:tiff"]
 
 [dependencies]
 # utils = { path = "../utils" }
-
 # tokio = { workspace = true, default-features = false, features = [
 #     "rt-multi-thread",
 #     "rt",
 # ] }
+
+
 serde.workspace = true
 serde_json.workspace = true
 chrono.workspace = true

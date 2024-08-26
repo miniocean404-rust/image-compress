@@ -3,7 +3,7 @@ mod utils;
 use utils::mock::*;
 use utils::path::*;
 
-use image_compress_core::tiff::codec::decoder::TiffDecoder;
+use image_compress_core::codecs::tiff::decoder::TiffDecoder;
 use zune_core::colorspace::ColorSpace;
 use zune_image::image::Image;
 use zune_image::traits::EncoderTrait;

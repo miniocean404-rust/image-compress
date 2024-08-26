@@ -5,9 +5,9 @@ use utils::mock::*;
 use utils::path::*;
 
 use cargo_metadata::MetadataCommand;
-use image_compress_core::png::codec::imagequant::{ImageQuantEncoder, ImageQuantOptions};
-use image_compress_core::png::codec::oxipng::OxiPngEncoder as OxiPngEncoderNew;
-use image_compress_core::png::oxipng_lossless::OxiPngEncoder;
+use image_compress_core::codecs::png::imagequant::{ImageQuantEncoder, ImageQuantOptions};
+use image_compress_core::codecs::png::oxipng::OxiPngEncoder as OxiPngEncoderNew;
+use image_compress_core::codecs::png::oxipng_lossless::OxiPngEncoder;
 use std::path::{Path, PathBuf};
 use std::{fs, io::Cursor};
 use zune_core::bit_depth::BitDepth;

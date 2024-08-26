@@ -6,6 +6,7 @@ use utils::path::*;
 
 use std::fs;
 use std::fs::File;
+use std::io::BufReader;
 use std::io::Cursor;
 
 use image_compress_core::webp::codec::decoder::WebPDecoder;
@@ -17,24 +18,28 @@ use zune_image::traits::EncoderTrait;
 
 #[test]
 fn encode_mem_webp() -> Result<(), Box<dyn std::error::Error>> {
-    let buf = fs::read(get_workspace_file_path("assets/image/webp/time-icon.webp"))?;
-    let decoder = WebPDecoder::try_new(&buf)?;
+    let byte_vec = fs::read(get_workspace_file_path("assets/image/webp/time-icon.webp"))?;
+    let cursor = Cursor::new(&byte_vec);
+    let reader = BufReader::new(cursor);
+
+    let decoder = WebPDecoder::try_new(reader)?;
     let image = Image::from_decoder(decoder)?;
 
     let compress_buf = Cursor::new(vec![]);
     let mut encoder = WebPEncoder::new();
 
     let result = encoder.encode(&image, compress_buf)?;
-    println!("原始字节数: {} 压缩后字节数: {}", buf.len(), result);
+    println!("原始字节数: {} 压缩后字节数: {}", byte_vec.len(), result);
 
     Ok(())
 }
 
 #[test]
 fn decode() -> Result<(), Box<dyn std::error::Error>> {
-    let buf = fs::read(get_workspace_file_path("assets/image/webp/time-icon.webp"))?;
-
-    let decoder = WebPDecoder::try_new(&buf).unwrap();
+    let byte_vec = fs::read(get_workspace_file_path("assets/image/webp/time-icon.webp"))?;
+    let cursor = Cursor::new(&byte_vec);
+    let reader = BufReader::new(cursor);
+    let decoder = WebPDecoder::try_new(reader).unwrap();
 
     let img = Image::from_decoder(decoder).unwrap();
 

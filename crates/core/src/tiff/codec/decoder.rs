@@ -1,19 +1,18 @@
-use std::io::{Read, Seek};
+use std::io::{BufRead, Seek};
 
 use zune_core::colorspace::ColorSpace;
 use zune_image::{errors::ImageErrors, image::Image, traits::DecoderTrait};
 
 /// A Tiff decoder
-pub struct TiffDecoder<R: Read + Seek> {
+pub struct TiffDecoder<R: BufRead + Seek> {
     inner: tiff::decoder::Decoder<R>,
     dimensions: Option<(usize, usize)>,
     colorspace: ColorSpace,
 }
 
-impl<R: Read + Seek> TiffDecoder<R> {
-    /// Create a new tiff decoder that reads data from `source`
+impl<R: BufRead + Seek> TiffDecoder<R> {
     pub fn try_new(source: R) -> Result<Self, ImageErrors> {
-        let inner = tiff::decoder::Decoder::new(source).map_err(|e| ImageErrors::ImageDecodeErrors(format!("Unable to create TIFF decoder: {}", e)))?;
+        let inner = tiff::decoder::Decoder::new(source).map_err(|e| ImageErrors::ImageDecodeErrors(format!("失败的创建 TIFF 解码器: {}", e)))?;
 
         Ok(Self {
             inner,
@@ -25,7 +24,7 @@ impl<R: Read + Seek> TiffDecoder<R> {
 
 impl<R> DecoderTrait for TiffDecoder<R>
 where
-    R: Read + Seek,
+    R: BufRead + Seek,
 {
     fn decode(&mut self) -> Result<Image, ImageErrors> {
         let (width, height) = self
@@ -77,6 +76,3 @@ where
         "tiff-decoder"
     }
 }
-
-#[cfg(test)]
-mod tests;

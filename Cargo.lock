@@ -876,6 +876,7 @@ dependencies = [
  "anyhow",
  "cargo_metadata",
  "chrono",
+ "gif",
  "gifsicle",
  "globset",
  "image",

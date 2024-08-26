@@ -18,10 +18,7 @@ use zune_image::traits::EncoderTrait;
 #[test]
 fn encode_mem_webp() -> Result<(), Box<dyn std::error::Error>> {
     let buf = fs::read(get_workspace_file_path("assets/image/webp/time-icon.webp"))?;
-    // let buffer = Cursor::new(&buf);
-
-    let file_content = File::open(get_workspace_file_path("assets/image/webp/time-icon.webp"))?;
-    let decoder = WebPDecoder::try_new(file_content)?;
+    let decoder = WebPDecoder::try_new(&buf)?;
     let image = Image::from_decoder(decoder)?;
 
     let compress_buf = Cursor::new(vec![]);
@@ -34,15 +31,17 @@ fn encode_mem_webp() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn decode() {
-    let file_content = File::open("tests/files/webp/f1t.webp").unwrap();
+fn decode() -> Result<(), Box<dyn std::error::Error>> {
+    let buf = fs::read(get_workspace_file_path("assets/image/webp/time-icon.webp"))?;
 
-    let decoder = WebPDecoder::try_new(file_content).unwrap();
+    let decoder = WebPDecoder::try_new(&buf).unwrap();
 
     let img = Image::from_decoder(decoder).unwrap();
 
     assert_eq!(img.dimensions(), (48, 80));
     assert_eq!(img.colorspace(), ColorSpace::RGBA);
+
+    Ok(())
 }
 
 #[test]

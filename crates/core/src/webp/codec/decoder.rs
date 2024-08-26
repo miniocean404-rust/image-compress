@@ -1,22 +1,19 @@
-use std::{io::Read, marker::PhantomData};
+use std::marker::PhantomData;
 
 use webp::{AnimDecoder, DecodeAnimImage};
 use zune_core::{bit_depth::BitDepth, colorspace::ColorSpace};
 use zune_image::{errors::ImageErrors, frame::Frame, image::Image, traits::DecoderTrait};
 
 /// A WebP decoder
-pub struct WebPDecoder<R: Read> {
+pub struct WebPDecoder {
     inner: DecodeAnimImage,
-    phantom: PhantomData<R>,
+    phantom: PhantomData<Vec<u8>>,
 }
 
-impl<R: Read> WebPDecoder<R> {
+impl WebPDecoder {
     /// Create a new webp decoder that reads data from `source`
-    pub fn try_new(mut source: R) -> Result<WebPDecoder<R>, ImageErrors> {
-        let mut buf = Vec::new();
-        source.read_to_end(&mut buf)?;
-
-        let decoder = AnimDecoder::new(&buf);
+    pub fn try_new(buf: &[u8]) -> Result<WebPDecoder, ImageErrors> {
+        let decoder = AnimDecoder::new(buf);
         let img = decoder.decode().map_err(ImageErrors::ImageDecodeErrors)?;
 
         Ok(WebPDecoder {
@@ -26,13 +23,10 @@ impl<R: Read> WebPDecoder<R> {
     }
 }
 
-impl<R> DecoderTrait for WebPDecoder<R>
-where
-    R: Read,
-{
+impl DecoderTrait for WebPDecoder {
     fn decode(&mut self) -> Result<Image, ImageErrors> {
-        let (width, height) = <WebPDecoder<R> as DecoderTrait>::dimensions(self).unwrap();
-        let color = <WebPDecoder<R> as DecoderTrait>::out_colorspace(self);
+        let (width, height) = <WebPDecoder as DecoderTrait>::dimensions(self).unwrap();
+        let color = <WebPDecoder as DecoderTrait>::out_colorspace(self);
 
         let frames = self
             .inner

@@ -4,9 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["wasm", "jpeg"]
+default = ["wasm", "native"]
 wasm = ["mem", "png"]
-native = ["jpeg", "webp", "gif"]
+native = ["jpeg", "webp", "gif", "tiff"]
 metadata = []
 mem = []
 
@@ -38,51 +38,51 @@ globset.workspace = true
 walkdir.workspace = true
 num_cpus.workspace = true
 
-rgb = "0.8.37"
 image = { version = "=0.25.2" }
+zune-core = "0.5.0-rc2"
+zune-image = { version = "0.5.0-rc0", default-features = false }
+
+rgb = "0.8.37"
 resize = "0.8.5"
 
-# 无损压缩 png (optipng、oxipng) 编译 wasm 需要安装 clang 环境
+# PNG
 oxipng = { version = "9.1.2", default-features = false, features = [
     "freestanding",
     "filetime",
     "parallel",
     "zopfli",
-], optional = true }
-# 有损压缩 png 把 png24 压缩成 png8 的库 是 pngquant 的包装
-imagequant = { version = "4.3.1", default-features = true, optional = true }
-# wasm 需要禁止 ffi
+], optional = true } # 无损压缩 png (optipng、oxipng) 编译 wasm 需要安装 clang 环境
+imagequant = { version = "4.3.1", default-features = true, optional = true } # 有损压缩 png 把 png24 压缩成 png8 的库 是 pngquant 的包装
 lodepng = { version = "3.10.4", default-features = false, features = [
     "rust_backend",
     "deprecated_back_compat_error_type",
-], optional = true }
+], optional = true } # wasm 需要禁止 ffi
 png = { version = "0.17.11", optional = true }
 
+# JPEG
 mozjpeg = { version = "0.10.9", default-features = false, features = [
     "with_simd",
 ], optional = true }
 mozjpeg-sys = { version = "2.2.1", features = ["default"], optional = true }
 
-# gifsicle 是读取以及 有损及无损压缩 gif 的库
-gifsicle = { version = "1.94.0", optional = true }
+# Gif
+gifsicle = { version = "1.94.0", optional = true } # gifsicle 是读取以及 有损及无损压缩 gif 的库
 libc = "0.2.155"
 
+# WEBP
 webp = { version = "0.3.0", default-features = false, optional = true } # 底层使用的是 rust libwebp-sys# webp 无损压缩及有损压缩
 
-# 处理 svg
-svgtypes = "0.15.1"
-
-zune-core = "0.5.0-rc2"
-zune-image = { version = "0.5.0-rc0", default-features = false }
-
-# avif
+# AVIF
 ravif = { version = "0.11.10", optional = true }
 libavif = { version = "0.14.0", default-features = false, features = [
     "codec-aom",
 ], optional = true }
 
-
+# TIFF
 tiff = { version = "0.9.1", default-features = false, optional = true }
+
+# 处理 svg
+svgtypes = "0.15.1"
 
 [dev-dependencies]
 zune-core = { version = "0.5.0-rc2", features = ["std"] }

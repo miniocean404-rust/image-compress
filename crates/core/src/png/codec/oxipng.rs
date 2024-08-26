@@ -49,7 +49,7 @@ impl OxiPngEncoder {
 
         let input = InFile::Path(PathBuf::from(input));
         let output = OutFile::from_path(PathBuf::from(output));
-        oxipng::optimize(&input, &output, &self.options).map_err(|e| return Err(anyhow!("压缩失败: {}", e.to_string())))?;
+        oxipng::optimize(&input, &output, &self.options).map_err(|e| anyhow!("压缩失败: {}", e.to_string()))?;
 
         Ok(())
     }

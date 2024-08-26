@@ -4,20 +4,52 @@ mod utils;
 use utils::mock::*;
 use utils::path::*;
 
-use image_compress_core::jpeg::codec::mozjpeg::MozJpegEncoder;
-use std::rc::Rc;
-use std::{fs, io::Cursor};
-use zune_core::result;
-use zune_core::{colorspace::ColorSpace, options::DecoderOptions};
-use zune_image::errors::ImageErrors;
+use std::fs;
+use std::fs::File;
+use std::io::Cursor;
+
+use image_compress_core::webp::codec::decoder::WebPDecoder;
+use image_compress_core::webp::codec::encoder::WebPEncoder;
+use zune_core::colorspace::ColorSpace;
+use zune_core::options::DecoderOptions;
 use zune_image::image::Image;
 use zune_image::traits::EncoderTrait;
+
+#[test]
+fn encode_mem_webp() -> Result<(), Box<dyn std::error::Error>> {
+    let buf = fs::read(get_workspace_file_path("assets/image/webp/time-icon.webp"))?;
+    // let buffer = Cursor::new(&buf);
+
+    let file_content = File::open(get_workspace_file_path("assets/image/webp/time-icon.webp"))?;
+    let decoder = WebPDecoder::try_new(file_content)?;
+    let image = Image::from_decoder(decoder)?;
+
+    let compress_buf = Cursor::new(vec![]);
+    let mut encoder = WebPEncoder::new();
+
+    let result = encoder.encode(&image, compress_buf)?;
+    println!("原始字节数: {} 压缩后字节数: {}", buf.len(), result);
+
+    Ok(())
+}
+
+#[test]
+fn decode() {
+    let file_content = File::open("tests/files/webp/f1t.webp").unwrap();
+
+    let decoder = WebPDecoder::try_new(file_content).unwrap();
+
+    let img = Image::from_decoder(decoder).unwrap();
+
+    assert_eq!(img.dimensions(), (48, 80));
+    assert_eq!(img.colorspace(), ColorSpace::RGBA);
+}
 
 #[test]
 fn encode_colorspaces_u8() {
     let mut results = vec![];
 
-    let encoder = MozJpegEncoder::new();
+    let encoder = WebPEncoder::new();
 
     for colorspace in encoder.supported_colorspaces() {
         let builder = std::thread::Builder::new().name(format!("{:?}", colorspace));
@@ -26,7 +58,7 @@ fn encode_colorspaces_u8() {
             .spawn(move || {
                 let image = create_test_image_u8(200, 200, *colorspace);
 
-                let mut encoder = MozJpegEncoder::new();
+                let mut encoder = WebPEncoder::new();
 
                 let buf = Cursor::new(vec![]);
 
@@ -50,7 +82,7 @@ fn encode_colorspaces_u8() {
 fn encode_colorspaces_u16() {
     let mut results = vec![];
 
-    let encoder = MozJpegEncoder::new();
+    let encoder = WebPEncoder::new();
 
     for colorspace in encoder.supported_colorspaces() {
         let builder = std::thread::Builder::new().name(format!("{:?}", colorspace));
@@ -59,7 +91,7 @@ fn encode_colorspaces_u16() {
             .spawn(move || {
                 let image = create_test_image_u16(200, 200, *colorspace);
 
-                let mut encoder = MozJpegEncoder::new();
+                let mut encoder = WebPEncoder::new();
 
                 let buf = Cursor::new(vec![]);
 
@@ -83,7 +115,7 @@ fn encode_colorspaces_u16() {
 fn encode_colorspaces_f32() {
     let mut results = vec![];
 
-    let encoder = MozJpegEncoder::new();
+    let encoder = WebPEncoder::new();
 
     for colorspace in encoder.supported_colorspaces() {
         let builder = std::thread::Builder::new().name(format!("{:?}", colorspace));
@@ -92,7 +124,7 @@ fn encode_colorspaces_f32() {
             .spawn(move || {
                 let image = create_test_image_f32(200, 200, *colorspace);
 
-                let mut encoder = MozJpegEncoder::new();
+                let mut encoder = WebPEncoder::new();
 
                 let buf = Cursor::new(vec![]);
 
@@ -115,7 +147,7 @@ fn encode_colorspaces_f32() {
 #[test]
 fn encode_u8() {
     let image = create_test_image_u8(200, 200, ColorSpace::RGB);
-    let mut encoder = MozJpegEncoder::new();
+    let mut encoder = WebPEncoder::new();
 
     let buf = Cursor::new(vec![]);
 
@@ -128,7 +160,7 @@ fn encode_u8() {
 #[test]
 fn encode_u16() {
     let image = create_test_image_u16(200, 200, ColorSpace::RGB);
-    let mut encoder = MozJpegEncoder::new();
+    let mut encoder = WebPEncoder::new();
 
     let buf = Cursor::new(vec![]);
 
@@ -141,7 +173,7 @@ fn encode_u16() {
 #[test]
 fn encode_f32() {
     let image = create_test_image_f32(200, 200, ColorSpace::RGB);
-    let mut encoder = MozJpegEncoder::new();
+    let mut encoder = WebPEncoder::new();
 
     let buf = Cursor::new(vec![]);
 
@@ -154,7 +186,7 @@ fn encode_f32() {
 #[test]
 fn encode_animated() {
     let image = create_test_image_animated(200, 200, ColorSpace::RGB);
-    let mut encoder = MozJpegEncoder::new();
+    let mut encoder = WebPEncoder::new();
 
     let buf = Cursor::new(vec![]);
 
@@ -162,19 +194,4 @@ fn encode_animated() {
     dbg!(&result);
 
     assert!(result.is_ok());
-}
-
-#[test]
-fn encode_mem_jpeg() -> Result<(), Box<dyn std::error::Error>> {
-    let buf = fs::read(get_workspace_file_path("assets/image/jpg/eye.jpg"))?;
-    let buffer = Cursor::new(&buf);
-    let image = Image::read(buffer, DecoderOptions::default())?;
-
-    let compress_buf = Cursor::new(vec![]);
-    let mut encoder = MozJpegEncoder::new();
-
-    let result = encoder.encode(&image, compress_buf)?;
-    println!("原始字节数: {} 压缩后字节数: {}", buf.len(), result);
-
-    Ok(())
 }

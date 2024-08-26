@@ -3,7 +3,10 @@
 use std::{env, fmt::Debug, io, vec};
 
 use tracing::{level_filters::LevelFilter, Level};
-use tracing_appender::non_blocking::WorkerGuard;
+use tracing_appender::{
+    non_blocking::WorkerGuard,
+    rolling::{RollingFileAppender, Rotation},
+};
 use tracing_subscriber::{
     fmt::{
         self,
@@ -157,7 +160,11 @@ impl LogUtil {
         }
         filter = filter.add_directive(LevelFilter::from_level(self.level).into());
 
-        let file_appender = tracing_appender::rolling::daily(&self.path, "tracing.log");
+        let file_appender = RollingFileAppender::builder()
+            .rotation(Rotation::DAILY)
+            .filename_prefix("tracing")
+            .filename_suffix("log")
+            .build(&self.path)?;
         // guard 必须返回给主函数
         let (non_blocking, guard) = tracing_appender::non_blocking(file_appender);
 

@@ -1,5 +1,5 @@
 [package]
-name = "image-compress-core"
+name = "image_compress_core"
 version = "0.1.0"
 edition = "2021"
 

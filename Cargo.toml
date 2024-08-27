@@ -43,7 +43,7 @@ panic = "abort"
 debug-assertions = false
 
 [workspace.dependencies]
-image-compress-core = { path = "./crates/core" }
+image_compress_core = { path = "./crates/core" }
 utils = { path = "./crates/utils" }
 
 # cli

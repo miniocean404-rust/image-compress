@@ -1,0 +1,13 @@
+[package]
+name = "image-compress"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+
+[dependencies]
+image_compress_core = { workspace = true }
+utils = { workspace = true, features = ["file"] }
+
+tokio.workspace = true
+anyhow.workspace = true
+infer.workspace = true

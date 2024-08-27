@@ -409,7 +409,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap",
- "image-compress-core",
+ "image_compress_core",
  "indoc",
 ]
 
@@ -870,41 +870,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "image-compress-core"
+name = "image-compress"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "cargo_metadata",
- "chrono",
- "gif",
- "gifsicle",
- "globset",
- "image",
- "imagequant",
+ "image_compress_core",
  "infer",
- "libavif",
- "libc",
- "lodepng",
- "mozjpeg",
- "mozjpeg-sys",
- "num_cpus",
- "oxipng",
- "png",
- "ravif",
- "resize",
- "rgb",
- "serde",
- "serde_json",
- "svgtypes",
- "thiserror",
- "tiff",
- "tracing",
- "tracing-appender",
- "tracing-subscriber",
- "walkdir",
- "webp",
- "zune-core 0.5.0-rc2",
- "zune-image",
+ "tokio",
+ "utils",
 ]
 
 [[package]]
@@ -948,6 +921,44 @@ checksum = "f79afb8cbee2ef20f59ccd477a218c12a93943d075b492015ecb1bb81f8ee904"
 dependencies = [
  "byteorder-lite",
  "quick-error",
+]
+
+[[package]]
+name = "image_compress_core"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "cargo_metadata",
+ "chrono",
+ "gif",
+ "gifsicle",
+ "globset",
+ "image",
+ "imagequant",
+ "infer",
+ "libavif",
+ "libc",
+ "lodepng",
+ "mozjpeg",
+ "mozjpeg-sys",
+ "num_cpus",
+ "oxipng",
+ "png",
+ "ravif",
+ "resize",
+ "rgb",
+ "serde",
+ "serde_json",
+ "svgtypes",
+ "thiserror",
+ "tiff",
+ "tracing",
+ "tracing-appender",
+ "tracing-subscriber",
+ "walkdir",
+ "webp",
+ "zune-core 0.5.0-rc2",
+ "zune-image",
 ]
 
 [[package]]

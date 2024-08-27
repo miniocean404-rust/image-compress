@@ -17,5 +17,5 @@ disallowed-names = [
   "usize",
 ]
 # 处理 current MSRV (Minimum Supported Rust Version) is 1.58.0 but this item is stable since 1.64.0 for further information 问题
-msrv = "1.73.0"
+msrv = "1.74.0"
 type-complexity-threshold = 25000

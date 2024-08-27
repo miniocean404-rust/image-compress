@@ -1,5 +1,4 @@
 #![allow(dead_code)]
-use image::{DynamicImage, ImageBuffer, Rgba};
 use zune_core::{
     bit_depth::{BitDepth, BitType},
     colorspace::ColorSpace,

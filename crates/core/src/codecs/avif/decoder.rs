@@ -1,16 +1,16 @@
-use std::{io::Read, marker::PhantomData};
+use std::{io::BufRead, marker::PhantomData};
 
 use zune_core::colorspace::ColorSpace;
 use zune_image::{errors::ImageErrors, image::Image, traits::DecoderTrait};
 
 /// A AVIF decoder
-pub struct AvifDecoder<R: Read> {
+pub struct AvifDecoder<R: BufRead> {
     inner: Vec<u8>,
     dimensions: Option<(usize, usize)>,
     phantom: PhantomData<R>,
 }
 
-impl<R: Read> AvifDecoder<R> {
+impl<R: BufRead> AvifDecoder<R> {
     /// Create a new avif decoder that reads data from `source`
     pub fn try_new(mut source: R) -> Result<AvifDecoder<R>, ImageErrors> {
         let mut buf = Vec::new();
@@ -26,7 +26,7 @@ impl<R: Read> AvifDecoder<R> {
 
 impl<R> DecoderTrait for AvifDecoder<R>
 where
-    R: Read,
+    R: BufRead,
 {
     fn decode(&mut self) -> Result<Image, ImageErrors> {
         let img = libavif::decode_rgb(&self.inner).map_err(|e| ImageErrors::ImageDecodeErrors(e.to_string()))?;

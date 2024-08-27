@@ -1,171 +1,192 @@
-// use std::fs::File;
-// mod utils;
+use std::{
+    fs::{self, File},
+    io::{BufReader, Cursor},
+};
+mod utils;
 
-// use utils::mock::*;
+use image_compress_core::codecs::avif::{decoder::AvifDecoder, encoder::AvifEncoder};
+use utils::{mock::*, path::get_workspace_file_path};
+use zune_core::colorspace::ColorSpace;
+use zune_image::{image::Image, traits::EncoderTrait};
 
-// // ! 暂未集成
-// #[test]
-// fn encode_mem_avif() {}
+#[test]
+fn encode_mem_avif() -> Result<(), Box<dyn std::error::Error>> {
+    let byte_vec = fs::read(get_workspace_file_path("assets/image/avif/f1t.avif"))?;
+    let cursor = Cursor::new(&byte_vec);
+    let reader = BufReader::new(cursor);
 
-// #[test]
-// fn decode() {
-//     let file_content = File::open("tests/files/avif/f1t.avif").unwrap();
+    let decoder = AvifDecoder::try_new(reader)?;
+    let image = Image::from_decoder(decoder)?;
 
-//     let decoder = AvifDecoder::try_new(file_content).unwrap();
+    let compress_buf = Cursor::new(vec![]);
+    let mut encoder = AvifEncoder::new();
 
-//     let img = Image::from_decoder(decoder).unwrap();
+    let result = encoder.encode(&image, compress_buf)?;
+    println!("原始字节数: {} 压缩后字节数: {}", byte_vec.len(), result);
 
-//     assert_eq!(img.dimensions(), (48, 80));
-//     assert_eq!(img.colorspace(), ColorSpace::RGBA);
-// }
+    Ok(())
+}
 
-// #[test]
-// fn encode_colorspaces_u8() {
-//     let mut results = vec![];
+#[test]
+fn decode() -> Result<(), Box<dyn std::error::Error>> {
+    let buf = fs::read(get_workspace_file_path("assets/image/avif/f1t.avif"))?;
+    let cursor = Cursor::new(&buf);
+    let decoder = AvifDecoder::try_new(cursor)?;
 
-//     let encoder = AvifEncoder::new();
+    let image = Image::from_decoder(decoder)?;
 
-//     for colorspace in encoder.supported_colorspaces() {
-//         let builder = std::thread::Builder::new().name(format!("{:?}", colorspace));
+    assert_eq!(image.dimensions(), (48, 80));
+    assert_eq!(image.colorspace(), ColorSpace::RGBA);
+    Ok(())
+}
 
-//         let handler = builder
-//             .spawn(move || {
-//                 let image = create_test_image_u8(200, 200, *colorspace);
+#[test]
+fn encode_colorspaces_u8() {
+    let mut results = vec![];
 
-//                 let mut encoder = AvifEncoder::new();
+    let encoder = AvifEncoder::new();
 
-//                 let buf = Cursor::new(vec![]);
+    for colorspace in encoder.supported_colorspaces() {
+        let builder = std::thread::Builder::new().name(format!("{:?}", colorspace));
 
-//                 let result = encoder.encode(&image, buf);
+        let handler = builder
+            .spawn(move || {
+                let image = create_test_image_u8(200, 200, *colorspace);
 
-//                 if result.is_err() {
-//                     dbg!(&result);
-//                 }
+                let mut encoder = AvifEncoder::new();
 
-//                 assert!(result.is_ok());
-//             })
-//             .unwrap();
+                let buf = Cursor::new(vec![]);
 
-//         results.push(handler.join())
-//     }
+                let result = encoder.encode(&image, buf);
 
-//     results.into_iter().collect::<Result<Vec<()>, _>>().unwrap();
-// }
+                if result.is_err() {
+                    dbg!(&result);
+                }
 
-// #[test]
-// fn encode_colorspaces_u16() {
-//     let mut results = vec![];
+                assert!(result.is_ok());
+            })
+            .unwrap();
 
-//     let encoder = AvifEncoder::new();
+        results.push(handler.join())
+    }
 
-//     for colorspace in encoder.supported_colorspaces() {
-//         let builder = std::thread::Builder::new().name(format!("{:?}", colorspace));
+    results.into_iter().collect::<Result<Vec<()>, _>>().unwrap();
+}
 
-//         let handler = builder
-//             .spawn(move || {
-//                 let image = create_test_image_u16(200, 200, *colorspace);
+#[test]
+fn encode_colorspaces_u16() {
+    let mut results = vec![];
 
-//                 let mut encoder = AvifEncoder::new();
+    let encoder = AvifEncoder::new();
 
-//                 let buf = Cursor::new(vec![]);
+    for colorspace in encoder.supported_colorspaces() {
+        let builder = std::thread::Builder::new().name(format!("{:?}", colorspace));
 
-//                 let result = encoder.encode(&image, buf);
+        let handler = builder
+            .spawn(move || {
+                let image = create_test_image_u16(200, 200, *colorspace);
 
-//                 if result.is_err() {
-//                     dbg!(&result);
-//                 }
+                let mut encoder = AvifEncoder::new();
 
-//                 assert!(result.is_ok());
-//             })
-//             .unwrap();
+                let buf = Cursor::new(vec![]);
 
-//         results.push(handler.join())
-//     }
+                let result = encoder.encode(&image, buf);
 
-//     results.into_iter().collect::<Result<Vec<()>, _>>().unwrap();
-// }
+                if result.is_err() {
+                    dbg!(&result);
+                }
 
-// #[test]
-// fn encode_colorspaces_f32() {
-//     let mut results = vec![];
+                assert!(result.is_ok());
+            })
+            .unwrap();
 
-//     let encoder = AvifEncoder::new();
+        results.push(handler.join())
+    }
 
-//     for colorspace in encoder.supported_colorspaces() {
-//         let builder = std::thread::Builder::new().name(format!("{:?}", colorspace));
+    results.into_iter().collect::<Result<Vec<()>, _>>().unwrap();
+}
 
-//         let handler = builder
-//             .spawn(move || {
-//                 let image = create_test_image_f32(200, 200, *colorspace);
+#[test]
+fn encode_colorspaces_f32() {
+    let mut results = vec![];
 
-//                 let mut encoder = AvifEncoder::new();
+    let encoder = AvifEncoder::new();
 
-//                 let buf = Cursor::new(vec![]);
+    for colorspace in encoder.supported_colorspaces() {
+        let builder = std::thread::Builder::new().name(format!("{:?}", colorspace));
 
-//                 let result = encoder.encode(&image, buf);
+        let handler = builder
+            .spawn(move || {
+                let image = create_test_image_f32(200, 200, *colorspace);
 
-//                 if result.is_err() {
-//                     dbg!(&result);
-//                 }
+                let mut encoder = AvifEncoder::new();
 
-//                 assert!(result.is_ok());
-//             })
-//             .unwrap();
+                let buf = Cursor::new(vec![]);
 
-//         results.push(handler.join())
-//     }
+                let result = encoder.encode(&image, buf);
 
-//     results.into_iter().collect::<Result<Vec<()>, _>>().unwrap();
-// }
+                if result.is_err() {
+                    dbg!(&result);
+                }
 
-// #[test]
-// fn encode_u8() {
-//     let image = create_test_image_u8(200, 200, ColorSpace::RGB);
-//     let mut encoder = AvifEncoder::new();
+                assert!(result.is_ok());
+            })
+            .unwrap();
 
-//     let buf = Cursor::new(vec![]);
+        results.push(handler.join())
+    }
 
-//     let result = encoder.encode(&image, buf);
-//     dbg!(&result);
+    results.into_iter().collect::<Result<Vec<()>, _>>().unwrap();
+}
 
-//     assert!(result.is_ok());
-// }
+#[test]
+fn encode_u8() {
+    let image = create_test_image_u8(200, 200, ColorSpace::RGB);
+    let mut encoder = AvifEncoder::new();
 
-// #[test]
-// fn encode_u16() {
-//     let image = create_test_image_u16(200, 200, ColorSpace::RGB);
-//     let mut encoder = AvifEncoder::new();
+    let buf = Cursor::new(vec![]);
 
-//     let buf = Cursor::new(vec![]);
+    let result = encoder.encode(&image, buf);
+    dbg!(&result);
 
-//     let result = encoder.encode(&image, buf);
-//     dbg!(&result);
+    assert!(result.is_ok());
+}
 
-//     assert!(result.is_ok());
-// }
+#[test]
+fn encode_u16() {
+    let image = create_test_image_u16(200, 200, ColorSpace::RGB);
+    let mut encoder = AvifEncoder::new();
 
-// #[test]
-// fn encode_f32() {
-//     let image = create_test_image_f32(200, 200, ColorSpace::RGB);
-//     let mut encoder = AvifEncoder::new();
+    let buf = Cursor::new(vec![]);
 
-//     let buf = Cursor::new(vec![]);
+    let result = encoder.encode(&image, buf);
+    dbg!(&result);
 
-//     let result = encoder.encode(&image, buf);
-//     dbg!(&result);
+    assert!(result.is_ok());
+}
 
-//     assert!(result.is_ok());
-// }
+#[test]
+fn encode_f32() {
+    let image = create_test_image_f32(200, 200, ColorSpace::RGB);
+    let mut encoder = AvifEncoder::new();
 
-// #[test]
-// fn encode_animated() {
-//     let image = create_test_image_animated(200, 200, ColorSpace::RGB);
-//     let mut encoder = AvifEncoder::new();
+    let buf = Cursor::new(vec![]);
 
-//     let buf = Cursor::new(vec![]);
+    let result = encoder.encode(&image, buf);
+    dbg!(&result);
 
-//     let result = encoder.encode(&image, buf);
-//     dbg!(&result);
+    assert!(result.is_ok());
+}
 
-//     assert!(result.is_ok());
-// }
+#[test]
+fn encode_animated() {
+    let image = create_test_image_animated(200, 200, ColorSpace::RGB);
+    let mut encoder = AvifEncoder::new();
+
+    let buf = Cursor::new(vec![]);
+
+    let result = encoder.encode(&image, buf);
+    dbg!(&result);
+
+    assert!(result.is_ok());
+}

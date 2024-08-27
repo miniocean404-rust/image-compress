@@ -14,20 +14,24 @@ use zune_image::{
 
 /// Advanced options for AVIF encoding
 pub struct AvifOptions {
-    /// Quality `1..=100`
+    /// 质量 `1..=100`
     pub quality: f32,
-    /// Separate quality for alpha channel `1..=100`
+
+    /// Alpha 通道的独立质量 `1..=100`
     pub alpha_quality: Option<f32>,
-    /// Compression speed (effort) `1..=10`
+
+    /// 压缩速度 (effort) `1..=10`
     ///
-    /// 1 = very very slow, but max compression
-    /// 10 = quick, but larger file sizes and lower quality.
+    /// 1 = 非常非常慢，但是最大的压缩
+    /// 10 = 快速，但文件大小较大，质量较差。
     pub speed: u8,
-    /// Changes how color channels are stored in the image.
+
+    /// 更改图像中颜色通道的存储方式。
     ///
-    /// Note that this is only internal detail for the AVIF file, and doesn't change color space of inputs to encode functions.
+    /// 请注意，这只是AVIF文件的内部细节，不会改变编码函数输入的颜色空间。
     pub color_space: ravif::ColorSpace,
-    /// Configure handling of color channels in transparent images
+
+    /// 配置透明图像中颜色通道的处理
     pub alpha_color_mode: ravif::AlphaColorMode,
 }
 
@@ -42,7 +46,7 @@ impl Default for AvifOptions {
         Self {
             quality: 50.,
             alpha_quality: None,
-            speed: 6,
+            speed: 5,
             color_space: ravif::ColorSpace::YCbCr,
             alpha_color_mode: ravif::AlphaColorMode::UnassociatedClean,
         }

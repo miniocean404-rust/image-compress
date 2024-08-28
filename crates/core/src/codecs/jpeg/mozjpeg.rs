@@ -111,7 +111,19 @@ impl MozJpegEncoder {
         let image = Image::read(buffer, DecoderOptions::default())?;
 
         let compress_buf = Cursor::new(vec![]);
-        let mut encoder = MozJpegEncoder::new();
+        let mut encoder = MozJpegEncoder::default();
+
+        encoder.encode(&image, compress_buf)?;
+
+        Ok(())
+    }
+
+    pub fn encode_with_options(buf: Vec<u8>, options: MozJpegOptions) -> anyhow::Result<()> {
+        let buffer = Cursor::new(&buf);
+        let image = Image::read(buffer, DecoderOptions::default())?;
+
+        let compress_buf = Cursor::new(vec![]);
+        let mut encoder = MozJpegEncoder { options };
 
         encoder.encode(&image, compress_buf)?;
 

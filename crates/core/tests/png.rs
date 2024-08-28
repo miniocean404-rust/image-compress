@@ -49,7 +49,11 @@ fn compress_u8_new() {
     let encoder = OxiPngEncoderNew::new_with_options(oxipng::Options::max_compression());
     let lossless_vec = encoder.encode(&buf).unwrap();
 
-    println!("原始字节数: {} 压缩后字节数: {}", buf.len(), lossless_vec.len());
+    println!(
+        "原始字节数: {} 压缩后字节数: {}",
+        buf.len(),
+        lossless_vec.len()
+    );
     // fs::write(Path::new(&workspace_root).join("assets/compress/test.png"), buf.into_inner()).unwrap();
 }
 
@@ -62,7 +66,11 @@ fn image_quant_compress_lossy() {
     let encoder = ImageQuantEncoder::new();
     let lossy_vec = encoder.encode(&buf).unwrap();
 
-    println!("原始字节数: {} 压缩后字节数: {}", buf.len(), lossy_vec.len());
+    println!(
+        "原始字节数: {} 压缩后字节数: {}",
+        buf.len(),
+        lossy_vec.len()
+    );
     // fs::write(Path::new(&workspace_root).join("assets/compress/test.png"), buf.into_inner()).unwrap();
 }
 
@@ -82,5 +90,9 @@ fn double_compress() {
     });
     let lossy_vec = encoder.encode(&lossless_vec).unwrap();
 
-    println!("原始字节数: {} 压缩后字节数: {}", buf.len(), lossy_vec.len());
+    println!(
+        "原始字节数: {} 压缩后字节数: {}",
+        buf.len(),
+        lossy_vec.len()
+    );
 }

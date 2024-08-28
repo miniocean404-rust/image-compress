@@ -1,3 +1,5 @@
+use std::io::{BufReader, Cursor};
+
 use ravif::Img;
 use rgb::FromSlice;
 use zune_core::{
@@ -11,6 +13,8 @@ use zune_image::{
     image::Image,
     traits::EncoderTrait,
 };
+
+use super::decoder::AvifDecoder;
 
 /// Advanced options for AVIF encoding
 pub struct AvifOptions {
@@ -63,6 +67,20 @@ impl AvifEncoder {
     pub fn new_with_options(options: AvifOptions) -> AvifEncoder {
         AvifEncoder { options }
     }
+
+    pub fn encode(buf: Vec<u8>) -> anyhow::Result<()> {
+        let cursor = Cursor::new(&buf);
+        let reader = BufReader::new(cursor);
+
+        let decoder = AvifDecoder::try_new(reader)?;
+        let image = Image::from_decoder(decoder)?;
+
+        let compress_buf = Cursor::new(vec![]);
+        let mut encoder = AvifEncoder::new();
+
+        encoder.encode(&image, compress_buf)?;
+        Ok(())
+    }
 }
 
 impl EncoderTrait for AvifEncoder {
@@ -70,7 +88,11 @@ impl EncoderTrait for AvifEncoder {
         "avif"
     }
 
-    fn encode_inner<T: ZByteWriterTrait>(&mut self, image: &Image, sink: T) -> Result<usize, ImageErrors> {
+    fn encode_inner<T: ZByteWriterTrait>(
+        &mut self,
+        image: &Image,
+        sink: T,
+    ) -> Result<usize, ImageErrors> {
         let (width, height) = image.dimensions();
         let data = &image.flatten_to_u8()[0];
 
@@ -86,28 +108,31 @@ impl EncoderTrait for AvifEncoder {
         match image.colorspace() {
             ColorSpace::RGB => {
                 let img = Img::new(data.as_slice().as_rgb(), width, height);
-                let result = encoder.encode_rgb(img).map_err(|e| ImgEncodeErrors::ImageEncodeErrors(e.to_string()))?;
+                let result = encoder
+                    .encode_rgb(img)
+                    .map_err(|e| ImgEncodeErrors::ImageEncodeErrors(e.to_string()))?;
 
-                writer
-                    .write(&result.avif_file)
-                    .map_err(|e| ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!("{e:?}"))))?;
+                writer.write(&result.avif_file).map_err(|e| {
+                    ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!("{e:?}")))
+                })?;
 
                 Ok(writer.bytes_written())
             }
             ColorSpace::RGBA => {
                 let img = Img::new(data.as_slice().as_rgba(), width, height);
-                let result = encoder.encode_rgba(img).map_err(|e| ImgEncodeErrors::ImageEncodeErrors(e.to_string()))?;
+                let result = encoder
+                    .encode_rgba(img)
+                    .map_err(|e| ImgEncodeErrors::ImageEncodeErrors(e.to_string()))?;
 
-                writer
-                    .write(&result.avif_file)
-                    .map_err(|e| ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!("{e:?}"))))?;
+                writer.write(&result.avif_file).map_err(|e| {
+                    ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!("{e:?}")))
+                })?;
 
                 Ok(writer.bytes_written())
             }
-            cs => Err(ImageErrors::EncodeErrors(ImgEncodeErrors::UnsupportedColorspace(
-                cs,
-                self.supported_colorspaces(),
-            ))),
+            cs => Err(ImageErrors::EncodeErrors(
+                ImgEncodeErrors::UnsupportedColorspace(cs, self.supported_colorspaces()),
+            )),
         }
     }
 

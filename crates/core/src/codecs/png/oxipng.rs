@@ -36,7 +36,11 @@ impl OxiPngEncoder {
     }
 
     #[cfg(feature = "native")]
-    pub fn compress_with_file(&self, input: &str, output: &str) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn compress_with_file(
+        &self,
+        input: &str,
+        output: &str,
+    ) -> Result<(), Box<dyn std::error::Error>> {
         use oxipng::InFile;
         use oxipng::OutFile;
         use std::path::PathBuf;
@@ -49,7 +53,8 @@ impl OxiPngEncoder {
 
         let input = InFile::Path(PathBuf::from(input));
         let output = OutFile::from_path(PathBuf::from(output));
-        oxipng::optimize(&input, &output, &self.options).map_err(|e| anyhow!("压缩失败: {}", e.to_string()))?;
+        oxipng::optimize(&input, &output, &self.options)
+            .map_err(|e| anyhow!("压缩失败: {}", e.to_string()))?;
 
         Ok(())
     }
@@ -80,24 +85,40 @@ impl OxiPngEncoder {
             width,
             height,
             match color_space {
-                image::ColorType::L8 | image::ColorType::L16 => oxipng::ColorType::Grayscale { transparent_shade: None },
+                image::ColorType::L8 | image::ColorType::L16 => oxipng::ColorType::Grayscale {
+                    transparent_shade: None,
+                },
                 image::ColorType::La8 | image::ColorType::La16 => oxipng::ColorType::GrayscaleAlpha,
-                image::ColorType::Rgb8 | image::ColorType::Rgb16 => oxipng::ColorType::RGB { transparent_color: None },
+                image::ColorType::Rgb8 | image::ColorType::Rgb16 => oxipng::ColorType::RGB {
+                    transparent_color: None,
+                },
                 image::ColorType::Rgba8 | image::ColorType::Rgba16 => oxipng::ColorType::RGBA,
                 cs => {
-                    return Err(anyhow!(format!("{:?} 颜色空间不支持，支持的是 {:?}", cs, self.supported_colorspaces())));
+                    return Err(anyhow!(format!(
+                        "{:?} 颜色空间不支持，支持的是 {:?}",
+                        cs,
+                        self.supported_colorspaces()
+                    )));
                 }
             },
             match color_space {
-                image::ColorType::L8 | image::ColorType::La8 | image::ColorType::Rgb8 | image::ColorType::Rgba8 => oxipng::BitDepth::Eight,
-                image::ColorType::L16 | image::ColorType::La16 | image::ColorType::Rgba16 | image::ColorType::Rgb16 => oxipng::BitDepth::Sixteen,
+                image::ColorType::L8
+                | image::ColorType::La8
+                | image::ColorType::Rgb8
+                | image::ColorType::Rgba8 => oxipng::BitDepth::Eight,
+                image::ColorType::L16
+                | image::ColorType::La16
+                | image::ColorType::Rgba16
+                | image::ColorType::Rgb16 => oxipng::BitDepth::Sixteen,
                 d => return Err(anyhow!(format!("{:?} 字节深度不支持", d))),
             },
             data,
         )
         .map_err(|e| anyhow!(e.to_string()))?;
 
-        let result = img.create_optimized_png(&self.options).map_err(|e| anyhow!(e.to_string()))?;
+        let result = img
+            .create_optimized_png(&self.options)
+            .map_err(|e| anyhow!(e.to_string()))?;
 
         Ok(result)
     }
@@ -134,7 +155,10 @@ impl OxiPngEncoder {
 
     pub fn default_depth(&self, depth: image::ColorType) -> oxipng::BitDepth {
         match depth {
-            image::ColorType::L16 | image::ColorType::La16 | image::ColorType::Rgba16 | image::ColorType::Rgb16 => oxipng::BitDepth::Sixteen,
+            image::ColorType::L16
+            | image::ColorType::La16
+            | image::ColorType::Rgba16
+            | image::ColorType::Rgb16 => oxipng::BitDepth::Sixteen,
             _ => oxipng::BitDepth::Eight,
         }
     }

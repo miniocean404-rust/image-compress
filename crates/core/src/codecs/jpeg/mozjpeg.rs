@@ -1,7 +1,14 @@
-use std::{io, mem, panic::AssertUnwindSafe};
+use std::{
+    io::{self, Cursor},
+    mem,
+    panic::AssertUnwindSafe,
+};
 
 use mozjpeg::qtable::QTable;
-use zune_core::{bit_depth::BitDepth, bytestream::ZByteWriterTrait, colorspace::ColorSpace, log};
+use zune_core::{
+    bit_depth::BitDepth, bytestream::ZByteWriterTrait, colorspace::ColorSpace, log,
+    options::DecoderOptions,
+};
 use zune_image::{codecs::ImageFormat, errors::ImageErrors, image::Image, traits::EncoderTrait};
 
 /// Advanced options for MozJpeg encoding
@@ -98,6 +105,18 @@ impl MozJpegEncoder {
     pub fn new_with_options(options: MozJpegOptions) -> MozJpegEncoder {
         MozJpegEncoder { options }
     }
+
+    pub fn encode(buf: Vec<u8>) -> anyhow::Result<()> {
+        let buffer = Cursor::new(&buf);
+        let image = Image::read(buffer, DecoderOptions::default())?;
+
+        let compress_buf = Cursor::new(vec![]);
+        let mut encoder = MozJpegEncoder::new();
+
+        encoder.encode(&image, compress_buf)?;
+
+        Ok(())
+    }
 }
 
 impl EncoderTrait for MozJpegEncoder {
@@ -105,7 +124,11 @@ impl EncoderTrait for MozJpegEncoder {
         "mozjpeg-encoder"
     }
 
-    fn encode_inner<T: ZByteWriterTrait>(&mut self, image: &Image, sink: T) -> Result<usize, ImageErrors> {
+    fn encode_inner<T: ZByteWriterTrait>(
+        &mut self,
+        image: &Image,
+        sink: T,
+    ) -> Result<usize, ImageErrors> {
         let (width, height) = image.dimensions();
         let data = &image.flatten_to_u8()[0];
 
@@ -171,7 +194,10 @@ impl EncoderTrait for MozJpegEncoder {
                 comp.set_chroma_qtable(qtable)
             }
 
-            let writer = TempVt { inner: sink, bytes_written: 0 };
+            let writer = TempVt {
+                inner: sink,
+                bytes_written: 0,
+            };
 
             let mut comp = comp.start_compress(writer)?;
 
@@ -205,9 +231,13 @@ impl EncoderTrait for MozJpegEncoder {
         }))
         .map_err(|err| {
             if let Ok(mut err) = err.downcast::<String>() {
-                ImageErrors::EncodeErrors(zune_image::errors::ImgEncodeErrors::Generic(mem::take(&mut *err)))
+                ImageErrors::EncodeErrors(zune_image::errors::ImgEncodeErrors::Generic(mem::take(
+                    &mut *err,
+                )))
             } else {
-                ImageErrors::EncodeErrors(zune_image::errors::ImgEncodeErrors::GenericStatic("Unknown error occurred during encoding"))
+                ImageErrors::EncodeErrors(zune_image::errors::ImgEncodeErrors::GenericStatic(
+                    "Unknown error occurred during encoding",
+                ))
             }
         })?
     }

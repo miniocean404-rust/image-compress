@@ -1333,7 +1333,7 @@ dependencies = [
  "cc",
  "dunce",
  "libc",
- "nasm-rs",
+ "nasm-rs 0.3.0",
 ]
 
 [[package]]
@@ -1394,6 +1394,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "427802e8ec3a734331fec1035594a210ce1ff4dc5bc1950530920ab717964ea3"
 dependencies = [
  "libloading",
+]
+
+[[package]]
+name = "nasm-rs"
+version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fe4d98d0065f4b1daf164b3eafb11974c94662e5e2396cf03f32d0bb5c17da51"
+dependencies = [
+ "rayon",
 ]
 
 [[package]]
@@ -1767,6 +1776,7 @@ dependencies = [
  "av1-grain",
  "bitstream-io",
  "built",
+ "cc",
  "cfg-if 1.0.0",
  "interpolate_name",
  "itertools",
@@ -1774,6 +1784,7 @@ dependencies = [
  "libfuzzer-sys",
  "log",
  "maybe-rayon",
+ "nasm-rs 0.2.5",
  "new_debug_unreachable",
  "noop_proc_macro",
  "num-derive",

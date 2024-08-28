@@ -1448,7 +1448,7 @@ dependencies = [
  "cc",
  "dunce",
  "libc",
- "nasm-rs",
+ "nasm-rs 0.3.0",
 ]
 
 [[package]]
@@ -1456,6 +1456,15 @@ name = "mutate_once"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "16cf681a23b4d0a43fc35024c176437f9dcd818db34e0f42ab456a0ee5ad497b"
+
+[[package]]
+name = "nasm-rs"
+version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fe4d98d0065f4b1daf164b3eafb11974c94662e5e2396cf03f32d0bb5c17da51"
+dependencies = [
+ "rayon",
+]
 
 [[package]]
 name = "nasm-rs"
@@ -1828,6 +1837,7 @@ dependencies = [
  "av1-grain",
  "bitstream-io",
  "built",
+ "cc",
  "cfg-if",
  "interpolate_name",
  "itertools",
@@ -1835,6 +1845,7 @@ dependencies = [
  "libfuzzer-sys",
  "log",
  "maybe-rayon",
+ "nasm-rs 0.2.5",
  "new_debug_unreachable",
  "noop_proc_macro",
  "num-derive",

@@ -18,11 +18,16 @@ fn encode_mem_avif() -> Result<(), Box<dyn std::error::Error>> {
     let decoder = AvifDecoder::try_new(reader)?;
     let image = Image::from_decoder(decoder)?;
 
-    let compress_buf = Cursor::new(vec![]);
+    let mut compress_buf = Cursor::new(vec![]);
     let mut encoder = AvifEncoder::new();
 
-    let result = encoder.encode(&image, compress_buf)?;
-    println!("原始字节数: {} 压缩后字节数: {}", byte_vec.len(), result);
+    encoder.encode(&image, &mut compress_buf)?;
+
+    println!(
+        "原始字节数: {} 压缩后字节数: {}",
+        byte_vec.len(),
+        compress_buf.get_ref().len()
+    );
 
     Ok(())
 }

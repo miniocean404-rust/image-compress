@@ -68,18 +68,36 @@ impl AvifEncoder {
         AvifEncoder { options }
     }
 
-    pub fn encode(buf: Vec<u8>) -> anyhow::Result<()> {
+    pub fn encode_mem(&mut self, buf: Vec<u8>) -> anyhow::Result<Vec<u8>> {
         let cursor = Cursor::new(&buf);
         let reader = BufReader::new(cursor);
 
         let decoder = AvifDecoder::try_new(reader)?;
         let image = Image::from_decoder(decoder)?;
 
-        let compress_buf = Cursor::new(vec![]);
-        let mut encoder = AvifEncoder::new();
+        let mut compress_buf = Cursor::new(vec![]);
+        self.encode(&image, &mut compress_buf)?;
 
-        encoder.encode(&image, compress_buf)?;
-        Ok(())
+        Ok(compress_buf.into_inner())
+    }
+
+    pub fn encode_mem_with_options(
+        &mut self,
+        buf: Vec<u8>,
+        options: AvifOptions,
+    ) -> anyhow::Result<Vec<u8>> {
+        self.options = options;
+
+        let cursor = Cursor::new(&buf);
+        let reader = BufReader::new(cursor);
+
+        let decoder = AvifDecoder::try_new(reader)?;
+        let image = Image::from_decoder(decoder)?;
+
+        let mut compress_buf = Cursor::new(vec![]);
+        self.encode(&image, &mut compress_buf)?;
+
+        Ok(compress_buf.into_inner())
     }
 }
 

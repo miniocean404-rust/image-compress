@@ -16,6 +16,7 @@ use zune_image::{
 /// [`oxipng::Options`] 别名
 pub type OxiPngOptions = oxipng::Options;
 
+//  无损压缩 lossless
 /// OxiPNG 编码器
 #[derive(Default, Debug)]
 pub struct OxiPngEncoder {

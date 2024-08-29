@@ -64,6 +64,8 @@ impl ImageCompress {
             .round()
             / 100.0;
 
+        self.state = CompressState::Done;
+
         Ok(())
     }
 }

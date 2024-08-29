@@ -18,18 +18,15 @@ use zune_image::traits::EncoderTrait;
 
 #[test]
 fn encode_mem_webp() -> Result<(), Box<dyn std::error::Error>> {
-    let byte_vec = fs::read(get_workspace_file_path("assets/image/webp/time-icon.webp"))?;
-    let cursor = Cursor::new(&byte_vec);
-    let reader = BufReader::new(cursor);
-
-    let decoder = WebPDecoder::try_new(reader)?;
-    let image = Image::from_decoder(decoder)?;
-
-    let compress_buf = Cursor::new(vec![]);
+    let byte_vec = fs::read(get_workspace_file_path("assets/image/avif/f1t.avif"))?;
     let mut encoder = WebPEncoder::new();
+    let compress_buf = encoder.encode_mem(&byte_vec)?;
 
-    let result = encoder.encode(&image, compress_buf)?;
-    println!("原始字节数: {} 压缩后字节数: {}", byte_vec.len(), result);
+    println!(
+        "原始字节数: {} 压缩后字节数: {}",
+        byte_vec.len(),
+        compress_buf.len()
+    );
 
     Ok(())
 }

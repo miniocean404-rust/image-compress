@@ -4,7 +4,6 @@ mod utils;
 use utils::mock::*;
 use utils::path::*;
 
-use cargo_metadata::MetadataCommand;
 use image_compress_core::codecs::png::imagequant::{ImageQuantEncoder, ImageQuantOptions};
 use image_compress_core::codecs::png::oxipng::OxiPngEncoder;
 use std::path::{Path, PathBuf};

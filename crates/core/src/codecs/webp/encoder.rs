@@ -42,19 +42,6 @@ impl WebPEncoder {
     }
 
     pub fn encode_mem(&mut self, buf: &Vec<u8>) -> anyhow::Result<Vec<u8>> {
-        self.mem_compress(buf)
-    }
-
-    pub fn encode_mem_with_options(
-        &mut self,
-        buf: &Vec<u8>,
-        options: WebPOptions,
-    ) -> anyhow::Result<Vec<u8>> {
-        self.options = options;
-        self.mem_compress(buf)
-    }
-
-    fn mem_compress(&mut self, buf: &Vec<u8>) -> anyhow::Result<Vec<u8>> {
         let cursor = Cursor::new(buf);
         let reader = BufReader::new(cursor);
 

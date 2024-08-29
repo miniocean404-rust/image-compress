@@ -2,8 +2,15 @@ use std::io::Cursor;
 
 use anyhow::anyhow;
 use imagequant::RGBA;
-use zune_core::{bit_depth::BitDepth, colorspace::ColorSpace, options::DecoderOptions};
-use zune_image::{codecs::ImageFormat, errors::ImageErrors, image::Image, traits::EncoderTrait};
+use zune_core::{
+    bit_depth::BitDepth, bytestream::ZWriter, colorspace::ColorSpace, options::DecoderOptions,
+};
+use zune_image::{
+    codecs::ImageFormat,
+    errors::{ImageErrors, ImgEncodeErrors},
+    image::Image,
+    traits::EncoderTrait,
+};
 
 #[derive(Debug)]
 pub struct ImageQuantOptions {
@@ -115,6 +122,25 @@ impl ImageQuantEncoder {
         enc.encode(pixels.as_slice(), width, height)
             .map_err(|e| anyhow!(e.to_string()))
     }
+
+    // 将 vec_data 转换为 RGBA 格式
+    fn convert_to_rgba(&self, buffer: Vec<u8>) -> Result<Vec<RGBA>, &'static str> {
+        if buffer.len() % 4 != 0 {
+            return Err("buffer length is not a multiple of 4");
+        }
+
+        let rgba_data: Vec<RGBA> = buffer
+            .chunks(4)
+            .map(|chunk| RGBA {
+                r: chunk[0],
+                g: chunk[1],
+                b: chunk[2],
+                a: chunk[3],
+            })
+            .collect();
+
+        Ok(rgba_data)
+    }
 }
 
 impl EncoderTrait for ImageQuantEncoder {
@@ -130,7 +156,7 @@ impl EncoderTrait for ImageQuantEncoder {
         let colorspace = image.colorspace();
         let (width, height) = image.dimensions();
 
-        let data = if image.depth() == BitDepth::Eight {
+        let vec_data = if image.depth() == BitDepth::Eight {
             // 如果是 8 个字节就拍平
             image.flatten_frames::<u8>()
         } else if image.depth() == BitDepth::Sixteen {
@@ -147,9 +173,19 @@ impl EncoderTrait for ImageQuantEncoder {
         .next()
         .unwrap();
 
-        // self.image_quant_encode(data, width, height);
+        let mut writer = ZWriter::new(sink);
 
-        todo!()
+        let data = self.convert_to_rgba(vec_data)?;
+
+        let result = self.image_quant_encode(data, width, height).map_err(|e| {
+            ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(e.to_string()))
+        })?;
+
+        writer.write(&result).map_err(|e| {
+            ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!("{e:?}")))
+        })?;
+
+        Ok(writer.bytes_written())
     }
 
     fn supported_colorspaces(&self) -> &'static [zune_core::colorspace::ColorSpace] {

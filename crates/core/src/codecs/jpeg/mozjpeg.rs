@@ -106,28 +106,28 @@ impl MozJpegEncoder {
         MozJpegEncoder { options }
     }
 
-    pub fn encode(buf: Vec<u8>) -> anyhow::Result<()> {
-        let buffer = Cursor::new(&buf);
-        let image = Image::read(buffer, DecoderOptions::default())?;
-
-        let compress_buf = Cursor::new(vec![]);
-        let mut encoder = MozJpegEncoder::default();
-
-        encoder.encode(&image, compress_buf)?;
-
-        Ok(())
+    pub fn encode_mem(&mut self, buf: &Vec<u8>) -> anyhow::Result<Vec<u8>> {
+        self.mem_compress(buf)
     }
 
-    pub fn encode_with_options(buf: Vec<u8>, options: MozJpegOptions) -> anyhow::Result<()> {
-        let buffer = Cursor::new(&buf);
-        let image = Image::read(buffer, DecoderOptions::default())?;
+    pub fn encode_mem_with_options(
+        &mut self,
+        buf: &Vec<u8>,
+        options: MozJpegOptions,
+    ) -> anyhow::Result<Vec<u8>> {
+        self.options = options;
+        self.mem_compress(buf)
+    }
 
-        let compress_buf = Cursor::new(vec![]);
-        let mut encoder = MozJpegEncoder { options };
+    fn mem_compress(&mut self, buf: &Vec<u8>) -> anyhow::Result<Vec<u8>> {
+        let cursor = Cursor::new(buf);
 
-        encoder.encode(&image, compress_buf)?;
+        let image = Image::read(cursor, DecoderOptions::default())?;
 
-        Ok(())
+        let mut compress_buf = Cursor::new(vec![]);
+        self.encode(&image, &mut compress_buf)?;
+
+        Ok(compress_buf.into_inner())
     }
 }
 

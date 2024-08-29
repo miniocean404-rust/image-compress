@@ -14,6 +14,18 @@ use zune_image::image::Image;
 use zune_image::traits::EncoderTrait;
 
 #[test]
+fn encode_mem_jpeg() -> Result<(), Box<dyn std::error::Error>> {
+    let buf = fs::read(get_workspace_file_path("assets/image/jpg/eye.jpg"))?;
+
+    let mut encoder = MozJpegEncoder::new();
+
+    let result = encoder.encode_mem(&buf)?;
+    println!("原始字节数: {} 压缩后字节数: {}", buf.len(), result.len());
+
+    Ok(())
+}
+
+#[test]
 fn encode_colorspaces_u8() {
     let mut results = vec![];
 
@@ -162,19 +174,4 @@ fn encode_animated() {
     dbg!(&result);
 
     assert!(result.is_ok());
-}
-
-#[test]
-fn encode_mem_jpeg() -> Result<(), Box<dyn std::error::Error>> {
-    let buf = fs::read(get_workspace_file_path("assets/image/jpg/eye.jpg"))?;
-    let buffer = Cursor::new(&buf);
-    let image = Image::read(buffer, DecoderOptions::default())?;
-
-    let compress_buf = Cursor::new(vec![]);
-    let mut encoder = MozJpegEncoder::new();
-
-    let result = encoder.encode(&image, compress_buf)?;
-    println!("原始字节数: {} 压缩后字节数: {}", buf.len(), result);
-
-    Ok(())
 }

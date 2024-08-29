@@ -68,21 +68,21 @@ impl AvifEncoder {
         AvifEncoder { options }
     }
 
-    pub fn encode_mem(&mut self, buf: Vec<u8>) -> anyhow::Result<Vec<u8>> {
+    pub fn encode_mem(&mut self, buf: &Vec<u8>) -> anyhow::Result<Vec<u8>> {
         self.mem_compress(buf)
     }
 
     pub fn encode_mem_with_options(
         &mut self,
-        buf: Vec<u8>,
+        buf: &Vec<u8>,
         options: AvifOptions,
     ) -> anyhow::Result<Vec<u8>> {
         self.options = options;
         self.mem_compress(buf)
     }
 
-    fn mem_compress(&mut self, buf: Vec<u8>) -> anyhow::Result<Vec<u8>> {
-        let cursor = Cursor::new(&buf);
+    fn mem_compress(&mut self, buf: &Vec<u8>) -> anyhow::Result<Vec<u8>> {
+        let cursor = Cursor::new(buf);
         let reader = BufReader::new(cursor);
 
         let decoder = AvifDecoder::try_new(reader)?;

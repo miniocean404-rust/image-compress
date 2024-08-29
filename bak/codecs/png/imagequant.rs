@@ -1,9 +1,5 @@
-use std::io::Cursor;
-
-use anyhow::anyhow;
+use image::GenericImageView;
 use imagequant::RGBA;
-use zune_core::{bit_depth::BitDepth, colorspace::ColorSpace, options::DecoderOptions};
-use zune_image::{codecs::ImageFormat, errors::ImageErrors, image::Image, traits::EncoderTrait};
 
 #[derive(Debug)]
 pub struct ImageQuantOptions {
@@ -70,28 +66,34 @@ impl ImageQuantEncoder {
         }
     }
 
-    pub fn encode_mem(&mut self, buf: &Vec<u8>) -> anyhow::Result<Vec<u8>> {
-        let cursor = Cursor::new(buf);
+    #[cfg(feature = "native")]
+    pub fn encode_with_file() {
+        // let mut encoder = lodepng::Encoder::new();
+        // encoder.set_palette(palette.as_slice())?;
 
-        let image = Image::read(cursor, DecoderOptions::default())?;
-
-        let mut compress_buf = Cursor::new(vec![]);
-        self.encode(&image, &mut compress_buf)?;
-
-        Ok(compress_buf.into_inner())
+        // // 写入文件
+        // encoder.encode_file(output, pixels.as_slice(), width, height)?;
     }
 
-    fn image_quant_encode<VecRGBA>(
-        &self,
-        data: VecRGBA,
-        width: usize,
-        height: usize,
-    ) -> anyhow::Result<Vec<u8>>
-    where
-        VecRGBA: Into<Box<[RGBA]>>,
-    {
+    pub fn encode(&self, buffer: &[u8]) -> anyhow::Result<Vec<u8>> {
+        let image = image::load_from_memory(buffer)?;
+
+        let (width, height) = image.dimensions();
+
+        let mut data = Vec::with_capacity((width * height) as usize);
+
+        for pixel in image.to_rgba8().pixels() {
+            let rgba = RGBA {
+                r: pixel[0],
+                g: pixel[1],
+                b: pixel[2],
+                a: pixel[3],
+            };
+            data.push(rgba);
+        }
+
         let mut attr = imagequant::new();
-        let mut img = attr.new_image(data, width, height, 0.0)?;
+        let mut img = attr.new_image(data, width as usize, height as usize, 0.0)?;
 
         attr.set_speed(self.options.speed)?;
         attr.set_quality(self.options.min_quality, self.options.max_quality)?;
@@ -112,65 +114,25 @@ impl ImageQuantEncoder {
         let mut enc = lodepng::Encoder::new();
         enc.info_raw_mut().set_bitdepth(8);
         enc.set_palette(palette)?;
-        enc.encode(pixels.as_slice(), width, height)
-            .map_err(|e| anyhow!(e.to_string()))
+        let png_vec = enc.encode(pixels.as_slice(), width as usize, height as usize)?;
+
+        // 将量化后的图像数据转换为 ImageBuffer
+
+        // 将 ImageBuffer 编码为 PNG 并保存到文件
+        // let file = File::create("output.png")?;
+        // let ref mut w = BufWriter::new(file);
+        // imgbuf.write_to(w, image::ImageOutputFormat::Png)?;
+
+        Ok(png_vec)
+    }
+
+    pub fn format(&self) -> image::ImageFormat {
+        image::ImageFormat::Png
     }
 }
 
-impl EncoderTrait for ImageQuantEncoder {
-    fn name(&self) -> &'static str {
-        "imagequant"
-    }
-
-    fn encode_inner<T: zune_core::bytestream::ZByteWriterTrait>(
-        &mut self,
-        image: &Image,
-        sink: T,
-    ) -> Result<usize, ImageErrors> {
-        let colorspace = image.colorspace();
-        let (width, height) = image.dimensions();
-
-        let data = if image.depth() == BitDepth::Eight {
-            // 如果是 8 个字节就拍平
-            image.flatten_frames::<u8>()
-        } else if image.depth() == BitDepth::Sixteen {
-            // 如果是 16 个字节就转为 本机字节序
-            image
-                .frames_ref()
-                .iter()
-                .map(|frame| frame.u16_to_native_endian(colorspace))
-                .collect()
-        } else {
-            unreachable!()
-        }
-        .into_iter()
-        .next()
-        .unwrap();
-
-        // self.image_quant_encode(data, width, height);
-
-        todo!()
-    }
-
-    fn supported_colorspaces(&self) -> &'static [zune_core::colorspace::ColorSpace] {
-        &[ColorSpace::RGBA]
-    }
-
-    fn format(&self) -> zune_image::codecs::ImageFormat {
-        ImageFormat::PNG
-    }
-
-    fn supported_bit_depth(&self) -> &'static [zune_core::bit_depth::BitDepth] {
-        &[BitDepth::Eight, BitDepth::Sixteen]
-    }
-
-    fn default_depth(
-        &self,
-        depth: zune_core::bit_depth::BitDepth,
-    ) -> zune_core::bit_depth::BitDepth {
-        match depth {
-            BitDepth::Sixteen | BitDepth::Float32 => BitDepth::Sixteen,
-            _ => BitDepth::Eight,
-        }
-    }
-}
+// impl From<RGBA> for image::Rgba<u8> {
+//     fn from(rgba: RGBA) -> Self {
+//         image::Rgba([rgba.r, rgba.g, rgba.b, rgba.a])
+//     }
+// }

@@ -6,8 +6,7 @@ use utils::path::*;
 
 use cargo_metadata::MetadataCommand;
 use image_compress_core::codecs::png::imagequant::{ImageQuantEncoder, ImageQuantOptions};
-use image_compress_core::codecs::png::oxipng::OxiPngEncoder as OxiPngEncoderNew;
-use image_compress_core::codecs::png::oxipng_lossless::OxiPngEncoder;
+use image_compress_core::codecs::png::oxipng::OxiPngEncoder;
 use std::path::{Path, PathBuf};
 use std::{fs, io::Cursor};
 use zune_core::bit_depth::BitDepth;
@@ -16,6 +15,46 @@ use zune_image::codecs::ImageFormat;
 use zune_image::image::Image;
 
 use image::{DynamicImage, ImageBuffer, Rgba};
+
+#[test]
+fn compress_u8_new() {
+    let buf = fs::read(get_workspace_file_path("assets/image/png/time-icon.png")).unwrap();
+
+    // let img = image::open(path).unwrap();
+
+    let mut encoder = OxiPngEncoder::new_with_options(oxipng::Options::max_compression());
+    let lossless_vec = encoder.encode_mem(&buf).unwrap();
+
+    println!(
+        "原始字节数: {} 压缩后字节数: {}",
+        buf.len(),
+        lossless_vec.len()
+    );
+    // fs::write(Path::new(&workspace_root).join("assets/compress/test.png"), buf.into_inner()).unwrap();
+}
+
+#[test]
+fn double_compress() {
+    let buf = fs::read(get_workspace_file_path("assets/image/png/time-icon.png")).unwrap();
+
+    // 无损压缩
+    // let img = image::open(path).unwrap();
+    let mut encoder = OxiPngEncoder::new_with_options(oxipng::Options::max_compression());
+    let lossless_vec = encoder.encode_mem(&buf).unwrap();
+
+    // 有损压缩
+    let mut encoder = ImageQuantEncoder::new_with_options(ImageQuantOptions {
+        max_quality: 70,
+        ..ImageQuantOptions::default()
+    });
+    let lossy_vec = encoder.encode_mem(&lossless_vec).unwrap();
+
+    println!(
+        "原始字节数: {} 压缩后字节数: {}",
+        buf.len(),
+        lossy_vec.len()
+    );
+}
 
 #[test]
 fn compress_u8() {
@@ -41,30 +80,13 @@ fn compress_u8() {
 }
 
 #[test]
-fn compress_u8_new() {
-    let buf = fs::read(get_workspace_file_path("assets/image/png/time-icon.png")).unwrap();
-
-    // let img = image::open(path).unwrap();
-
-    let encoder = OxiPngEncoderNew::new_with_options(oxipng::Options::max_compression());
-    let lossless_vec = encoder.encode(&buf).unwrap();
-
-    println!(
-        "原始字节数: {} 压缩后字节数: {}",
-        buf.len(),
-        lossless_vec.len()
-    );
-    // fs::write(Path::new(&workspace_root).join("assets/compress/test.png"), buf.into_inner()).unwrap();
-}
-
-#[test]
 fn image_quant_compress_lossy() {
     let file_path = get_workspace_file_path("assets/image/png/time-icon.png");
 
     let buf = fs::read(&file_path).unwrap();
 
-    let encoder = ImageQuantEncoder::new();
-    let lossy_vec = encoder.encode(&buf).unwrap();
+    let mut encoder = ImageQuantEncoder::new();
+    let lossy_vec = encoder.encode_mem(&buf).unwrap();
 
     println!(
         "原始字节数: {} 压缩后字节数: {}",
@@ -72,27 +94,4 @@ fn image_quant_compress_lossy() {
         lossy_vec.len()
     );
     // fs::write(Path::new(&workspace_root).join("assets/compress/test.png"), buf.into_inner()).unwrap();
-}
-
-#[test]
-fn double_compress() {
-    let buf = fs::read(get_workspace_file_path("assets/image/png/time-icon.png")).unwrap();
-
-    // 无损压缩
-    // let img = image::open(path).unwrap();
-    let encoder = OxiPngEncoderNew::new_with_options(oxipng::Options::max_compression());
-    let lossless_vec = encoder.encode(&buf).unwrap();
-
-    // 有损压缩
-    let encoder = ImageQuantEncoder::new_with_options(ImageQuantOptions {
-        max_quality: 70,
-        ..ImageQuantOptions::default()
-    });
-    let lossy_vec = encoder.encode(&lossless_vec).unwrap();
-
-    println!(
-        "原始字节数: {} 压缩后字节数: {}",
-        buf.len(),
-        lossy_vec.len()
-    );
 }

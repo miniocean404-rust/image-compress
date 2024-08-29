@@ -1,6 +1,6 @@
 use std::{
     fs::{self},
-    io::{BufReader, Cursor},
+    io::Cursor,
 };
 mod utils;
 

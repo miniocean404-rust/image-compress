@@ -1,8 +1,8 @@
-use std::io::{BufReader, Cursor};
-
 use anyhow::anyhow;
 use image_compress_core::codecs::{
-    avif::encoder::AvifEncoder, jpeg::mozjpeg::MozJpegEncoder, png::oxipng::OxiPngEncoder,
+    avif::encoder::AvifEncoder,
+    jpeg::mozjpeg::MozJpegEncoder,
+    png::oxipng::{OxiPngEncoder, OxiPngOptions},
     webp::encoder::WebPEncoder,
 };
 use utils::file::mime::get_mime_for_memory;
@@ -26,6 +26,8 @@ pub struct ImageCompress {
     pub after_size: usize,
 
     pub rate: f64,
+
+    pub oxipng_options: OxiPngOptions,
 }
 
 impl ImageCompress {
@@ -42,11 +44,12 @@ impl ImageCompress {
         }
     }
 
+    pub fn with_oxipng_options(&mut self, options: OxiPngOptions) {
+        self.oxipng_options = options;
+    }
+
     pub fn compress_with_mem(&mut self) -> anyhow::Result<()> {
         self.state = CompressState::Compressing;
-
-        let cursor = Cursor::new(&self.image);
-        let _reader = BufReader::new(cursor);
 
         self.compress_image = match self.ext {
             SupportedFileTypes::Jpeg => MozJpegEncoder::new().encode_mem(&self.image),

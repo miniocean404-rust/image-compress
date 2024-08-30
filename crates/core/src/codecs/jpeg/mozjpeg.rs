@@ -11,6 +11,7 @@ use zune_core::{
 };
 use zune_image::{codecs::ImageFormat, errors::ImageErrors, image::Image, traits::EncoderTrait};
 
+#[derive(Debug)]
 /// Advanced options for MozJpeg encoding
 pub struct MozJpegOptions {
     /// 质量, 推荐 60-80. 范围：`1..=100`

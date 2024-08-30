@@ -17,6 +17,7 @@ use zune_image::{
 use super::decoder::AvifDecoder;
 
 /// Advanced options for AVIF encoding
+#[derive(Debug)]
 pub struct AvifOptions {
     /// 质量 `1..=100`
     pub quality: f32,

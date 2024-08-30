@@ -17,3 +17,7 @@ pub mod tiff;
 // # 暂未实现
 #[cfg(feature = "gif")]
 pub mod gif;
+
+pub trait OptionsTrait {
+    fn get_options(&self) -> Box<dyn OptionsTrait>;
+}

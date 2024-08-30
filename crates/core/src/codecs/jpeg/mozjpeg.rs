@@ -11,6 +11,8 @@ use zune_core::{
 };
 use zune_image::{codecs::ImageFormat, errors::ImageErrors, image::Image, traits::EncoderTrait};
 
+use crate::codecs::OptionsTrait;
+
 #[derive(Debug)]
 /// Advanced options for MozJpeg encoding
 pub struct MozJpegOptions {
@@ -40,6 +42,12 @@ pub struct MozJpegOptions {
 
     /// 使用特定的量化表的颜色。替代质量（quality）设置。
     pub chroma_qtable: Option<QTable>,
+}
+
+impl OptionsTrait for MozJpegOptions {
+    fn get_options(&self) -> Box<dyn OptionsTrait> {
+        todo!()
+    }
 }
 
 /// A MozJpeg encoder

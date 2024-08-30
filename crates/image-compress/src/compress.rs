@@ -7,6 +7,7 @@ use image_compress_core::codecs::{
         oxipng::{self, OxiPngEncoder},
     },
     webp::{self, encoder::WebPEncoder},
+    OptionsTrait,
 };
 use utils::file::mime::get_mime_for_memory;
 
@@ -38,17 +39,14 @@ pub struct ImageCompress {
     pub after_size: usize,
 
     pub rate: f64,
-    // oxipng_options: OxiPngOptions,
-    // image_quant_options: ImageQuantOptions,
-    // mozjpeg_options: MozJpegOptions,
-    // webp_options: WebPOptions,
-    // avif_options: AvifOptions,
+    // options: Box<dyn OptionsTrait>,
 }
 
 impl ImageCompress {
     pub fn new(buffer: Vec<u8>, quality: u8) -> Self {
         let before_size = buffer.len();
         let ext = get_mime_for_memory(&buffer).into();
+        // std::error::Error
 
         Self {
             image: buffer,

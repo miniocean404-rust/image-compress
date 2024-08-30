@@ -14,6 +14,8 @@ use zune_image::{
     traits::EncoderTrait,
 };
 
+use crate::codecs::OptionsTrait;
+
 use super::decoder::AvifDecoder;
 
 /// Advanced options for AVIF encoding
@@ -44,6 +46,12 @@ pub struct AvifOptions {
 #[derive(Default)]
 pub struct AvifEncoder {
     options: AvifOptions,
+}
+
+impl OptionsTrait for AvifOptions {
+    fn get_options(&self) -> Box<dyn OptionsTrait> {
+        todo!()
+    }
 }
 
 impl Default for AvifOptions {

@@ -1,6 +1,5 @@
-use std::{io::Cursor, time::Duration};
+use std::io::Cursor;
 
-use oxipng::{Deflaters, IndexSet, Interlacing, RowFilter, StripChunks};
 use zune_core::{
     bit_depth::BitDepth,
     bytestream::{ZByteWriterTrait, ZWriter},
@@ -154,7 +153,7 @@ impl EncoderTrait for OxiPngEncoder {
         let mut writer = ZWriter::new(sink);
 
         let result = img
-            .create_optimized_png(&oxipng::Options::from(self.options.clone()))
+            .create_optimized_png(&self.options)
             .map_err(|e| ImgEncodeErrors::ImageEncodeErrors(e.to_string()))?;
 
         writer.write(&result).map_err(|e| {

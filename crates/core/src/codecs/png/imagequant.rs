@@ -14,7 +14,7 @@ use zune_image::{
 
 use crate::codecs::OptionsTrait;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct ImageQuantOptions {
     // imagequant 默认最小值 0
     pub min_quality: u8,

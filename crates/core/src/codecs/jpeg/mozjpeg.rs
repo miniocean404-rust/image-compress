@@ -4,7 +4,7 @@ use std::{
     panic::AssertUnwindSafe,
 };
 
-use mozjpeg::qtable::QTable;
+use mozjpeg::qtable::*;
 use zune_core::{
     bit_depth::BitDepth, bytestream::ZByteWriterTrait, colorspace::ColorSpace, log,
     options::DecoderOptions,
@@ -13,7 +13,7 @@ use zune_image::{codecs::ImageFormat, errors::ImageErrors, image::Image, traits:
 
 use crate::codecs::OptionsTrait;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 /// Advanced options for MozJpeg encoding
 pub struct MozJpegOptions {
     /// 质量, 推荐 60-80. 范围：`1..=100`
@@ -37,11 +37,27 @@ pub struct MozJpegOptions {
     /// 设置色度子采样，保留为“None”以使用自动子采样
     pub chroma_subsample: Option<u8>,
 
-    /// 使用特定的量化表。替代质量（quality）设置。
-    pub luma_qtable: Option<QTable>,
+    /// 是否使用特定的量化表。替代质量（quality）设置。
+    pub luma: bool,
 
-    /// 使用特定的量化表的颜色。替代质量（quality）设置。
-    pub chroma_qtable: Option<QTable>,
+    /// 是否使用特定的量化表的颜色。替代质量（quality）设置。
+    pub chroma: bool,
+
+    pub qtable: Option<QtableOptimize>,
+}
+
+#[allow(non_camel_case_types)]
+#[derive(Debug, Clone, Copy)]
+pub enum QtableOptimize {
+    AhumadaWatsonPeterson,
+    AnnexK_Luma,
+    Flat,
+    KleinSilversteinCarney,
+    MSSSIM_Luma,
+    NRobidoux,
+    PSNRHVS_Luma,
+    PetersonAhumadaWatson,
+    WatsonTaylorBorthwick,
 }
 
 impl OptionsTrait for MozJpegOptions {}
@@ -94,8 +110,9 @@ impl Default for MozJpegOptions {
             color_space: mozjpeg::ColorSpace::JCS_YCbCr,
             trellis_multipass: false,
             chroma_subsample: None,
-            luma_qtable: None,
-            chroma_qtable: None,
+            luma: false,
+            chroma: false,
+            qtable: None,
         }
     }
 }
@@ -135,9 +152,6 @@ impl EncoderTrait for MozJpegEncoder {
     ) -> Result<usize, ImageErrors> {
         let (width, height) = image.dimensions();
         let data = &image.flatten_to_u8()[0];
-
-        let luma_qtable = self.options.luma_qtable.as_ref();
-        let chroma_qtable = self.options.chroma_qtable.as_ref();
 
         std::panic::catch_unwind(AssertUnwindSafe(|| -> Result<usize, ImageErrors> {
             let format = match image.colorspace() {
@@ -190,12 +204,45 @@ impl EncoderTrait for MozJpegEncoder {
                 comp.set_chroma_sampling_pixel_sizes((sb, sb), (sb, sb))
             }
 
-            if let Some(qtable) = luma_qtable {
-                comp.set_luma_qtable(qtable)
-            }
+            let qtable = match self.options.qtable {
+                Some(QtableOptimize::AhumadaWatsonPeterson) => {
+                    Some(AhumadaWatsonPeterson.scaled(self.options.quality, self.options.quality))
+                }
+                Some(QtableOptimize::AnnexK_Luma) => {
+                    Some(AnnexK_Luma.scaled(self.options.quality, self.options.quality))
+                }
+                Some(QtableOptimize::Flat) => {
+                    Some(Flat.scaled(self.options.quality, self.options.quality))
+                }
+                Some(QtableOptimize::KleinSilversteinCarney) => {
+                    Some(KleinSilversteinCarney.scaled(self.options.quality, self.options.quality))
+                }
+                Some(QtableOptimize::MSSSIM_Luma) => {
+                    Some(MSSSIM_Luma.scaled(self.options.quality, self.options.quality))
+                }
+                Some(QtableOptimize::NRobidoux) => {
+                    Some(NRobidoux.scaled(self.options.quality, self.options.quality))
+                }
+                Some(QtableOptimize::PSNRHVS_Luma) => {
+                    Some(PSNRHVS_Luma.scaled(self.options.quality, self.options.quality))
+                }
+                Some(QtableOptimize::PetersonAhumadaWatson) => {
+                    Some(PetersonAhumadaWatson.scaled(self.options.quality, self.options.quality))
+                }
+                Some(QtableOptimize::WatsonTaylorBorthwick) => {
+                    Some(WatsonTaylorBorthwick.scaled(self.options.quality, self.options.quality))
+                }
+                None => None,
+            };
 
-            if let Some(qtable) = chroma_qtable {
-                comp.set_chroma_qtable(qtable)
+            if let Some(qtable) = qtable {
+                if self.options.luma {
+                    comp.set_luma_qtable(&qtable);
+                }
+
+                if self.options.chroma {
+                    comp.set_chroma_qtable(&qtable)
+                }
             }
 
             let writer = TempVt {

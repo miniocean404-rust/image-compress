@@ -10,9 +10,9 @@ fn oxipng_compress() -> anyhow::Result<()> {
 
     dbg!(byte_vec.len());
 
-    let result = ImageCompress::new(byte_vec, 80)
-        .with_options(OxiPngOptions::default())
-        .compress()?;
+    let ins = ImageCompress::new(byte_vec, 80);
+
+    let result = ins.with_options(OxiPngOptions::default()).compress()?;
 
     dbg!(result.len());
 

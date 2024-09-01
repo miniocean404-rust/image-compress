@@ -66,10 +66,10 @@ impl<O: OptionsTrait> ImageCompress<O> {
         Self { options, ..self }
     }
 
-    pub fn compress(mut self) -> anyhow::Result<Vec<u8>> {
+    pub fn compress(&mut self) -> anyhow::Result<Vec<u8>> {
         self.state = CompressState::Compressing;
 
-        let options = Box::new(self.options) as Box<dyn Any>;
+        let options = Box::new(self.options.clone()) as Box<dyn Any>;
 
         self.compress_image = match self.ext {
             SupportedFileTypes::Jpeg => {
@@ -117,5 +117,9 @@ impl<O: OptionsTrait> ImageCompress<O> {
         self.state = CompressState::Done;
 
         Ok(self.compress_image.to_vec())
+    }
+
+    pub fn to_ins(self) -> Self {
+        Self { ..self }
     }
 }

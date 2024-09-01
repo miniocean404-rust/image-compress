@@ -18,7 +18,7 @@ use zune_image::traits::EncoderTrait;
 
 #[test]
 fn encode_mem_webp() -> Result<(), Box<dyn std::error::Error>> {
-    let byte_vec = fs::read(get_workspace_file_path("assets/image/avif/f1t.avif"))?;
+    let byte_vec = fs::read(get_workspace_file_path("assets/image/webp/time-icon.webp"))?;
     let mut encoder = WebPEncoder::new();
     let compress_buf = encoder.encode_mem(&byte_vec)?;
 

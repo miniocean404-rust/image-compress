@@ -19,7 +19,7 @@ use crate::codecs::OptionsTrait;
 use super::decoder::AvifDecoder;
 
 /// Advanced options for AVIF encoding
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct AvifOptions {
     /// 质量 `1..=100`
     pub quality: f32,
@@ -42,16 +42,12 @@ pub struct AvifOptions {
     pub alpha_color_mode: ravif::AlphaColorMode,
 }
 
+impl OptionsTrait for AvifOptions {}
+
 /// A AVIF encoder
 #[derive(Default)]
 pub struct AvifEncoder {
     options: AvifOptions,
-}
-
-impl OptionsTrait for AvifOptions {
-    fn get_options(&self) -> Box<dyn OptionsTrait> {
-        todo!()
-    }
 }
 
 impl Default for AvifOptions {

@@ -12,6 +12,8 @@ use zune_image::{
     traits::EncoderTrait,
 };
 
+use crate::codecs::OptionsTrait;
+
 #[derive(Debug)]
 pub struct ImageQuantOptions {
     // imagequant 默认最小值 0
@@ -42,6 +44,8 @@ pub struct ImageQuantOptions {
     // true 会增大大小
     pub last_index_transparent: bool,
 }
+
+impl OptionsTrait for ImageQuantOptions {}
 
 impl Default for ImageQuantOptions {
     fn default() -> Self {

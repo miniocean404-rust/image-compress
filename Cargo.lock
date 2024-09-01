@@ -938,6 +938,7 @@ dependencies = [
  "infer",
  "libavif",
  "libc",
+ "libwebp-sys",
  "lodepng",
  "mozjpeg",
  "mozjpeg-sys",

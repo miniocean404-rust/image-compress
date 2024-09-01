@@ -1,3 +1,5 @@
+use std::any::Any;
+
 #[cfg(feature = "avif")]
 pub mod avif;
 
@@ -18,6 +20,4 @@ pub mod tiff;
 #[cfg(feature = "gif")]
 pub mod gif;
 
-pub trait OptionsTrait {
-    fn get_options(&self) -> Box<dyn OptionsTrait>;
-}
+pub trait OptionsTrait: Any + Default {}

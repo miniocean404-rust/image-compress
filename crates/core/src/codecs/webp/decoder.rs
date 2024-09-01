@@ -38,10 +38,18 @@ where
             .inner
             .into_iter()
             .enumerate()
-            .map(|(idx, frame)| Frame::from_u8(frame.get_image(), color, idx, frame.get_time_ms() as usize))
+            .map(|(idx, frame)| {
+                Frame::from_u8(frame.get_image(), color, idx, frame.get_time_ms() as usize)
+            })
             .collect::<Vec<_>>();
 
-        Ok(Image::new_frames(frames, BitDepth::Eight, width, height, color))
+        Ok(Image::new_frames(
+            frames,
+            BitDepth::Eight,
+            width,
+            height,
+            color,
+        ))
     }
 
     fn dimensions(&self) -> Option<(usize, usize)> {

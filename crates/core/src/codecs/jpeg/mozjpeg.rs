@@ -44,14 +44,10 @@ pub struct MozJpegOptions {
     pub chroma_qtable: Option<QTable>,
 }
 
-impl OptionsTrait for MozJpegOptions {
-    fn get_options(&self) -> Box<dyn OptionsTrait> {
-        todo!()
-    }
-}
+impl OptionsTrait for MozJpegOptions {}
 
 /// A MozJpeg encoder
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct MozJpegEncoder {
     options: MozJpegOptions,
 }
@@ -106,13 +102,13 @@ impl Default for MozJpegOptions {
 
 impl MozJpegEncoder {
     /// Create a new encoder
-    pub fn new() -> MozJpegEncoder {
+    pub fn new() -> Self {
         MozJpegEncoder::default()
     }
 
     /// Create a new encoder with specified options
-    pub fn new_with_options(options: MozJpegOptions) -> MozJpegEncoder {
-        MozJpegEncoder { options }
+    pub fn new_with_options(options: MozJpegOptions) -> Self {
+        Self { options }
     }
 
     pub fn encode_mem(&mut self, buf: &Vec<u8>) -> anyhow::Result<Vec<u8>> {

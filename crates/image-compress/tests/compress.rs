@@ -8,14 +8,10 @@ use image_compress::compress::{
 fn oxipng_compress() -> anyhow::Result<()> {
     let byte_vec = fs::read("../../assets/image/png/time-icon.png")?;
 
-    dbg!(byte_vec.len());
+    let mut ins = ImageCompress::new(byte_vec).with_options(OxiPngOptions::default());
+    let _ = ins.compress()?;
 
-    let ins = ImageCompress::new(byte_vec, 80);
-
-    let result = ins.with_options(OxiPngOptions::default()).compress()?;
-
-    dbg!(result.len());
-
+    println!("{}", ins);
     Ok(())
 }
 
@@ -23,13 +19,10 @@ fn oxipng_compress() -> anyhow::Result<()> {
 fn image_quant_compress() -> anyhow::Result<()> {
     let byte_vec = fs::read("../../assets/image/png/time-icon.png")?;
 
-    dbg!(byte_vec.len());
+    let mut ins = ImageCompress::new(byte_vec).with_options(ImageQuantOptions::default());
+    let _ = ins.compress()?;
 
-    let result = ImageCompress::new(byte_vec, 80)
-        .with_options(ImageQuantOptions::default())
-        .compress()?;
-
-    dbg!(result.len());
+    println!("{:#?}", ins);
 
     Ok(())
 }
@@ -38,13 +31,10 @@ fn image_quant_compress() -> anyhow::Result<()> {
 fn mozjpeg_compress() -> anyhow::Result<()> {
     let byte_vec = fs::read("../../assets/image/jpeg/eye.jpg")?;
 
-    dbg!(byte_vec.len());
+    let mut ins = ImageCompress::new(byte_vec).with_options(MozJpegOptions::default());
+    let _ = ins.compress()?;
 
-    let result = ImageCompress::new(byte_vec, 80)
-        .with_options(MozJpegOptions::default())
-        .compress()?;
-
-    dbg!(result.len());
+    println!("{:#?}", ins);
 
     Ok(())
 }
@@ -53,13 +43,10 @@ fn mozjpeg_compress() -> anyhow::Result<()> {
 fn webp_compress() -> anyhow::Result<()> {
     let byte_vec = fs::read("../../assets/image/webp/time-icon.webp")?;
 
-    dbg!(byte_vec.len());
+    let mut ins = ImageCompress::new(byte_vec).with_options(WebPOptions::default());
+    let _ = ins.compress()?;
 
-    let result = ImageCompress::new(byte_vec, 80)
-        .with_options(WebPOptions::default())
-        .compress()?;
-
-    dbg!(result.len());
+    println!("{:#?}", ins);
 
     Ok(())
 }
@@ -68,13 +55,10 @@ fn webp_compress() -> anyhow::Result<()> {
 fn avif_compress() -> anyhow::Result<()> {
     let byte_vec = fs::read("../../assets/image/avif/f1t.avif")?;
 
-    dbg!(byte_vec.len());
+    let mut ins = ImageCompress::new(byte_vec).with_options(AvifOptions::default());
+    let _ = ins.compress()?;
 
-    let result = ImageCompress::new(byte_vec, 80)
-        .with_options(AvifOptions::default())
-        .compress()?;
-
-    dbg!(result.len());
+    println!("{:#?}", ins);
 
     Ok(())
 }

@@ -1,4 +1,7 @@
-use std::any::Any;
+use std::{
+    any::Any,
+    fmt::{self},
+};
 
 use anyhow::anyhow;
 use image_compress_core::codecs::{
@@ -24,14 +27,14 @@ pub type WebPOptions = webp::encoder::WebPOptions;
 
 pub type AvifOptions = avif::encoder::AvifOptions;
 
-#[derive(Debug, Default)]
+#[derive(Default)]
 pub struct ImageCompress<O>
 where
     O: OptionsTrait,
 {
     pub image: Vec<u8>,
 
-    pub compress_image: Vec<u8>,
+    pub compressed_image: Vec<u8>,
 
     pub ext: SupportedFileTypes,
 
@@ -49,13 +52,12 @@ where
 }
 
 impl<O: OptionsTrait> ImageCompress<O> {
-    pub fn new(buffer: Vec<u8>, quality: u8) -> Self {
+    pub fn new(buffer: Vec<u8>) -> Self {
         let before_size = buffer.len();
         let ext = get_mime_for_memory(&buffer).into();
 
         Self {
             image: buffer,
-            quality,
             before_size,
             ext,
             ..Default::default()
@@ -71,7 +73,7 @@ impl<O: OptionsTrait> ImageCompress<O> {
 
         let options = Box::new(self.options.clone()) as Box<dyn Any>;
 
-        self.compress_image = match self.ext {
+        self.compressed_image = match self.ext {
             SupportedFileTypes::Jpeg => {
                 let options = *options
                     .downcast::<MozJpegOptions>()
@@ -106,7 +108,7 @@ impl<O: OptionsTrait> ImageCompress<O> {
             SupportedFileTypes::Unknown => Err(anyhow!("不能压缩的类型")),
         }?;
 
-        self.after_size = self.compress_image.len();
+        self.after_size = self.compressed_image.len();
 
         self.rate = (((self.before_size as f64 - self.after_size as f64)
             / self.before_size as f64)
@@ -116,10 +118,36 @@ impl<O: OptionsTrait> ImageCompress<O> {
 
         self.state = CompressState::Done;
 
-        Ok(self.compress_image.to_vec())
+        Ok(self.compressed_image.to_vec())
     }
 
     pub fn to_ins(self) -> Self {
         Self { ..self }
+    }
+}
+
+impl<O> fmt::Display for ImageCompress<O>
+where
+    O: OptionsTrait,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:#?}", self)
+    }
+}
+
+impl<O> fmt::Debug for ImageCompress<O>
+where
+    O: OptionsTrait,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("ImageCompress")
+            .field("ext", &self.ext)
+            .field("state", &self.state)
+            .field("quality", &self.quality)
+            .field("before_size", &self.before_size)
+            .field("after_size", &self.after_size)
+            .field("rate", &self.rate)
+            .field("options", &self.options)
+            .finish()
     }
 }

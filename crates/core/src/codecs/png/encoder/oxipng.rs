@@ -13,10 +13,14 @@ use zune_image::{
     traits::EncoderTrait,
 };
 
-use crate::codecs::OptionsTrait;
 use crate::codecs::png::encoder::oxipng_options::OxiPngOptions;
+use crate::codecs::OptionsTrait;
 
-impl OptionsTrait for OxiPngOptions {}
+impl OptionsTrait for OxiPngOptions {
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
+}
 
 //  无损压缩 lossless
 /// OxiPNG 编码器

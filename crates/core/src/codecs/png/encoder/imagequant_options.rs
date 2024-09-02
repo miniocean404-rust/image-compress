@@ -31,7 +31,11 @@ pub struct ImageQuantOptions {
     pub last_index_transparent: bool,
 }
 
-impl OptionsTrait for ImageQuantOptions {}
+impl OptionsTrait for ImageQuantOptions {
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
+}
 
 impl Default for ImageQuantOptions {
     fn default() -> Self {

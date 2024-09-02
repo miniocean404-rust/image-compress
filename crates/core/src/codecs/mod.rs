@@ -20,4 +20,6 @@ pub mod tiff;
 #[cfg(feature = "gif")]
 pub mod gif;
 
-pub trait OptionsTrait: Any + Default + Clone + Debug {}
+pub trait OptionsTrait: Any + Debug + Clone {
+    fn as_any(&self) -> &dyn Any;
+}

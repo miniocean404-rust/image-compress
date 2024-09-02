@@ -361,9 +361,12 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-module.exports.asyncFib = nativeBinding.asyncFib
-module.exports.callThreadsafeFunction = nativeBinding.callThreadsafeFunction
-module.exports.DEFAULT_COST = nativeBinding.DEFAULT_COST
-module.exports.getPaths = nativeBinding.getPaths
+module.exports.AlphaColorMode = nativeBinding.AlphaColorMode
+module.exports.ColorSpace = nativeBinding.ColorSpace
+module.exports.ColorSpace = nativeBinding.ColorSpace
 module.exports.initCustomTraceSubscriber = nativeBinding.initCustomTraceSubscriber
-module.exports.readFile = nativeBinding.readFile
+module.exports.Interlacing = nativeBinding.Interlacing
+module.exports.Kind = nativeBinding.Kind
+module.exports.QtableOptimize = nativeBinding.QtableOptimize
+module.exports.RowFilter = nativeBinding.RowFilter
+module.exports.WebPImageHint = nativeBinding.WebPImageHint

@@ -35,7 +35,11 @@ pub struct WebPOptions {
     pub qmax: i32,
 }
 
-impl OptionsTrait for WebPOptions {}
+impl OptionsTrait for WebPOptions {
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
+}
 
 impl Default for WebPOptions {
     fn default() -> Self {

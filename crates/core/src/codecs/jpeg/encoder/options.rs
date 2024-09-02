@@ -35,7 +35,11 @@ pub struct MozJpegOptions {
     pub qtable: Option<QtableOptimize>,
 }
 
-impl OptionsTrait for MozJpegOptions {}
+impl OptionsTrait for MozJpegOptions {
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
+}
 
 impl Default for MozJpegOptions {
     fn default() -> Self {

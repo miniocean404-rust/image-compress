@@ -1,4 +1,4 @@
-pub use image_compress_core::codecs::{OptionsTrait};
+pub use image_compress_core::codecs::OptionsTrait;
 
 use std::{
     any::Any,
@@ -6,12 +6,16 @@ use std::{
 };
 
 use anyhow::anyhow;
-use image_compress_core::codecs::{avif::{encoder::ravif::AvifEncoder}, jpeg::{encoder::mozjpeg::MozJpegEncoder}, png::encoder::{imagequant::{ImageQuantEncoder}, oxipng::OxiPngEncoder}, webp::{self}};
+use image_compress_core::codecs::{
+    avif::encoder::ravif::AvifEncoder,
+    jpeg::encoder::mozjpeg::MozJpegEncoder,
+    png::encoder::{imagequant::ImageQuantEncoder, oxipng::OxiPngEncoder},
+    webp::{self},
+};
 use utils::file::mime::get_mime_for_memory;
 
-
-use crate::{state::CompressState, support::SupportedFileTypes};
 use crate::export::*;
+use crate::{state::CompressState, support::SupportedFileTypes};
 
 #[derive(Default)]
 pub struct ImageCompress<O>
@@ -37,7 +41,7 @@ where
     options: O,
 }
 
-impl<O: OptionsTrait> ImageCompress<O> {
+impl<O: OptionsTrait + std::default::Default> ImageCompress<O> {
     pub fn new(buffer: Vec<u8>) -> Self {
         let before_size = buffer.len();
         let ext = get_mime_for_memory(&buffer).into();

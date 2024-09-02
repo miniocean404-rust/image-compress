@@ -1,6 +1,5 @@
 use std::time::Duration;
 
-use chrono::Utc;
 use image_compress::export::{self, IndexSet};
 use napi::bindgen_prelude::{Array, BigInt, Object};
 use napi_derive::napi;

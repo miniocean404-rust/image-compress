@@ -1,5 +1,5 @@
 use crate::codecs::OptionsTrait;
-pub use ravif::{AlphaColorMode};
+pub use ravif::AlphaColorMode;
 
 pub type AvifColorSpace = ravif::ColorSpace;
 
@@ -27,4 +27,8 @@ pub struct AvifOptions {
     pub alpha_color_mode: AlphaColorMode,
 }
 
-impl OptionsTrait for AvifOptions {}
+impl OptionsTrait for AvifOptions {
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
+}

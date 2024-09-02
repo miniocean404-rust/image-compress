@@ -10,57 +10,7 @@ use zune_core::{
     options::DecoderOptions,
 };
 use zune_image::{codecs::ImageFormat, errors::ImageErrors, image::Image, traits::EncoderTrait};
-
-use crate::codecs::OptionsTrait;
-
-#[derive(Debug, Clone, Copy)]
-/// Advanced options for MozJpeg encoding
-pub struct MozJpegOptions {
-    /// 质量, 推荐 60-80. 范围：`1..=100`
-    pub quality: f32,
-
-    /// 设置图像的渐进模式
-    pub progressive: bool,
-
-    /// 设置为 false 可以毫无理由地使文件变大
-    pub optimize_coding: bool,
-
-    /// 非 0 （1..=100） 它将使用MozJPEG的平滑。
-    pub smoothing: u8,
-
-    /// 设置正在写入的 JPEG 的颜色空间，不同于输入的颜色空间
-    pub color_space: mozjpeg::ColorSpace,
-
-    /// 指定在网格量化期间是否应考虑多次扫描。
-    pub trellis_multipass: bool,
-
-    /// 设置色度子采样，保留为“None”以使用自动子采样
-    pub chroma_subsample: Option<u8>,
-
-    /// 是否使用特定的量化表。替代质量（quality）设置。
-    pub luma: bool,
-
-    /// 是否使用特定的量化表的颜色。替代质量（quality）设置。
-    pub chroma: bool,
-
-    pub qtable: Option<QtableOptimize>,
-}
-
-#[allow(non_camel_case_types)]
-#[derive(Debug, Clone, Copy)]
-pub enum QtableOptimize {
-    AhumadaWatsonPeterson,
-    AnnexK_Luma,
-    Flat,
-    KleinSilversteinCarney,
-    MSSSIM_Luma,
-    NRobidoux,
-    PSNRHVS_Luma,
-    PetersonAhumadaWatson,
-    WatsonTaylorBorthwick,
-}
-
-impl OptionsTrait for MozJpegOptions {}
+use crate::codecs::jpeg::encoder::options::{MozJpegOptions, QtableOptimize};
 
 /// A MozJpeg encoder
 #[derive(Default, Debug)]
@@ -68,12 +18,12 @@ pub struct MozJpegEncoder {
     options: MozJpegOptions,
 }
 
-struct TempVt<T: ZByteWriterTrait> {
+struct MozJpegTempVt<T: ZByteWriterTrait> {
     inner: T,
     bytes_written: usize,
 }
 
-impl<T: ZByteWriterTrait> io::Write for TempVt<T> {
+impl<T: ZByteWriterTrait> io::Write for MozJpegTempVt<T> {
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
         let bytes_written = self.inner.write_bytes(buf).map_err(|e| match e {
             zune_core::bytestream::ZByteIoError::StdIoError(e) => e,
@@ -83,6 +33,13 @@ impl<T: ZByteWriterTrait> io::Write for TempVt<T> {
         Ok(bytes_written)
     }
 
+    fn flush(&mut self) -> io::Result<()> {
+        self.inner.flush_bytes().map_err(|e| match e {
+            zune_core::bytestream::ZByteIoError::StdIoError(e) => e,
+            e => io::Error::other(format!("{e:?}")),
+        })
+    }
+
     fn write_all(&mut self, buf: &[u8]) -> io::Result<()> {
         self.inner.write_all_bytes(buf).map_err(|e| match e {
             zune_core::bytestream::ZByteIoError::StdIoError(e) => e,
@@ -90,30 +47,6 @@ impl<T: ZByteWriterTrait> io::Write for TempVt<T> {
         })?;
         self.bytes_written += buf.len();
         Ok(())
-    }
-
-    fn flush(&mut self) -> io::Result<()> {
-        self.inner.flush_bytes().map_err(|e| match e {
-            zune_core::bytestream::ZByteIoError::StdIoError(e) => e,
-            e => io::Error::other(format!("{e:?}")),
-        })
-    }
-}
-
-impl Default for MozJpegOptions {
-    fn default() -> Self {
-        Self {
-            quality: 75.,
-            progressive: true,
-            optimize_coding: true,
-            smoothing: 0,
-            color_space: mozjpeg::ColorSpace::JCS_YCbCr,
-            trellis_multipass: false,
-            chroma_subsample: None,
-            luma: false,
-            chroma: false,
-            qtable: None,
-        }
     }
 }
 
@@ -245,7 +178,7 @@ impl EncoderTrait for MozJpegEncoder {
                 }
             }
 
-            let writer = TempVt {
+            let writer = MozJpegTempVt {
                 inner: sink,
                 bytes_written: 0,
             };

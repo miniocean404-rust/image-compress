@@ -4,28 +4,21 @@ use std::{
 };
 
 use anyhow::anyhow;
-use image_compress_core::codecs::{
-    avif::{self, encoder::AvifEncoder},
-    jpeg::{self, mozjpeg::MozJpegEncoder},
-    png::{
-        imagequant::{self, ImageQuantEncoder},
-        oxipng::{self, OxiPngEncoder},
-    },
-    webp::{self},
-    OptionsTrait,
-};
+use image_compress_core::codecs::{avif::{self, encoder::ravif::AvifEncoder}, jpeg::{self, encoder::mozjpeg::MozJpegEncoder}, OptionsTrait, png, webp::{self}};
+use image_compress_core::codecs::png::encoder::imagequant::{ImageQuantEncoder};
+use image_compress_core::codecs::png::encoder::oxipng::{ OxiPngEncoder};
 use utils::file::mime::get_mime_for_memory;
 
 use crate::{state::CompressState, support::SupportedFileTypes};
 
-pub type OxiPngOptions = oxipng::OxiPngOptions;
-pub type ImageQuantOptions = imagequant::ImageQuantOptions;
+pub type OxiPngOptions = png::encoder::oxipng_options::OxiPngOptions;
+pub type ImageQuantOptions = png::encoder::imagequant_options::ImageQuantOptions;
 
-pub type MozJpegOptions = jpeg::mozjpeg::MozJpegOptions;
+pub type MozJpegOptions = jpeg::encoder::options::MozJpegOptions;
 
-pub type WebPOptions = webp::encoder::WebPOptions;
+pub type WebPOptions = webp::encoder::options::WebPOptions;
 
-pub type AvifOptions = avif::encoder::AvifOptions;
+pub type AvifOptions = avif::encoder::options::AvifOptions;
 
 #[derive(Default)]
 pub struct ImageCompress<O>
@@ -97,7 +90,7 @@ impl<O: OptionsTrait> ImageCompress<O> {
                 let options = *options
                     .downcast::<WebPOptions>()
                     .map_err(|_| anyhow!("Any downcast 转换错误"))?;
-                webp::encoder::WebPEncoder::new_with_options(options).encode_mem(&self.image)
+                webp::encoder::webp::WebPEncoder::new_with_options(options).encode_mem(&self.image)
             }
             SupportedFileTypes::Avif => {
                 let options = *options

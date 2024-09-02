@@ -1,5 +1,5 @@
 [package]
-name = "image-compress"
+name = "image_compress"
 version.workspace = true
 edition.workspace = true
 repository.workspace = true

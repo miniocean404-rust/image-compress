@@ -4,17 +4,14 @@ mod utils;
 use utils::mock::*;
 use utils::path::*;
 
-use image_compress_core::codecs::png::imagequant::{ImageQuantEncoder, ImageQuantOptions};
-use image_compress_core::codecs::png::oxipng::OxiPngEncoder;
-use std::path::{Path, PathBuf};
+use image_compress_core::codecs::png::encoder::imagequant::ImageQuantEncoder;
+use image_compress_core::codecs::png::encoder::oxipng::OxiPngEncoder;
 use std::{fs, io::Cursor};
-use zune_core::bit_depth::BitDepth;
 use zune_core::colorspace::ColorSpace;
 use zune_image::codecs::ImageFormat;
-use zune_image::image::Image;
 use zune_image::traits::EncoderTrait;
 
-use image::{DynamicImage, ImageBuffer, Rgba};
+use image_compress_core::codecs::png::encoder::imagequant_options::ImageQuantOptions;
 
 #[test]
 fn image_quant_compress_lossy() {

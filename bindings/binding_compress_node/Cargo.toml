@@ -12,7 +12,7 @@ edition.workspace = true
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-image-compress-native = { path = "../../crates/core-native" }
+image_compress = { path = "../../crates/image-compress" }
 utils = { path = "../../crates/utils", features = ["hook"] }
 
 tokio.workspace = true

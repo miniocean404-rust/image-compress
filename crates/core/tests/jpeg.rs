@@ -4,7 +4,7 @@ mod utils;
 use utils::mock::*;
 use utils::path::*;
 
-use image_compress_core::codecs::jpeg::mozjpeg::MozJpegEncoder;
+use image_compress_core::codecs::jpeg::encoder::mozjpeg::MozJpegEncoder;
 use std::rc::Rc;
 use std::{fs, io::Cursor};
 use zune_core::result;

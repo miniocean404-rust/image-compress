@@ -10,7 +10,7 @@ use std::io::BufReader;
 use std::io::Cursor;
 
 use image_compress_core::codecs::webp::decoder::WebPDecoder;
-use image_compress_core::codecs::webp::encoder::WebPEncoder;
+use image_compress_core::codecs::webp::encoder::webp::WebPEncoder;
 use zune_core::colorspace::ColorSpace;
 use zune_core::options::DecoderOptions;
 use zune_image::image::Image;

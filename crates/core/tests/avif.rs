@@ -4,7 +4,7 @@ use std::{
 };
 mod utils;
 
-use image_compress_core::codecs::avif::{decoder::AvifDecoder, encoder::AvifEncoder};
+use image_compress_core::codecs::avif::{decoder::AvifDecoder, encoder::ravif::AvifEncoder};
 use utils::{mock::*, path::get_workspace_file_path};
 use zune_core::colorspace::ColorSpace;
 use zune_image::{image::Image, traits::EncoderTrait};

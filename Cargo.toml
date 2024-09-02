@@ -2,7 +2,7 @@
 
 resolver = "2"
 # 设置默认执行的 workspace
-default-members = ["crates/core-native"]
+default-members = ["crates/image-compress"]
 members = [
     "crates/*",
     # "crates/xxx",

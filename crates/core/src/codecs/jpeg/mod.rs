@@ -1,1 +1,1 @@
-pub mod mozjpeg;
+pub mod encoder;

@@ -12,7 +12,7 @@ edition.workspace = true
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-utils = { path = "../../crates/utils" }
+utils = { path = "../../crates/utils", features = ["fs"] }
 
 tokio.workspace = true
 

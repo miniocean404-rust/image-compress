@@ -43,7 +43,7 @@ image = { version = "=0.25.2" }
 zune-core = { version = "0.5.0-rc2" }
 zune-image = { version = "0.5.0-rc0", default-features = true }
 
-rgb = "0.8.37"
+rgb = "0.8.48"
 resize = "0.8.5"
 
 # PNG

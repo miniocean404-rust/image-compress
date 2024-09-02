@@ -1,11 +1,14 @@
+pub use image_compress_core::codecs::{OptionsTrait};
+
 use std::{
     any::Any,
     fmt::{self},
 };
 
 use anyhow::anyhow;
-use image_compress_core::codecs::{avif::{encoder::ravif::AvifEncoder}, jpeg::{encoder::mozjpeg::MozJpegEncoder}, png::encoder::{imagequant::{ImageQuantEncoder}, oxipng::OxiPngEncoder}, OptionsTrait, webp::{self}};
+use image_compress_core::codecs::{avif::{encoder::ravif::AvifEncoder}, jpeg::{encoder::mozjpeg::MozJpegEncoder}, png::encoder::{imagequant::{ImageQuantEncoder}, oxipng::OxiPngEncoder}, webp::{self}};
 use utils::file::mime::get_mime_for_memory;
+
 
 use crate::{state::CompressState, support::SupportedFileTypes};
 use crate::export::*;

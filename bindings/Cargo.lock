@@ -925,6 +925,7 @@ name = "image_compress_node"
 version = "0.1.0"
 dependencies = [
  "backtrace",
+ "chrono",
  "image_compress",
  "napi",
  "napi-build",
@@ -1440,13 +1441,14 @@ checksum = "16cf681a23b4d0a43fc35024c176437f9dcd818db34e0f42ab456a0ee5ad497b"
 
 [[package]]
 name = "napi"
-version = "2.16.8"
+version = "3.0.0-alpha.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a1bd081bbaef43600fd2c5dd4c525b8ecea7dfdacf40ebc674e87851dce6559e"
+checksum = "743b5a7769f54c95e20a26d9e66d1b43d5622b7dc8ec8f97b51ed8c58633841f"
 dependencies = [
  "bitflags 2.6.0",
+ "chrono",
  "ctor",
- "napi-derive",
+ "napi-build",
  "napi-sys",
  "once_cell",
  "serde",
@@ -1462,9 +1464,8 @@ checksum = "e1c0f5d67ee408a4685b61f5ab7e58605c8ae3f2b4189f0127d804ff13d5560a"
 
 [[package]]
 name = "napi-derive"
-version = "2.16.10"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b13934cae1f98599ae96d461d14ce3a9199215de1e9a9a201b64b118b3dfa329"
+version = "3.0.0-alpha.7"
+source = "git+https://github.com/napi-rs/napi-rs.git?branch=main#58bcb64c1982c71cf26f79c81b67703bfc442050"
 dependencies = [
  "cfg-if 1.0.0",
  "convert_case",
@@ -1476,9 +1477,8 @@ dependencies = [
 
 [[package]]
 name = "napi-derive-backend"
-version = "1.0.72"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "632d41c6057955f455824a7585ce19bc69b2c83472d16581e8f0175fcf4759b7"
+version = "2.0.0-alpha.7"
+source = "git+https://github.com/napi-rs/napi-rs.git?branch=main#58bcb64c1982c71cf26f79c81b67703bfc442050"
 dependencies = [
  "convert_case",
  "once_cell",

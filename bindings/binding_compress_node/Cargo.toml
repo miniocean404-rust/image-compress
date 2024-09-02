@@ -23,6 +23,8 @@ tracing-subscriber.workspace = true
 tracing-futures.workspace = true
 tracing-chrome.workspace = true
 
+chrono.workspace = true
+
 napi.workspace = true
 napi-derive.workspace = true
 # 用于在 Rust 程序运行时获取堆栈跟踪（回溯）的库

@@ -27,6 +27,7 @@
   },
   "scripts": {
     "build:node-dev": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p image_compress_node --js ./index.js --dts ./index.d.ts --target-dir ../../target -o ./",
+    "build:demo-dev": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p binding_demo_node --js ./index.js --dts ./index.d.ts --target-dir ../../target -o ./",
     "build:node": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p image_compress_node --release -o ./",
     "prepack": "napi prepublish -p ./npm --tag-style npm --no-gh-release",
     "artifacts": "napi artifacts -d ../artifacts --npm-dir ./npm",

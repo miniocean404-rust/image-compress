@@ -361,6 +361,9 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-module.exports.compress = nativeBinding.compress
+module.exports.asyncFib = nativeBinding.asyncFib
+module.exports.callThreadsafeFunction = nativeBinding.callThreadsafeFunction
+module.exports.DEFAULT_COST = nativeBinding.DEFAULT_COST
+module.exports.getPaths = nativeBinding.getPaths
 module.exports.initCustomTraceSubscriber = nativeBinding.initCustomTraceSubscriber
-module.exports.Kind = nativeBinding.Kind
+module.exports.readFile = nativeBinding.readFile

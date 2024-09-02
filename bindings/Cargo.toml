@@ -55,6 +55,8 @@ tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 tracing-futures = "0.2.5"
 tracing-chrome = "0.7.2"
 
+chrono = "0.4.31"
+
 # wasm-pack，一个构建、测试和发布 WASM 的 Rust CLI 工具，我们将使用 wasm-pack 相关的命令来构建 WASM 二进制内容。
 # https://rustwasm.github.io/wasm-pack/installer/
 
@@ -78,6 +80,11 @@ js-sys = "0.3.67"
 serde-wasm-bindgen = "0.6.3"
 wee_alloc = "0.4.5"
 
-napi = { version = "2.16.8", features = ["async", "serde-json", "napi9"] }
-napi-derive = "2.16.10"
+napi = { version = "3.0.0-alpha.8", features = [
+    "napi9",
+    "async",
+    "serde-json",
+    "chrono_date"
+] }
+napi-derive = { git = "https://github.com/napi-rs/napi-rs.git", features = ["type-def"], branch = "main" }
 napi-build = "2.1.3"

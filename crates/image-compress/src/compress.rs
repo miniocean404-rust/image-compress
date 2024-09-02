@@ -4,21 +4,11 @@ use std::{
 };
 
 use anyhow::anyhow;
-use image_compress_core::codecs::{avif::{self, encoder::ravif::AvifEncoder}, jpeg::{self, encoder::mozjpeg::MozJpegEncoder}, OptionsTrait, png, webp::{self}};
-use image_compress_core::codecs::png::encoder::imagequant::{ImageQuantEncoder};
-use image_compress_core::codecs::png::encoder::oxipng::{ OxiPngEncoder};
+use image_compress_core::codecs::{avif::{encoder::ravif::AvifEncoder}, jpeg::{encoder::mozjpeg::MozJpegEncoder}, png::encoder::{imagequant::{ImageQuantEncoder}, oxipng::OxiPngEncoder}, OptionsTrait, webp::{self}};
 use utils::file::mime::get_mime_for_memory;
 
 use crate::{state::CompressState, support::SupportedFileTypes};
-
-pub type OxiPngOptions = png::encoder::oxipng_options::OxiPngOptions;
-pub type ImageQuantOptions = png::encoder::imagequant_options::ImageQuantOptions;
-
-pub type MozJpegOptions = jpeg::encoder::options::MozJpegOptions;
-
-pub type WebPOptions = webp::encoder::options::WebPOptions;
-
-pub type AvifOptions = avif::encoder::options::AvifOptions;
+use crate::export::*;
 
 #[derive(Default)]
 pub struct ImageCompress<O>

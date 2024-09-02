@@ -1,7 +1,9 @@
 use std::fs;
-
-use image_compress::compress::{
-    AvifOptions, ImageCompress, ImageQuantOptions, MozJpegOptions, OxiPngOptions, WebPOptions,
+use image_compress::{
+    compress::ImageCompress,
+    export::{
+        AvifOptions, ImageQuantOptions, MozJpegOptions, OxiPngOptions, WebPOptions,
+    },
 };
 
 #[test]

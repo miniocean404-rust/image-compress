@@ -1,5 +1,7 @@
 use crate::codecs::OptionsTrait;
 
+pub type MozJpegColorSpace = mozjpeg::ColorSpace;
+
 #[derive(Debug, Clone, Copy)]
 /// Advanced options for MozJpeg encoding
 pub struct MozJpegOptions {
@@ -16,7 +18,7 @@ pub struct MozJpegOptions {
     pub smoothing: u8,
 
     /// 设置正在写入的 JPEG 的颜色空间，不同于输入的颜色空间
-    pub color_space: mozjpeg::ColorSpace,
+    pub color_space: MozJpegColorSpace,
 
     /// 指定在网格量化期间是否应考虑多次扫描。
     pub trellis_multipass: bool,

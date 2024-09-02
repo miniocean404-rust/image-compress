@@ -1,4 +1,7 @@
 use crate::codecs::OptionsTrait;
+pub use ravif::{AlphaColorMode};
+
+pub type AvifColorSpace = ravif::ColorSpace;
 
 /// Advanced options for AVIF encoding
 #[derive(Debug, Clone, Copy)]
@@ -18,10 +21,10 @@ pub struct AvifOptions {
     /// 更改图像中颜色通道的存储方式。
     ///
     /// 请注意，这只是AVIF文件的内部细节，不会改变编码函数输入的颜色空间。
-    pub color_space: ravif::ColorSpace,
+    pub color_space: AvifColorSpace,
 
     /// 配置透明图像中颜色通道的处理
-    pub alpha_color_mode: ravif::AlphaColorMode,
+    pub alpha_color_mode: AlphaColorMode,
 }
 
 impl OptionsTrait for AvifOptions {}

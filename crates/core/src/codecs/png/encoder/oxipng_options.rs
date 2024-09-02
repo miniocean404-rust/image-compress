@@ -1,3 +1,5 @@
+pub use oxipng::{Deflaters, IndexSet, Interlacing, RowFilter, StripChunks};
+
 /// [`oxipng::Options`] 别名
 /// fix_errors: bool:               尝试在解码输入文件时修复错误，而不是返回 `Err`。默认值: `false`
 /// force: bool:                    即使压缩没有改进，也写入输出。默认值: `false`

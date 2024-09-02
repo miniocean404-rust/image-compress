@@ -1,5 +1,5 @@
-use libwebp_sys::WebPImageHint;
 use crate::codecs::OptionsTrait;
+pub use libwebp_sys::WebPImageHint;
 
 #[derive(Debug, Clone, Copy)]
 #[allow(non_snake_case)]

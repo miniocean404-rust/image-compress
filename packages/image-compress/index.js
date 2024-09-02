@@ -361,6 +361,6 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-module.exports.getImageInfo = nativeBinding.getImageInfo
+module.exports.compress = nativeBinding.compress
 module.exports.initCustomTraceSubscriber = nativeBinding.initCustomTraceSubscriber
 module.exports.Kind = nativeBinding.Kind

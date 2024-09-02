@@ -1,6 +1,7 @@
 use std::fs;
+use image_compress::export::*;
 
-use image_compress::compress::{ImageCompress, MozJpegOptions};
+use image_compress::compress::{ImageCompress};
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 use utils::file::mime::get_mime_for_memory;
@@ -24,15 +25,15 @@ pub struct CompressInfo {
 #[tracing::instrument(level = "info", skip_all)]
 fn compress(
     file: String,
-    #[napi(
-        ts_arg_type = "MozJpegOptions | OxiPngOptions | ImageQuantOptions | WebPOptions | AvifOptions"
-    )]
+    // #[napi(
+    //     ts_arg_type = "MozJpegOptions | OxiPngOptions | ImageQuantOptions | WebPOptions | AvifOptions"
+    // )]
     options: Object,
 ) -> Result<CompressInfo> {
     // 如果没用自定义初始化就使用 默认 的初始化
     crate::log::init_default_trace_subscriber();
 
-    let options: super::options::MozJpegOptions = options.into();
+    // let options: super::options::MozJpegOptions = options.into();
     let buffer = fs::read(file)?;
     let ext = get_mime_for_memory(&buffer);
 

@@ -1,5 +1,6 @@
-use napi_derive::napi;
 use image_compress::export;
+use napi::bindgen_prelude::Object;
+use napi_derive::napi;
 
 #[allow(non_snake_case)]
 #[napi(object)]
@@ -35,25 +36,53 @@ pub struct WebPOptions {
     pub qmax: i32,
 }
 
-#[allow(non_camel_case_types)]
-#[napi]
-pub enum WebPImageHint {
-    WEBP_HINT_DEFAULT = 0,
-    WEBP_HINT_PICTURE = 1,
-    WEBP_HINT_PHOTO = 2,
-    WEBP_HINT_GRAPH = 3,
-    WEBP_HINT_LAST = 4,
+impl From<Object> for WebPOptions {
+    fn from(value: Object) -> Self {
+        Self {
+            lossless: value.get_named_property::<i32>("lossless").unwrap(),
+            quality: value.get_named_property::<f64>("quality").unwrap(),
+            method: value.get_named_property::<i32>("method").unwrap(),
+            image_hint: value
+                .get_named_property::<WebPImageHint>("imageHint")
+                .unwrap(),
+            target_size: value.get_named_property::<i32>("targetSize").unwrap(),
+            target_psnr: value.get_named_property::<f64>("targetPSNR").unwrap(),
+            segments: value.get_named_property::<i32>("segments").unwrap(),
+            sns_strength: value.get_named_property::<i32>("snsStrength").unwrap(),
+            filter_strength: value.get_named_property::<i32>("filterStrength").unwrap(),
+            filter_sharpness: value.get_named_property::<i32>("filterSharpness").unwrap(),
+            filter_type: value.get_named_property::<i32>("filterType").unwrap(),
+            autofilter: value.get_named_property::<i32>("autofilter").unwrap(),
+            alpha_compression: value.get_named_property::<i32>("alphaCompression").unwrap(),
+            alpha_filtering: value.get_named_property::<i32>("alphaFiltering").unwrap(),
+            alpha_quality: value.get_named_property::<i32>("alphaQuality").unwrap(),
+            pass: value.get_named_property::<i32>("pass").unwrap(),
+            show_compressed: value.get_named_property::<i32>("showCompressed").unwrap(),
+            preprocessing: value.get_named_property::<i32>("preprocessing").unwrap(),
+            partitions: value.get_named_property::<i32>("partitions").unwrap(),
+            partition_limit: value.get_named_property::<i32>("partitionLimit").unwrap(),
+            emulate_jpeg_size: value.get_named_property::<i32>("emulateJpegSize").unwrap(),
+            thread_level: value.get_named_property::<i32>("threadLevel").unwrap(),
+            low_memory: value.get_named_property::<i32>("lowMemory").unwrap(),
+            near_lossless: value.get_named_property::<i32>("nearLossless").unwrap(),
+            exact: value.get_named_property::<i32>("exact").unwrap(),
+            use_delta_palette: value.get_named_property::<i32>("useDeltaPalette").unwrap(),
+            use_sharp_yuv: value.get_named_property::<i32>("useSharpYUV").unwrap(),
+            qmin: value.get_named_property::<i32>("qmin").unwrap(),
+            qmax: value.get_named_property::<i32>("qmax").unwrap(),
+        }
+    }
 }
 
 impl From<WebPOptions> for export::WebPOptions {
     fn from(value: WebPOptions) -> Self {
         export::WebPOptions {
             lossless: value.lossless,
-            quality: value.quality.into(),
+            quality: value.quality as f32,
             method: value.method,
             image_hint: value.image_hint.into(),
             target_size: value.target_size,
-            target_PSNR: value.target_psnr.into(),
+            target_PSNR: value.target_psnr as f32,
             segments: value.segments,
             sns_strength: value.sns_strength,
             filter_strength: value.filter_strength,
@@ -77,6 +106,28 @@ impl From<WebPOptions> for export::WebPOptions {
             use_sharp_yuv: value.use_sharp_yuv,
             qmin: value.qmin,
             qmax: value.qmax,
+        }
+    }
+}
+
+#[allow(non_camel_case_types)]
+#[napi]
+pub enum WebPImageHint {
+    WEBP_HINT_DEFAULT = 0,
+    WEBP_HINT_PICTURE = 1,
+    WEBP_HINT_PHOTO = 2,
+    WEBP_HINT_GRAPH = 3,
+    WEBP_HINT_LAST = 4,
+}
+
+impl From<WebPImageHint> for export::WebPImageHint {
+    fn from(value: WebPImageHint) -> Self {
+        match value {
+            WebPImageHint::WEBP_HINT_DEFAULT => export::WebPImageHint::WEBP_HINT_DEFAULT,
+            WebPImageHint::WEBP_HINT_PICTURE => export::WebPImageHint::WEBP_HINT_PICTURE,
+            WebPImageHint::WEBP_HINT_PHOTO => export::WebPImageHint::WEBP_HINT_PHOTO,
+            WebPImageHint::WEBP_HINT_GRAPH => export::WebPImageHint::WEBP_HINT_GRAPH,
+            WebPImageHint::WEBP_HINT_LAST => export::WebPImageHint::WEBP_HINT_LAST,
         }
     }
 }

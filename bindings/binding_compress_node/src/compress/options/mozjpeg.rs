@@ -1,4 +1,5 @@
 use image_compress::export;
+use napi::bindgen_prelude::Object;
 use napi_derive::napi;
 
 #[napi(object)]
@@ -31,6 +32,48 @@ pub struct MozJpegOptions {
     pub chroma: bool,
 
     pub qtable: Option<QtableOptimize>,
+}
+
+impl From<Object> for MozJpegOptions {
+    fn from(value: Object) -> Self {
+        Self {
+            quality: value.get_named_property::<f64>("quality").unwrap(),
+            progressive: value.get_named_property::<bool>("progressive").unwrap(),
+            optimize_coding: value.get_named_property::<bool>("optimizeCoding").unwrap(),
+            smoothing: value.get_named_property::<u8>("smoothing").unwrap(),
+            color_space: value
+                .get_named_property::<ColorSpace>("colorSpace")
+                .unwrap(),
+            trellis_multipass: value
+                .get_named_property::<bool>("trellisMultipass")
+                .unwrap(),
+            chroma_subsample: value
+                .get_named_property::<Option<u8>>("chromaSubsample")
+                .unwrap(),
+            luma: value.get_named_property::<bool>("luma").unwrap(),
+            chroma: value.get_named_property::<bool>("chroma").unwrap(),
+            qtable: value
+                .get_named_property::<Option<QtableOptimize>>("qtable")
+                .unwrap(),
+        }
+    }
+}
+
+impl From<MozJpegOptions> for export::MozJpegOptions {
+    fn from(value: MozJpegOptions) -> Self {
+        export::MozJpegOptions {
+            quality: value.quality as f32,
+            progressive: value.progressive,
+            optimize_coding: value.optimize_coding,
+            smoothing: value.smoothing,
+            color_space: value.color_space.into(),
+            trellis_multipass: value.trellis_multipass,
+            chroma_subsample: value.chroma_subsample,
+            luma: value.luma,
+            chroma: value.chroma,
+            qtable: value.qtable.map(|e| e.into()),
+        }
+    }
 }
 
 #[allow(non_camel_case_types)]
@@ -80,6 +123,30 @@ pub enum ColorSpace {
     JCS_RGB565,
 }
 
+impl From<ColorSpace> for export::MozJpegColorSpace {
+    fn from(value: ColorSpace) -> Self {
+        match value {
+            ColorSpace::JCS_UNKNOWN => export::MozJpegColorSpace::JCS_UNKNOWN,
+            ColorSpace::JCS_GRAYSCALE => export::MozJpegColorSpace::JCS_GRAYSCALE,
+            ColorSpace::JCS_RGB => export::MozJpegColorSpace::JCS_RGB,
+            ColorSpace::JCS_YCbCr => export::MozJpegColorSpace::JCS_YCbCr,
+            ColorSpace::JCS_CMYK => export::MozJpegColorSpace::JCS_CMYK,
+            ColorSpace::JCS_YCCK => export::MozJpegColorSpace::JCS_YCCK,
+            ColorSpace::JCS_EXT_RGB => export::MozJpegColorSpace::JCS_EXT_RGB,
+            ColorSpace::JCS_EXT_RGBX => export::MozJpegColorSpace::JCS_EXT_RGBX,
+            ColorSpace::JCS_EXT_BGR => export::MozJpegColorSpace::JCS_EXT_BGR,
+            ColorSpace::JCS_EXT_BGRX => export::MozJpegColorSpace::JCS_EXT_BGRX,
+            ColorSpace::JCS_EXT_XBGR => export::MozJpegColorSpace::JCS_EXT_XBGR,
+            ColorSpace::JCS_EXT_XRGB => export::MozJpegColorSpace::JCS_EXT_XRGB,
+            ColorSpace::JCS_EXT_RGBA => export::MozJpegColorSpace::JCS_EXT_RGBA,
+            ColorSpace::JCS_EXT_BGRA => export::MozJpegColorSpace::JCS_EXT_BGRA,
+            ColorSpace::JCS_EXT_ABGR => export::MozJpegColorSpace::JCS_EXT_ABGR,
+            ColorSpace::JCS_EXT_ARGB => export::MozJpegColorSpace::JCS_EXT_ARGB,
+            ColorSpace::JCS_RGB565 => export::MozJpegColorSpace::JCS_RGB565,
+        }
+    }
+}
+
 #[allow(non_camel_case_types)]
 #[napi(string_enum)]
 pub enum QtableOptimize {
@@ -94,19 +161,20 @@ pub enum QtableOptimize {
     WatsonTaylorBorthwick,
 }
 
-impl From<MozJpegOptions> for export::MozJpegOptions {
-    fn from(value: MozJpegOptions) -> Self {
-        export::MozJpegOptions {
-            quality: value.quality as f32,
-            progressive: value.progressive,
-            optimize_coding: value.optimize_coding,
-            smoothing: value.smoothing,
-            color_space: value.color_space.into(),
-            trellis_multipass: value.trellis_multipass,
-            chroma_subsample: value.chroma_subsample,
-            luma: value.luma,
-            chroma: value.chroma,
-            qtable: value.qtable,
+impl From<QtableOptimize> for export::QtableOptimize {
+    fn from(value: QtableOptimize) -> Self {
+        match value {
+            QtableOptimize::AhumadaWatsonPeterson => export::QtableOptimize::AhumadaWatsonPeterson,
+            QtableOptimize::AnnexK_Luma => export::QtableOptimize::AnnexK_Luma,
+            QtableOptimize::Flat => export::QtableOptimize::Flat,
+            QtableOptimize::KleinSilversteinCarney => {
+                export::QtableOptimize::KleinSilversteinCarney
+            }
+            QtableOptimize::MSSSIM_Luma => export::QtableOptimize::MSSSIM_Luma,
+            QtableOptimize::NRobidoux => export::QtableOptimize::NRobidoux,
+            QtableOptimize::PSNRHVS_Luma => export::QtableOptimize::PSNRHVS_Luma,
+            QtableOptimize::PetersonAhumadaWatson => export::QtableOptimize::PetersonAhumadaWatson,
+            QtableOptimize::WatsonTaylorBorthwick => export::QtableOptimize::WatsonTaylorBorthwick,
         }
     }
 }

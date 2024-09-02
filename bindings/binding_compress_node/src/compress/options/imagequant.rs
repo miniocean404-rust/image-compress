@@ -1,4 +1,5 @@
 use image_compress::export;
+use napi::bindgen_prelude::Object;
 use napi_derive::napi;
 
 #[napi(object)]
@@ -42,6 +43,22 @@ impl From<ImageQuantOptions> for export::ImageQuantOptions {
             dithering: value.dithering as f32,
             gamma: value.gamma,
             last_index_transparent: value.last_index_transparent,
+        }
+    }
+}
+
+impl From<Object> for ImageQuantOptions {
+    fn from(value: Object) -> Self {
+        Self {
+            min_quality: value.get_named_property::<u8>("minQuality").unwrap(),
+            max_quality: value.get_named_property::<u8>("maxQuality").unwrap(),
+            speed: value.get_named_property::<i32>("speed").unwrap(),
+            min_posterization: value.get_named_property::<u8>("minPosterization").unwrap(),
+            dithering: value.get_named_property::<f64>("dithering").unwrap(),
+            gamma: value.get_named_property::<f64>("gamma").unwrap(),
+            last_index_transparent: value
+                .get_named_property::<bool>("lastIndexTransparent")
+                .unwrap(),
         }
     }
 }

@@ -1,5 +1,6 @@
-use napi_derive::napi;
 use image_compress::export;
+use napi::bindgen_prelude::Object;
+use napi_derive::napi;
 
 #[napi(object)]
 pub struct AvifOptions {
@@ -22,6 +23,43 @@ pub struct AvifOptions {
 
     /// 配置透明图像中颜色通道的处理
     pub alpha_color_mode: AlphaColorMode,
+}
+
+impl From<AvifOptions> for export::AvifOptions {
+    fn from(value: AvifOptions) -> Self {
+        export::AvifOptions {
+            quality: value.quality as f32,
+            alpha_quality: value.alpha_quality.map(|e| e as f32),
+            speed: value.speed,
+            color_space: match value.color_space {
+                ColorSpace::YCbCr => export::AvifColorSpace::YCbCr,
+                ColorSpace::RGB => export::AvifColorSpace::RGB,
+            },
+            alpha_color_mode: match value.alpha_color_mode {
+                AlphaColorMode::UnassociatedDirty => export::AlphaColorMode::UnassociatedDirty,
+                AlphaColorMode::UnassociatedClean => export::AlphaColorMode::UnassociatedClean,
+                AlphaColorMode::Premultiplied => export::AlphaColorMode::Premultiplied,
+            },
+        }
+    }
+}
+
+impl From<Object> for AvifOptions {
+    fn from(value: Object) -> Self {
+        Self {
+            quality: value.get_named_property::<f64>("quality").unwrap(),
+            alpha_quality: value
+                .get_named_property::<Option<f64>>("alphaQuality")
+                .unwrap(),
+            speed: value.get_named_property::<u8>("speed").unwrap(),
+            color_space: value
+                .get_named_property::<ColorSpace>("colorSpace")
+                .unwrap(),
+            alpha_color_mode: value
+                .get_named_property::<AlphaColorMode>("alphaColorMode")
+                .unwrap(),
+        }
+    }
 }
 
 #[napi(string_enum)]
@@ -51,24 +89,4 @@ pub enum AlphaColorMode {
     /// Note that this is only internal detail for the AVIF file.
     /// It does not change meaning of `RGBA` in this library — it's always unassociated.
     Premultiplied,
-}
-
-
-impl From<AvifOptions> for export::AvifOptions {
-    fn from(value: AvifOptions) -> Self {
-        export::AvifOptions {
-            quality: value.quality.into(),
-            alpha_quality: value.alpha_quality.into(),
-            speed: value.speed,
-            color_space: match value.color_space {
-                ColorSpace::YCbCr => export::AvifColorSpace::YCbCr,
-                ColorSpace::RGB => export::AvifColorSpace::RGB,
-            },
-            alpha_color_mode: match value.alpha_color_mode {
-                AlphaColorMode::UnassociatedDirty => export::AlphaColorMode::UnassociatedDirty,
-                AlphaColorMode::UnassociatedClean => export::AlphaColorMode::UnassociatedClean,
-                AlphaColorMode::Premultiplied => export::AlphaColorMode::Premultiplied,
-            },
-        }
-    }
 }

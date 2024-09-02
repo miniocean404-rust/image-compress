@@ -1,8 +1,9 @@
-use chrono::Utc;
-use napi::bindgen_prelude::Array;
-use napi_derive::napi;
-use image_compress::export;
+use std::time::Duration;
 
+use chrono::Utc;
+use image_compress::export::{self, IndexSet};
+use napi::bindgen_prelude::{Array, BigInt, Object};
+use napi_derive::napi;
 
 #[napi(object)]
 pub struct OxiPngOptions {
@@ -70,9 +71,10 @@ pub struct OxiPngOptions {
 
     /// Maximum amount of time to spend on optimizations.
     /// Further potential optimizations are skipped if the timeout is exceeded.
-    pub timeout: Option<chrono::DateTime<Utc>>,
+    pub timeout: Option<BigInt>,
+    // 仅供参考的 demo
+    // pub date: Option<chrono::DateTime<Utc>>,
 }
-
 
 #[allow(non_camel_case_types)]
 #[napi(string_enum)]
@@ -91,10 +93,37 @@ pub enum RowFilter {
     Brute,
 }
 
+// ! 未写全
+impl From<RowFilter> for export::IndexSet<export::RowFilter> {
+    fn from(value: RowFilter) -> Self {
+        match value {
+            RowFilter::None => IndexSet::new(),
+            RowFilter::Sub => IndexSet::new(),
+            RowFilter::Up => IndexSet::new(),
+            RowFilter::Average => IndexSet::new(),
+            RowFilter::Paeth => IndexSet::new(),
+            RowFilter::MinSum => IndexSet::new(),
+            RowFilter::Entropy => IndexSet::new(),
+            RowFilter::Bigrams => IndexSet::new(),
+            RowFilter::BigEnt => IndexSet::new(),
+            RowFilter::Brute => IndexSet::new(),
+        }
+    }
+}
+
 #[napi(string_enum)]
 pub enum Interlacing {
     None,
     Adam7,
+}
+
+impl From<Interlacing> for export::Interlacing {
+    fn from(value: Interlacing) -> Self {
+        match value {
+            Interlacing::None => export::Interlacing::None,
+            Interlacing::Adam7 => export::Interlacing::Adam7,
+        }
+    }
 }
 
 #[napi(discriminant = "type2")]
@@ -114,6 +143,15 @@ pub enum Deflaters {
     // },
 }
 
+impl From<Deflaters> for export::Deflaters {
+    fn from(value: Deflaters) -> Self {
+        match value {
+            Deflaters::Libdeflater { compression } => {
+                export::Deflaters::Libdeflater { compression }
+            }
+        }
+    }
+}
 
 #[napi(discriminant = "type2")]
 pub enum StripChunks {
@@ -129,14 +167,28 @@ pub enum StripChunks {
     All,
 }
 
+// ! 未写全
+impl From<StripChunks> for export::StripChunks {
+    fn from(value: StripChunks) -> Self {
+        match value {
+            StripChunks::None => export::StripChunks::None,
+            StripChunks::Strip(_) => export::StripChunks::Strip(IndexSet::new()),
+            StripChunks::Safe => export::StripChunks::Safe,
+            StripChunks::Keep(_) => export::StripChunks::Keep(IndexSet::new()),
+            StripChunks::All => export::StripChunks::All,
+        }
+    }
+}
 
 impl From<OxiPngOptions> for export::OxiPngOptions {
     fn from(value: OxiPngOptions) -> Self {
+        let (_signed, timeout, _is_lossless) = value.timeout.unwrap().get_u64();
+
         export::OxiPngOptions {
             fix_errors: value.fix_errors,
             force: value.force,
             filter: value.filter.into(),
-            interlace: value.interlace.into(),
+            interlace: value.interlace.map(|x| x.into()),
             optimize_alpha: value.optimize_alpha,
             bit_depth_reduction: value.bit_depth_reduction,
             color_type_reduction: value.color_type_reduction,
@@ -147,7 +199,41 @@ impl From<OxiPngOptions> for export::OxiPngOptions {
             strip: value.strip.into(),
             deflate: value.deflate.into(),
             fast_evaluation: value.fast_evaluation,
-            timeout: value.timeout.map(|x| x.into()),
+            timeout: Some(Duration::from_millis(timeout)),
+        }
+    }
+}
+
+impl From<Object> for OxiPngOptions {
+    fn from(value: Object) -> Self {
+        Self {
+            fix_errors: value.get_named_property::<bool>("fixErrors").unwrap(),
+            force: value.get_named_property::<bool>("force").unwrap(),
+            filter: value.get_named_property::<RowFilter>("filter").unwrap(),
+            interlace: value
+                .get_named_property::<Option<Interlacing>>("interlace")
+                .unwrap(),
+            optimize_alpha: value.get_named_property::<bool>("optimizeAlpha").unwrap(),
+            bit_depth_reduction: value
+                .get_named_property::<bool>("bitDepthReduction")
+                .unwrap(),
+            color_type_reduction: value
+                .get_named_property::<bool>("colorTypeReduction")
+                .unwrap(),
+            palette_reduction: value
+                .get_named_property::<bool>("paletteReduction")
+                .unwrap(),
+            grayscale_reduction: value
+                .get_named_property::<bool>("grayscaleReduction")
+                .unwrap(),
+            idat_recoding: value.get_named_property::<bool>("idatRecoding").unwrap(),
+            scale_16: value.get_named_property::<bool>("scale16").unwrap(),
+            strip: value.get_named_property::<StripChunks>("strip").unwrap(),
+            deflate: value.get_named_property::<Deflaters>("deflate").unwrap(),
+            fast_evaluation: value.get_named_property::<bool>("fastEvaluation").unwrap(),
+            timeout: value
+                .get_named_property::<Option<BigInt>>("timeout")
+                .unwrap(),
         }
     }
 }

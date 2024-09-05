@@ -1,4 +1,5 @@
-use image_compress::export::{self, AvifOptions, WebPOptions};
+use image_compress::export::{self, AvifOptions, ImageQuantOptions, MozJpegOptions, WebPOptions};
+use std::any::Any;
 use std::fs;
 use utils::file::mime::get_mime_for_memory;
 
@@ -49,19 +50,20 @@ fn compress(
     //     "不支持的类型".to_string(),
     // )),
 
-    let options: Box<dyn OptionsTrait> = match ext {
-        SupportedFileTypes::Jpeg => Box::new(MozJpegOptions::default()),
-        SupportedFileTypes::Png => Box::new(ImageQuantOptions::default()),
-        SupportedFileTypes::WebP => Box::new(WebPOptions::default()),
-        SupportedFileTypes::Avif => Box::new(AvifOptions::default()),
-        SupportedFileTypes::Unknown => Err(Error::new(
-            Status::GenericFailure,
-            "不支持的类型".to_string(),
-        )),
-    };
+    // let options: Box<dyn OptionsTrait> = match ext {
+    //     SupportedFileTypes::Jpeg => Ok(Box::new(MozJpegOptions::default())),
+    //     SupportedFileTypes::Png => Ok(Box::new(ImageQuantOptions::default())),
+    //     SupportedFileTypes::WebP => Ok(Box::new(WebPOptions::default())),
+    //     SupportedFileTypes::Avif => Ok(Box::new(AvifOptions::default())),
+    //     SupportedFileTypes::Unknown => {
+    //         Error::new(Status::GenericFailure, "不支持的类型".to_string())
+    //     }
+    // }?;
 
-    let mut info = ImageCompress::new(buffer).with_options(export::OxiPngOptions::from(options));
-    info.compress();
+    let base_info = ImageCompress::new().with_buffer(buffer);
+    let mut info = base_info.with_options(ImageQuantOptions::default());
+    info.compress()
+        .map_err(|e| Error::new(Status::GenericFailure, format!("compress 失败:, {}", e)))?;
 
     let ImageCompress {
         ext,

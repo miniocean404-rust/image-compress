@@ -1,5 +1,7 @@
 pub use oxipng::{Deflaters, IndexSet, Interlacing, RowFilter, StripChunks};
 
+use crate::codecs::OptionsTrait;
+
 /// [`oxipng::Options`] 别名
 /// fix_errors: bool:               尝试在解码输入文件时修复错误，而不是返回 `Err`。默认值: `false`
 /// force: bool:                    即使压缩没有改进，也写入输出。默认值: `false`
@@ -17,3 +19,9 @@ pub use oxipng::{Deflaters, IndexSet, Interlacing, RowFilter, StripChunks};
 /// fast_evaluation: bool:          是否使用快速评估来选择最佳过滤器。默认值: `true`
 /// timeout: Option<Duration>:      优化的最大时间。如果超时，将跳过进一步的潜在优化。
 pub type OxiPngOptions = oxipng::Options;
+
+impl OptionsTrait for OxiPngOptions {
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
+}

@@ -1,5 +1,3 @@
-use crate::codecs::OptionsTrait;
-
 pub type MozJpegColorSpace = mozjpeg::ColorSpace;
 
 #[derive(Debug, Clone, Copy)]
@@ -33,12 +31,6 @@ pub struct MozJpegOptions {
     pub chroma: bool,
 
     pub qtable: Option<QtableOptimize>,
-}
-
-impl OptionsTrait for MozJpegOptions {
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
-    }
 }
 
 impl Default for MozJpegOptions {

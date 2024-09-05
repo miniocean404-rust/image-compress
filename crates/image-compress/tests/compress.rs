@@ -1,5 +1,5 @@
 use image_compress::{
-    compress::ImageCompress,
+    compress::{ImageCompress, Options},
     export::{AvifOptions, ImageQuantOptions, MozJpegOptions, OxiPngOptions, WebPOptions},
 };
 use std::fs;
@@ -10,7 +10,7 @@ fn oxipng_compress() -> anyhow::Result<()> {
 
     let mut ins = ImageCompress::new()
         .with_buffer(byte_vec)
-        .with_options(OxiPngOptions::default());
+        .with_options(Options::OxiPng(OxiPngOptions::default()));
     let _ = ins.compress()?;
 
     Ok(())
@@ -22,7 +22,7 @@ fn image_quant_compress() -> anyhow::Result<()> {
 
     let mut ins = ImageCompress::new()
         .with_buffer(byte_vec)
-        .with_options(ImageQuantOptions::default());
+        .with_options(Options::ImageQuant(ImageQuantOptions::default()));
     let _ = ins.compress()?;
 
     println!("{:#?}", ins);
@@ -36,7 +36,7 @@ fn mozjpeg_compress() -> anyhow::Result<()> {
 
     let mut ins = ImageCompress::new()
         .with_buffer(byte_vec)
-        .with_options(MozJpegOptions::default());
+        .with_options(Options::MozJpeg(MozJpegOptions::default()));
     let _ = ins.compress()?;
 
     Ok(())
@@ -48,7 +48,7 @@ fn webp_compress() -> anyhow::Result<()> {
 
     let mut ins = ImageCompress::new()
         .with_buffer(byte_vec)
-        .with_options(WebPOptions::default());
+        .with_options(Options::WebP(WebPOptions::default()));
     let _ = ins.compress()?;
 
     println!("{:#?}", ins);
@@ -62,7 +62,7 @@ fn avif_compress() -> anyhow::Result<()> {
 
     let mut ins = ImageCompress::new()
         .with_buffer(byte_vec)
-        .with_options(AvifOptions::default());
+        .with_options(Options::Avif(AvifOptions::default()));
     let _ = ins.compress()?;
 
     println!("{:#?}", ins);

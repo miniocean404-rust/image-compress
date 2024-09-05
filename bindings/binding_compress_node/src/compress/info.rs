@@ -1,14 +1,16 @@
-use image_compress::export::{self, AvifOptions, ImageQuantOptions, MozJpegOptions, WebPOptions};
-use std::any::Any;
+use image_compress::export::{self};
 use std::fs;
-use utils::file::mime::get_mime_for_memory;
 
-use image_compress::compress::{ImageCompress, OptionsTrait};
+use image_compress::compress::{ImageCompress, Options};
 use image_compress::support::SupportedFileTypes;
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 
 use super::kind::Kind;
+use super::options::mozjpeg::NapiMozJpegOptions;
+use super::options::oxipng::NapiOxiPngOptions;
+use super::options::ravif::NapiAvifOptions;
+use super::options::webp::NapiWebPOptions;
 
 #[napi(object)]
 pub struct CompressInfo {
@@ -36,32 +38,38 @@ fn compress(
     crate::log::init_default_trace_subscriber();
 
     let buffer = fs::read(file)?;
-    let ext_str = get_mime_for_memory(&buffer);
-    let ext = SupportedFileTypes::from(get_mime_for_memory(&buffer));
-
-    //     let options: super::options::oxipng::OxiPngOptions = options.into();
-    //     let mut info =
-    //         ImageCompress::new(buffer).with_options(export::OxiPngOptions::from(options));
-    //     info.compress()
-    //         .map_err(|e| Error::new(Status::GenericFailure, format!("compress 失败:, {}", e)))?;
-
-    // _ => Err(Error::new(
-    //     Status::GenericFailure,
-    //     "不支持的类型".to_string(),
-    // )),
-
-    // let options: Box<dyn OptionsTrait> = match ext {
-    //     SupportedFileTypes::Jpeg => Ok(Box::new(MozJpegOptions::default())),
-    //     SupportedFileTypes::Png => Ok(Box::new(ImageQuantOptions::default())),
-    //     SupportedFileTypes::WebP => Ok(Box::new(WebPOptions::default())),
-    //     SupportedFileTypes::Avif => Ok(Box::new(AvifOptions::default())),
-    //     SupportedFileTypes::Unknown => {
-    //         Error::new(Status::GenericFailure, "不支持的类型".to_string())
-    //     }
-    // }?;
 
     let base_info = ImageCompress::new().with_buffer(buffer);
-    let mut info = base_info.with_options(ImageQuantOptions::default());
+
+    let mut info = match base_info.ext {
+        SupportedFileTypes::Jpeg => {
+            let js_options = NapiMozJpegOptions::from(options);
+            let options = export::MozJpegOptions::from(js_options);
+            base_info.with_options(Options::MozJpeg(options))
+        }
+        SupportedFileTypes::Png => {
+            let js_options = NapiOxiPngOptions::from(options);
+            let options = export::OxiPngOptions::from(js_options);
+            base_info.with_options(Options::OxiPng(options))
+        }
+        SupportedFileTypes::WebP => {
+            let js_options = NapiWebPOptions::from(options);
+            let options = export::WebPOptions::from(js_options);
+            base_info.with_options(Options::WebP(options))
+        }
+        SupportedFileTypes::Avif => {
+            let js_options = NapiAvifOptions::from(options);
+            let options = export::AvifOptions::from(js_options);
+            base_info.with_options(Options::Avif(options))
+        }
+        SupportedFileTypes::Unknown => {
+            return Err(Error::new(
+                Status::GenericFailure,
+                "不支持的类型".to_string(),
+            ))
+        }
+    };
+
     info.compress()
         .map_err(|e| Error::new(Status::GenericFailure, format!("compress 失败:, {}", e)))?;
 

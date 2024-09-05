@@ -3,8 +3,8 @@ use napi::bindgen_prelude::Object;
 use napi_derive::napi;
 
 #[allow(non_snake_case)]
-#[napi(object)]
-pub struct WebPOptions {
+#[napi(object, js_name = "WebPOptions")]
+pub struct NapiWebPOptions {
     pub lossless: i32,
     pub quality: f64,
     pub method: i32,
@@ -36,7 +36,7 @@ pub struct WebPOptions {
     pub qmax: i32,
 }
 
-impl From<Object> for WebPOptions {
+impl From<Object> for NapiWebPOptions {
     fn from(value: Object) -> Self {
         Self {
             lossless: value.get_named_property::<i32>("lossless").unwrap(),
@@ -74,8 +74,8 @@ impl From<Object> for WebPOptions {
     }
 }
 
-impl From<WebPOptions> for export::WebPOptions {
-    fn from(value: WebPOptions) -> Self {
+impl From<NapiWebPOptions> for export::WebPOptions {
+    fn from(value: NapiWebPOptions) -> Self {
         export::WebPOptions {
             lossless: value.lossless,
             quality: value.quality as f32,

@@ -1,5 +1,3 @@
-use crate::codecs::OptionsTrait;
-
 #[derive(Debug, Clone, Copy)]
 pub struct ImageQuantOptions {
     // imagequant 默认最小值 0
@@ -29,12 +27,6 @@ pub struct ImageQuantOptions {
     // 这对于PNG来说效率较低，但某些有缺陷的软件却需要这样做
     // true 会增大大小
     pub last_index_transparent: bool,
-}
-
-impl OptionsTrait for ImageQuantOptions {
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
-    }
 }
 
 impl Default for ImageQuantOptions {

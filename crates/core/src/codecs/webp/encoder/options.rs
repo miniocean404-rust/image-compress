@@ -1,4 +1,3 @@
-use crate::codecs::OptionsTrait;
 pub use libwebp_sys::WebPImageHint;
 
 #[derive(Debug, Clone, Copy)]
@@ -33,12 +32,6 @@ pub struct WebPOptions {
     pub use_sharp_yuv: i32,
     pub qmin: i32,
     pub qmax: i32,
-}
-
-impl OptionsTrait for WebPOptions {
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
-    }
 }
 
 impl Default for WebPOptions {

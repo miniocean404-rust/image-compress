@@ -364,6 +364,7 @@ if (!nativeBinding) {
 module.exports.AlphaColorMode = nativeBinding.AlphaColorMode
 module.exports.ColorSpace = nativeBinding.ColorSpace
 module.exports.ColorSpace = nativeBinding.ColorSpace
+module.exports.compress = nativeBinding.compress
 module.exports.initCustomTraceSubscriber = nativeBinding.initCustomTraceSubscriber
 module.exports.Interlacing = nativeBinding.Interlacing
 module.exports.Kind = nativeBinding.Kind

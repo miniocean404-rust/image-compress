@@ -1,23 +1,18 @@
-pub use image_compress_core::codecs::OptionsTrait;
-
-use std::{
-    any::Any,
-    fmt::{self},
-    sync::Arc,
-};
+use std::fmt::{self};
 
 use anyhow::anyhow;
 use image_compress_core::codecs::{
     avif::encoder::ravif::AvifEncoder,
     jpeg::encoder::mozjpeg::MozJpegEncoder,
     png::encoder::{imagequant::ImageQuantEncoder, oxipng::OxiPngEncoder},
-    webp::{self},
+    webp::encoder::webp::WebPEncoder,
 };
 use utils::file::mime::get_mime_for_memory;
 
 use crate::export::*;
 use crate::{state::CompressState, support::SupportedFileTypes};
 
+#[derive(Debug, Clone)]
 pub enum Options {
     MozJpeg(MozJpegOptions),
     OxiPng(OxiPngOptions),
@@ -27,10 +22,7 @@ pub enum Options {
     Unknown,
 }
 
-pub struct ImageCompress<O>
-where
-    O: OptionsTrait,
-{
+pub struct ImageCompress {
     pub image: Vec<u8>,
 
     pub compressed_image: Vec<u8>,
@@ -47,16 +39,16 @@ where
 
     pub rate: f64,
 
-    options: Option<Arc<O>>,
+    options: Options,
 }
 
-impl<O: OptionsTrait> Default for ImageCompress<O> {
+impl Default for ImageCompress {
     fn default() -> Self {
         Self {
             image: vec![],
             before_size: 0,
             ext: SupportedFileTypes::Unknown,
-            options: None,
+            options: Options::Unknown,
             compressed_image: vec![],
             state: CompressState::Ready,
             quality: 0,
@@ -66,7 +58,7 @@ impl<O: OptionsTrait> Default for ImageCompress<O> {
     }
 }
 
-impl<O: OptionsTrait> ImageCompress<O> {
+impl ImageCompress {
     pub fn new() -> Self {
         Self::default()
     }
@@ -83,59 +75,30 @@ impl<O: OptionsTrait> ImageCompress<O> {
         }
     }
 
-    pub fn with_options(self, options: O) -> Self {
-        Self {
-            options: Some(Arc::new(options)),
-            ..self
-        }
+    pub fn with_options(self, options: Options) -> Self {
+        Self { options, ..self }
     }
 
-    pub fn compress(&mut self) -> anyhow::Result<&Vec<u8>> {
+    pub fn compress(&mut self) -> anyhow::Result<Vec<u8>> {
         self.state = CompressState::Compressing;
-        let option_arc = self
-            .options
-            .clone()
-            .ok_or(anyhow!("没有赋值 options"))?
-            .clone();
 
-        let options = option_arc as Arc<dyn Any>;
-
-        self.compressed_image = match self.ext {
-            SupportedFileTypes::Jpeg => {
-                let options = options
-                    .downcast_ref::<MozJpegOptions>()
-                    .ok_or(anyhow!("Any downcast 转换错误"))?;
-
-                MozJpegEncoder::new_with_options(*options).encode_mem(&self.image)
+        self.compressed_image = match self.options.clone() {
+            Options::MozJpeg(options) => {
+                MozJpegEncoder::new_with_options(options).encode_mem(&self.image)
             }
-            SupportedFileTypes::Png => {
-                if options.is::<Arc<OxiPngOptions>>() {
-                    let options = options
-                        .downcast_ref::<OxiPngOptions>()
-                        .ok_or(anyhow!("Any downcast 转换错误"))?;
-
-                    OxiPngEncoder::new_with_options((*options).clone()).encode_mem(&self.image)
-                } else {
-                    let options = options
-                        .downcast_ref::<ImageQuantOptions>()
-                        .ok_or(anyhow!("Any downcast 转换错误"))?;
-
-                    ImageQuantEncoder::new_with_options(*options).encode_mem(&self.image)
-                }
+            Options::OxiPng(options) => {
+                OxiPngEncoder::new_with_options((options).clone()).encode_mem(&self.image)
             }
-            SupportedFileTypes::WebP => {
-                let options = options
-                    .downcast_ref::<WebPOptions>()
-                    .ok_or(anyhow!("Any downcast 转换错误"))?;
-                webp::encoder::webp::WebPEncoder::new_with_options(*options).encode_mem(&self.image)
+            Options::ImageQuant(options) => {
+                ImageQuantEncoder::new_with_options(options).encode_mem(&self.image)
             }
-            SupportedFileTypes::Avif => {
-                let options = options
-                    .downcast_ref::<AvifOptions>()
-                    .ok_or(anyhow!("Any downcast 转换错误"))?;
-                AvifEncoder::new_with_options(*options).encode_mem(&self.image)
+            Options::WebP(options) => {
+                WebPEncoder::new_with_options(options).encode_mem(&self.image)
             }
-            SupportedFileTypes::Unknown => Err(anyhow!("不能压缩的类型")),
+            Options::Avif(options) => {
+                AvifEncoder::new_with_options(options).encode_mem(&self.image)
+            }
+            Options::Unknown => Err(anyhow!("没有设置 options 或 不能压缩的类型")),
         }?;
 
         self.after_size = self.compressed_image.len();
@@ -148,23 +111,17 @@ impl<O: OptionsTrait> ImageCompress<O> {
 
         self.state = CompressState::Done;
 
-        Ok(&self.compressed_image)
+        Ok(self.compressed_image.clone().to_vec())
     }
 }
 
-impl<O> fmt::Display for ImageCompress<O>
-where
-    O: OptionsTrait,
-{
+impl fmt::Display for ImageCompress {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{:#?}", self)
     }
 }
 
-impl<O> fmt::Debug for ImageCompress<O>
-where
-    O: OptionsTrait,
-{
+impl fmt::Debug for ImageCompress {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("ImageCompress")
             .field("ext", &self.ext)

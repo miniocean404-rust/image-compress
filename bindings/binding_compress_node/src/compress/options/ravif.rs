@@ -2,8 +2,8 @@ use image_compress::export;
 use napi::bindgen_prelude::Object;
 use napi_derive::napi;
 
-#[napi(object)]
-pub struct AvifOptions {
+#[napi(object, js_name = "AvifOptions")]
+pub struct NapiAvifOptions {
     /// 质量 `1..=100`
     pub quality: f64,
 
@@ -25,8 +25,8 @@ pub struct AvifOptions {
     pub alpha_color_mode: AlphaColorMode,
 }
 
-impl From<AvifOptions> for export::AvifOptions {
-    fn from(value: AvifOptions) -> Self {
+impl From<NapiAvifOptions> for export::AvifOptions {
+    fn from(value: NapiAvifOptions) -> Self {
         export::AvifOptions {
             quality: value.quality as f32,
             alpha_quality: value.alpha_quality.map(|e| e as f32),
@@ -44,7 +44,7 @@ impl From<AvifOptions> for export::AvifOptions {
     }
 }
 
-impl From<Object> for AvifOptions {
+impl From<Object> for NapiAvifOptions {
     fn from(value: Object) -> Self {
         Self {
             quality: value.get_named_property::<f64>("quality").unwrap(),

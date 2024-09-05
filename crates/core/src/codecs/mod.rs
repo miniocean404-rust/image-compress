@@ -1,5 +1,3 @@
-use std::{any::Any, fmt::Debug};
-
 #[cfg(feature = "avif")]
 pub mod avif;
 
@@ -19,7 +17,3 @@ pub mod tiff;
 // # 暂未实现
 #[cfg(feature = "gif")]
 pub mod gif;
-
-pub trait OptionsTrait: Any + Debug {
-    fn as_any(&self) -> &dyn Any;
-}

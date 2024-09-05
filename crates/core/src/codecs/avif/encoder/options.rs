@@ -1,4 +1,3 @@
-use crate::codecs::OptionsTrait;
 pub use ravif::AlphaColorMode;
 
 pub type AvifColorSpace = ravif::ColorSpace;
@@ -25,10 +24,4 @@ pub struct AvifOptions {
 
     /// 配置透明图像中颜色通道的处理
     pub alpha_color_mode: AlphaColorMode,
-}
-
-impl OptionsTrait for AvifOptions {
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
-    }
 }

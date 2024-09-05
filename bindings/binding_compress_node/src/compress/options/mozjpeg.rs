@@ -2,8 +2,8 @@ use image_compress::export;
 use napi::bindgen_prelude::Object;
 use napi_derive::napi;
 
-#[napi(object)]
-pub struct MozJpegOptions {
+#[napi(object, js_name = "MozJpegOptions")]
+pub struct NapiMozJpegOptions {
     /// 质量, 推荐 60-80. 范围：`1..=100`
     pub quality: f64,
 
@@ -34,7 +34,7 @@ pub struct MozJpegOptions {
     pub qtable: Option<QtableOptimize>,
 }
 
-impl From<Object> for MozJpegOptions {
+impl From<Object> for NapiMozJpegOptions {
     fn from(value: Object) -> Self {
         Self {
             quality: value.get_named_property::<f64>("quality").unwrap(),
@@ -59,8 +59,8 @@ impl From<Object> for MozJpegOptions {
     }
 }
 
-impl From<MozJpegOptions> for export::MozJpegOptions {
-    fn from(value: MozJpegOptions) -> Self {
+impl From<NapiMozJpegOptions> for export::MozJpegOptions {
+    fn from(value: NapiMozJpegOptions) -> Self {
         export::MozJpegOptions {
             quality: value.quality as f32,
             progressive: value.progressive,

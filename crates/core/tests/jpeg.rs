@@ -1,3 +1,4 @@
+#![cfg(feature = "jpeg")]
 #![allow(unused_imports)]
 mod utils;
 

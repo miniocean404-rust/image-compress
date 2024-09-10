@@ -1,3 +1,5 @@
+#![cfg(feature = "avif")]
+
 use std::{
     fs::{self},
     io::Cursor,

@@ -7,7 +7,7 @@ use zune_image::{
     traits::OperationsTrait,
 };
 
-/// 减少图像调色板
+/// 减少图像调色板, 可对任意图片进行操作，但必须是 RGBA 格式
 pub struct Quantize {
     quality: u8,
     dithering: Option<f32>,

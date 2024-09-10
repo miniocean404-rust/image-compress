@@ -1,6 +1,4 @@
-use fast_image_resize::{
-    self as fr, images, IntoImageView, IntoImageViewMut, PixelTrait, ResizeOptions,
-};
+use fast_image_resize::{self as fr, ResizeOptions};
 pub use fast_image_resize::{FilterType, ResizeAlg};
 use zune_core::bit_depth::BitType;
 use zune_image::{

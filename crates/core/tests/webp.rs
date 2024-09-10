@@ -1,3 +1,4 @@
+#![cfg(feature = "webp")]
 #![allow(unused_imports)]
 mod utils;
 

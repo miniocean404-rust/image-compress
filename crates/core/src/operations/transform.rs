@@ -1,5 +1,3 @@
-use std::{fs, path::Path};
-
 use anyhow::anyhow;
 use image::DynamicImage;
 use webp::Encoder;
@@ -18,7 +16,8 @@ impl ImageFormatTransformm {
 
     /// 将' DynamicImage '编码为webp格式的字节
     pub fn encode2webp(&self, image: &DynamicImage) -> Result<Vec<u8>, String> {
-        let encoder = Encoder::from_image(image).map_err(|e| format!("失败的创建 WebP 编码器: {}", e))?;
+        let encoder =
+            Encoder::from_image(image).map_err(|e| format!("失败的创建 WebP 编码器: {}", e))?;
         let webp_data = encoder.encode(100.0);
         Ok(webp_data.to_vec())
     }

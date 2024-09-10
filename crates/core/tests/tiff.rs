@@ -1,3 +1,4 @@
+#![cfg(feature = "tiff")]
 #![allow(unused_imports)]
 mod utils;
 use utils::mock::*;

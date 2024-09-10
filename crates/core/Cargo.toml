@@ -11,7 +11,7 @@ wasm = ["mem", "png"]
 native = ["jpeg", "webp", "gif", "tiff", "avif"]
 
 operations = ["transform", "resize", "icc", "quantize"]
-transform = []
+transform = ["dep:webp"]
 resize = ["dep:fast_image_resize"]
 icc = []
 quantize = []

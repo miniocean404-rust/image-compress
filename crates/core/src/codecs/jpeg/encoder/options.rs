@@ -63,3 +63,6 @@ pub enum QtableOptimize {
     PetersonAhumadaWatson,
     WatsonTaylorBorthwick,
 }
+
+// Jxl encoder
+pub type JxlOptions = zune_core::options::EncoderOptions;

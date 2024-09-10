@@ -1,10 +1,12 @@
 use std::fmt::{self};
 
 use anyhow::anyhow;
+use image_compress_core::codecs::png::encoder::{
+    imagequant::ImageQuantEncoder, oxipng::OxiPngEncoder,
+};
+#[cfg(feature = "native")]
 use image_compress_core::codecs::{
-    avif::encoder::ravif::AvifEncoder,
-    jpeg::encoder::mozjpeg::MozJpegEncoder,
-    png::encoder::{imagequant::ImageQuantEncoder, oxipng::OxiPngEncoder},
+    avif::encoder::ravif::AvifEncoder, jpeg::encoder::mozjpeg::MozJpegEncoder,
     webp::encoder::webp::WebPEncoder,
 };
 use utils::file::mime::get_mime_for_memory;
@@ -14,10 +16,13 @@ use crate::{state::CompressState, support::SupportedFileTypes};
 
 #[derive(Debug, Clone)]
 pub enum Options {
-    MozJpeg(MozJpegOptions),
     OxiPng(OxiPngOptions),
     ImageQuant(ImageQuantOptions),
+    #[cfg(feature = "native")]
+    MozJpeg(MozJpegOptions),
+    #[cfg(feature = "native")]
     WebP(WebPOptions),
+    #[cfg(feature = "native")]
     Avif(AvifOptions),
     Unknown,
 }
@@ -83,18 +88,21 @@ impl ImageCompress {
         self.state = CompressState::Compressing;
 
         self.compressed_image = match self.options.clone() {
-            Options::MozJpeg(options) => {
-                MozJpegEncoder::new_with_options(options).encode_mem(&self.image)
-            }
             Options::OxiPng(options) => {
                 OxiPngEncoder::new_with_options((options).clone()).encode_mem(&self.image)
             }
             Options::ImageQuant(options) => {
                 ImageQuantEncoder::new_with_options(options).encode_mem(&self.image)
             }
+            #[cfg(feature = "native")]
+            Options::MozJpeg(options) => {
+                MozJpegEncoder::new_with_options(options).encode_mem(&self.image)
+            }
+            #[cfg(feature = "native")]
             Options::WebP(options) => {
                 WebPEncoder::new_with_options(options).encode_mem(&self.image)
             }
+            #[cfg(feature = "native")]
             Options::Avif(options) => {
                 AvifEncoder::new_with_options(options).encode_mem(&self.image)
             }

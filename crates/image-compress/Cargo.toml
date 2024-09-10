@@ -4,8 +4,14 @@ version.workspace = true
 edition.workspace = true
 repository.workspace = true
 
+[features]
+default = ['wasm']
+native = []
+wasm = []
+
+
 [dependencies]
-image_compress_core = { workspace = true }
+image_compress_core = { workspace = true, features = ["native"] }
 utils = { workspace = true, features = ["file"] }
 
 tokio.workspace = true

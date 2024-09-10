@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["wasm", "native"]
+default = ["wasm"]
 wasm = ["mem", "png"]
 native = ["jpeg", "webp", "gif", "tiff", "avif"]
 transform = []

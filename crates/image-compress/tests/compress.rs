@@ -1,7 +1,11 @@
 use image_compress::{
     compress::{ImageCompress, Options},
-    export::{AvifOptions, ImageQuantOptions, MozJpegOptions, OxiPngOptions, WebPOptions},
+    export::{ImageQuantOptions, OxiPngOptions},
 };
+
+#[cfg(feature = "native")]
+use image_compress::export::{AvifOptions, MozJpegOptions, WebPOptions};
+
 use std::fs;
 
 #[test]
@@ -31,6 +35,7 @@ fn image_quant_compress() -> anyhow::Result<()> {
 }
 
 #[test]
+#[cfg(feature = "native")]
 fn mozjpeg_compress() -> anyhow::Result<()> {
     let byte_vec = fs::read("../../assets/image/jpeg/eye.jpg")?;
 
@@ -43,6 +48,7 @@ fn mozjpeg_compress() -> anyhow::Result<()> {
 }
 
 #[test]
+#[cfg(feature = "native")]
 fn webp_compress() -> anyhow::Result<()> {
     let byte_vec = fs::read("../../assets/image/webp/time-icon.webp")?;
 
@@ -57,6 +63,7 @@ fn webp_compress() -> anyhow::Result<()> {
 }
 
 #[test]
+#[cfg(feature = "native")]
 fn avif_compress() -> anyhow::Result<()> {
     let byte_vec = fs::read("../../assets/image/avif/f1t.avif")?;
 

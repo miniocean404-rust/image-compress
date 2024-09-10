@@ -4,12 +4,17 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["wasm"]
+default = ["wasm", "operations"]
+
+mem = []
 wasm = ["mem", "png"]
 native = ["jpeg", "webp", "gif", "tiff", "avif"]
+
+operations = ["transform", "resize", "icc", "quantize"]
 transform = []
-metadata = []
-mem = []
+resize = ["dep:fast_image_resize"]
+icc = []
+quantize = []
 
 png = ["dep:oxipng", "dep:imagequant", "dep:lodepng", "dep:png"]
 webp = ["dep:webp"]
@@ -17,6 +22,10 @@ jpeg = ["dep:mozjpeg", "dep:mozjpeg-sys"]
 gif = ["dep:gifsicle", "dep:gif"]
 avif = ["dep:libavif", "dep:ravif"]
 tiff = ["dep:tiff"]
+
+
+metadata = []
+
 
 [dependencies]
 # utils = { path = "../utils" }
@@ -45,6 +54,11 @@ zune-image = { version = "0.5.0-rc0", default-features = true }
 
 rgb = "0.8.48"
 resize = "0.8.5"
+
+# 使用 SIMD 指令快速调整图像大小的库
+fast_image_resize = { version = "4.2.1", features = ["image"], optional = true }
+# ICC 颜色配置文件处理。 rust 包装 little cms
+lcms2 = "6.1.0"
 
 # PNG
 oxipng = { version = "9.1.2", default-features = false, features = [

@@ -1,4 +1,2 @@
 pub mod codecs;
-
-#[cfg(feature = "transform")]
-pub mod transform;
+pub mod operations;

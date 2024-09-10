@@ -1,24 +1,19 @@
-use anyhow::anyhow;
-use image::DynamicImage;
-use webp::Encoder;
+use image::ImageFormat;
+use std::io::Cursor;
 
-pub struct ImageFormatTransformm {}
+pub struct ImageFormatTransform {}
 
-impl ImageFormatTransformm {
-    pub fn transform(&self, buffer: &[u8]) -> anyhow::Result<Vec<u8>> {
-        // 打开并解码图像
-        // let image_buffer = ImageReader::open(input_path).map_err(|e| format!("失败的打开图片: {}", e))?;
-        // let image = image_buffer.decode().map_err(|e| format!("失败的解码图片: {}\n", e))?;
+impl ImageFormatTransform {
+    // 打开并解码图像
+    // let image_buffer = ImageReader::open(input_path).map_err(|e| format!("失败的打开图片: {}", e))?;
+    // let image = image_buffer.decode().map_err(|e| format!("失败的解码图片: {}\n", e))?;
 
+    pub fn transform(&self, buffer: &[u8], format: ImageFormat) -> anyhow::Result<Vec<u8>> {
         let image = image::load_from_memory(buffer)?;
-        self.encode2webp(&image).map_err(|e| anyhow!(e.to_string()))
-    }
 
-    /// 将' DynamicImage '编码为webp格式的字节
-    pub fn encode2webp(&self, image: &DynamicImage) -> Result<Vec<u8>, String> {
-        let encoder =
-            Encoder::from_image(image).map_err(|e| format!("失败的创建 WebP 编码器: {}", e))?;
-        let webp_data = encoder.encode(100.0);
-        Ok(webp_data.to_vec())
+        let mut bytes: Cursor<Vec<u8>> = Cursor::new(vec![]);
+        image.write_to(&mut bytes, format)?;
+
+        Ok(bytes.into_inner())
     }
 }

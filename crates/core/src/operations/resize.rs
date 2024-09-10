@@ -1,4 +1,6 @@
-use fast_image_resize::{self as fr, IntoImageView, IntoImageViewMut, ResizeOptions};
+use fast_image_resize::{
+    self as fr, images, IntoImageView, IntoImageViewMut, PixelTrait, ResizeOptions,
+};
 pub use fast_image_resize::{FilterType, ResizeAlg};
 use zune_core::bit_depth::BitType;
 use zune_image::{
@@ -79,26 +81,12 @@ impl OperationsTrait for Resize {
                         src_image.pixel_type(),
                     );
 
-                    let src_view =
-                        src_image
-                            .image_view()
-                            .ok_or(ImageOperationsErrors::GenericString(
-                                "获取 dst image view 失败".to_string(),
-                            ))?;
-
-                    let mut dst_view =
-                        dst_image
-                            .image_view_mut()
-                            .ok_or(ImageOperationsErrors::GenericString(
-                                "获取 dst image view 失败".to_string(),
-                            ))?;
-
                     let mut resizer = fr::Resizer::new();
                     let options = ResizeOptions::new();
                     options.resize_alg(self.algorithm);
 
                     resizer
-                        .resize(&src_view.into(), &mut dst_view.into(), &options)
+                        .resize(&src_image, &mut dst_image, &options)
                         .map_err(|e| ImageOperationsErrors::GenericString(e.to_string()))?;
 
                     unsafe {
@@ -121,9 +109,9 @@ impl OperationsTrait for Resize {
         for old_channel in image.channels_mut(false) {
             let mut new_channel = Channel::new_with_bit_type(new_length, depth);
 
-            let src_image = fr::Image::from_slice_u8(
-                width,
-                height,
+            let src_image = fr::images::Image::from_slice_u8(
+                src_width as u32,
+                src_height as u32,
                 unsafe { old_channel.alias_mut() },
                 match depth {
                     BitType::U8 => fr::PixelType::U8,
@@ -135,14 +123,15 @@ impl OperationsTrait for Resize {
             )
             .map_err(|e| ImageOperationsErrors::GenericString(e.to_string()))?;
 
-            let mut dst_image = fr::Image::new(dst_width, dst_height, src_image.pixel_type());
+            let mut dst_image =
+                fr::images::Image::new(dst_width as u32, dst_height as u32, src_image.pixel_type());
 
-            let mut dst_view = dst_image.view_mut();
-
-            let mut resizer = fr::Resizer::new(self.algorithm);
+            let mut resizer = fr::Resizer::new();
+            let options = ResizeOptions::new();
+            options.resize_alg(self.algorithm);
 
             resizer
-                .resize(&src_image.view(), &mut dst_view)
+                .resize(&src_image, &mut dst_image, &options)
                 .map_err(|e| ImageOperationsErrors::GenericString(e.to_string()))?;
 
             unsafe {

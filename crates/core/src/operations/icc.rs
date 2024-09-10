@@ -13,10 +13,10 @@ pub struct ApplyICC {
 }
 
 impl ApplyICC {
-    /// Create a new icc apply operation
+    /// 创建一个新的 icc 应用操作
     ///
-    /// # Arguments
-    /// - profile: ICC profile
+    /// # 参数
+    /// - profile: ICC 配置
     #[must_use]
     pub fn new(profile: Profile<ThreadContext>) -> Self {
         Self { profile }

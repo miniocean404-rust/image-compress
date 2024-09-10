@@ -1,5 +1,3 @@
-use std::num::NonZeroU32;
-
 use fast_image_resize::{self as fr, IntoImageView, IntoImageViewMut, ResizeOptions};
 pub use fast_image_resize::{FilterType, ResizeAlg};
 use zune_core::bit_depth::BitType;

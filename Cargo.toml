@@ -49,42 +49,42 @@ image_compress = { path = "./crates/image-compress" }
 utils = { path = "./crates/utils" }
 
 # CLI
-clap = { version = "4.5.17" }
-indoc = { version = "2.0.5" }
+clap = { version = "4.5.54" }
+indoc = { version = "2.0.7" }
 
 # 异步运行时
 tokio = { version = "1.49.0", features = ["full"] }
 
 # 序列化
-serde = { version = "1.0.210", features = ["derive"] }
-serde_json = "1.0.128"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.148"
 
 # 时间处理
-chrono = "0.4.31"
+chrono = "0.4.42"
 
 # 错误处理
-anyhow = "1.0.87"
-thiserror = "1.0.50"
+anyhow = "1.0.100"
+thiserror = "2.0.17"
 
 # 文件类型推断
 infer = "0.19.0"
 
 # 文件系统
-globset = "0.4.15"
+globset = "0.4.18"
 walkdir = "2.5.0"
 
 # 系统信息
-num_cpus = "1.16.0"
+num_cpus = "1.17.0"
 
 # URL 编码
 urlencoding = "2.1.3"
 
 # Cargo 元数据
-cargo_metadata = "0.18.1"
+cargo_metadata = "0.23.1"
 
 # 枚举工具
-strum = "0.26.3"
-strum_macros = "0.26.4"
+strum = "0.27.2"
+strum_macros = "0.27.2"
 
 # 日志及栈追踪
 tracing = { version = "0.1.40", features = ["release_max_level_info"] }
@@ -94,7 +94,8 @@ tracing-futures = "0.2.5"
 tracing-serde = "0.2.0"
 
 # 堆栈跟踪
-backtrace = "0.3.69"
+backtrace = "0.3.76"
+
 
 # 图像处理
 image = "0.25.2"
@@ -140,7 +141,7 @@ libavif = { version = "0.14.0", default-features = false, features = ["codec-aom
 tiff = { version = "0.9.1", default-features = false }
 
 # SVG
-svgtypes = "0.15.1"
+svgtypes = "0.16.0"
 
 # macOS
 cocoa = "0.26.1"

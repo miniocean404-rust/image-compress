@@ -3,8 +3,8 @@ pub mod png;
 
 use std::path::PathBuf;
 
+use clap::Parser;
 use clap::Subcommand;
-use clap::{command, Parser};
 use indoc::indoc;
 use jpeg::JpegCodecOptions;
 

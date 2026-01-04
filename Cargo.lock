@@ -876,7 +876,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "image_compress_core",
- "infer 0.16.0",
+ "infer",
  "tokio",
  "utils",
 ]
@@ -894,7 +894,7 @@ dependencies = [
  "globset",
  "image",
  "imagequant",
- "infer 0.16.0",
+ "infer",
  "lcms2",
  "libavif",
  "libc",
@@ -957,15 +957,6 @@ name = "indoc"
 version = "2.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b248f5224d1d606005e02c97f5aa4e88eeb230488bcc03bc9ca4d7991399f2b5"
-
-[[package]]
-name = "infer"
-version = "0.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bc150e5ce2330295b8616ce0e3f53250e53af31759a9dbedad1621ba29151847"
-dependencies = [
- "cfb",
-]
 
 [[package]]
 name = "infer"
@@ -2449,7 +2440,7 @@ dependencies = [
  "backtrace",
  "chrono",
  "globset",
- "infer 0.19.0",
+ "infer",
  "tokio",
  "tracing",
  "tracing-appender",

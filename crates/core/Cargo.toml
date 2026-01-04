@@ -1,7 +1,7 @@
 [package]
 name = "image_compress_core"
-version = "0.1.0"
-edition = "2021"
+version.workspace = true
+edition.workspace = true
 
 [features]
 default = ["wasm", "operations"]
@@ -34,73 +34,75 @@ metadata = []
 #     "rt",
 # ] }
 
-
+# 序列化
 serde.workspace = true
 serde_json.workspace = true
+
+# 时间处理
 chrono.workspace = true
+
+# 错误处理
 anyhow.workspace = true
 thiserror.workspace = true
+
+# 日志
 tracing.workspace = true
 tracing-appender.workspace = true
 tracing-subscriber.workspace = true
+
+# 文件类型推断
 infer.workspace = true
+
+# 文件系统
 globset.workspace = true
 walkdir.workspace = true
+
+# 系统信息
 num_cpus.workspace = true
 
-image = { version = "=0.25.2" }
-zune-core = { version = "0.5.0-rc2" }
-zune-image = { version = "0.5.0-rc0", default-features = true }
-
-rgb = "0.8.48"
-resize = "0.8.5"
-
+# 图像处理
+image.workspace = true
+zune-core.workspace = true
+zune-image.workspace = true
+rgb.workspace = true
+resize.workspace = true
 # 使用 SIMD 指令快速调整图像大小的库
-fast_image_resize = { version = "4.2.1", features = ["image"], optional = true }
+fast_image_resize = { workspace = true, optional = true }
 # ICC 颜色配置文件处理。 rust 包装 little cms
-lcms2 = "6.1.0"
+lcms2.workspace = true
 
-# PNG
-oxipng = { version = "9.1.2", default-features = false, features = [
-    "freestanding",
-    "filetime",
-    "parallel",
-    "zopfli",
-], optional = true } # 无损压缩 png (optipng、oxipng) 编译 wasm 需要安装 clang 环境
-imagequant = { version = "4.3.1", default-features = true, optional = true } # 有损压缩 png 把 png24 压缩成 png8 的库 是 pngquant 的包装
-lodepng = { version = "3.10.4", default-features = false, features = [
-    "rust_backend",
-    "deprecated_back_compat_error_type",
-], optional = true } # wasm 需要禁止 ffi
-png = { version = "0.17.11", optional = true }
+# PNG # 无损压缩 png (optipng、oxipng) 编译 wasm 需要安装 clang 环境
+oxipng = { workspace = true, optional = true }
+# 有损压缩 png 把 png24 压缩成 png8 的库 是 pngquant 的包装
+imagequant = { workspace = true, optional = true }
+# wasm 需要禁止 ffi
+lodepng = { workspace = true, optional = true }
+png = { workspace = true, optional = true }
 
 # JPEG
-mozjpeg = { version = "0.10.9", default-features = false, features = [
-    "with_simd",
-], optional = true }
-mozjpeg-sys = { version = "2.2.1", features = ["default"], optional = true }
+mozjpeg = { workspace = true, optional = true }
+mozjpeg-sys = { workspace = true, optional = true }
 
-# Gif
-gif = { version = "0.13.1", optional = true }      # gif 编码解码器
-gifsicle = { version = "1.94.0", optional = true } # gifsicle 是读取以及 有损及无损压缩 gif 的库
-libc = "0.2.155"
+# gif 编码解码器
+gif = { workspace = true, optional = true }
+# gifsicle 是读取以及 有损及无损压缩 gif 的库
+gifsicle = { workspace = true, optional = true }
+libc.workspace = true
 
-# WEBP
-webp = { version = "0.3.0", default-features = true, optional = true } # 底层使用的是 rust libwebp-sys# webp 无损压缩及有损压缩
-libwebp-sys = "0.9.5"
+# WebP, 底层使用的是 rust libwebp-sys# webp 无损压缩及有损压缩
+webp = { workspace = true, optional = true }
+libwebp-sys.workspace = true
 
 # AVIF
-ravif = { version = "0.11.10", optional = true }
-libavif = { version = "0.14.0", default-features = false, features = [
-    "codec-aom",
-], optional = true }
+ravif = { workspace = true, optional = true }
+libavif = { workspace = true, optional = true }
 
 # TIFF
-tiff = { version = "0.9.1", default-features = false, optional = true }
+tiff = { workspace = true, optional = true }
 
-# 处理 svg
-svgtypes = "0.15.1"
+# SVG
+svgtypes.workspace = true
 
 [dev-dependencies]
-zune-core = { version = "0.5.0-rc2", features = ["std"] }
+zune-core = { workspace = true, features = ["std"] }
 cargo_metadata.workspace = true

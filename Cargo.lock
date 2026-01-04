@@ -1005,7 +1005,7 @@ dependencies = [
  "lcms2",
  "libavif",
  "libc",
- "libwebp-sys",
+ "libwebp-sys 0.14.1",
  "lodepng",
  "mozjpeg",
  "mozjpeg-sys",
@@ -1427,6 +1427,17 @@ checksum = "829b6b604f31ed6d2bccbac841fe0788de93dbd87e4eb1ba2c4adfe8c012a838"
 dependencies = [
  "cc",
  "glob",
+]
+
+[[package]]
+name = "libwebp-sys"
+version = "0.14.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "39f019895d5064a40a6d1e8859d8093c3dfdaee8d4a15fa08c80405a856658f0"
+dependencies = [
+ "cc",
+ "glob",
+ "pkg-config",
 ]
 
 [[package]]
@@ -2804,7 +2815,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c071456adef4aca59bf6a583c46b90ff5eb0b4f758fc347cea81290288f37ce1"
 dependencies = [
  "image",
- "libwebp-sys",
+ "libwebp-sys 0.9.5",
 ]
 
 [[package]]

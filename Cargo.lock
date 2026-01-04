@@ -713,16 +713,16 @@ dependencies = [
 
 [[package]]
 name = "fast_image_resize"
-version = "4.2.3"
+version = "5.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "43e5ce628b529e9bd2e2f378c1193215104b526fd494a572aa23414adc4e5553"
+checksum = "fbc7fe45cf92b43817ff62a3723e862b85bd1d06288f63007f7645d1d2f7a060"
 dependencies = [
  "bytemuck",
  "cfg-if",
  "document-features",
  "image",
  "num-traits",
- "thiserror 1.0.69",
+ "thiserror 2.0.17",
 ]
 
 [[package]]

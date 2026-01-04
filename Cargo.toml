@@ -98,13 +98,13 @@ backtrace = "0.3.76"
 
 
 # 图像处理
-image = "0.25.2"
-zune-core = "0.5.0-rc2"
+image = "0.25.9"
+zune-core = "0.5.0"
 zune-image = "0.5.0-rc0"
-rgb = "0.8.48"
-resize = "0.8.5"
-fast_image_resize = { version = "4.2.1", features = ["image"] }
-lcms2 = "6.1.0"
+rgb = "0.8.52"
+resize = "0.8.8"
+fast_image_resize = { version = "5.5.0", features = ["image"] }
+lcms2 = "6.1.1"
 
 # PNG
 oxipng = { version = "9.1.2", default-features = false, features = [

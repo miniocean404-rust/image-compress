@@ -113,21 +113,19 @@ impl From<NapiWebPOptions> for export::WebPOptions {
 #[allow(non_camel_case_types)]
 #[napi]
 pub enum WebPImageHint {
-    WEBP_HINT_DEFAULT = 0,
-    WEBP_HINT_PICTURE = 1,
-    WEBP_HINT_PHOTO = 2,
-    WEBP_HINT_GRAPH = 3,
-    WEBP_HINT_LAST = 4,
+    Default = 0,
+    Picture = 1,
+    Photo = 2,
+    Graph = 3,
 }
 
 impl From<WebPImageHint> for export::WebPImageHint {
     fn from(value: WebPImageHint) -> Self {
         match value {
-            WebPImageHint::WEBP_HINT_DEFAULT => export::WebPImageHint::WEBP_HINT_DEFAULT,
-            WebPImageHint::WEBP_HINT_PICTURE => export::WebPImageHint::WEBP_HINT_PICTURE,
-            WebPImageHint::WEBP_HINT_PHOTO => export::WebPImageHint::WEBP_HINT_PHOTO,
-            WebPImageHint::WEBP_HINT_GRAPH => export::WebPImageHint::WEBP_HINT_GRAPH,
-            WebPImageHint::WEBP_HINT_LAST => export::WebPImageHint::WEBP_HINT_LAST,
+            WebPImageHint::Default => export::WebPImageHint::Default,
+            WebPImageHint::Picture => export::WebPImageHint::Picture,
+            WebPImageHint::Photo => export::WebPImageHint::Photo,
+            WebPImageHint::Graph => export::WebPImageHint::Graph,
         }
     }
 }

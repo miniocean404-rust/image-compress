@@ -12,11 +12,11 @@ pub struct NapiOxiPngOptions {
     /// force: bool:                    即使压缩没有改进，也写入输出。默认值: `false`
     pub force: bool,
 
-    /// filter: IndexSet<RowFilter>:    尝试在文件上使用哪些 RowFilters。默认值: `None,Sub,Entropy,Bigrams`
-    pub filter: RowFilter,
+    /// filters: IndexSet<FilterStrategy>: 尝试在文件上使用哪些 FilterStrategy。默认值: `None,Sub,Entropy,Bigrams`
+    pub filters: FilterStrategy,
 
-    /// interlace: Option<Interlacing>: 是否更改文件的交错类型。`None` 将不会更改当前的交错类型。`Some(x)` 将把文件更改为交错模式 `x`。默认值: `Some(Interlacing::None)`
-    pub interlace: Option<Interlacing>,
+    /// interlace: Option<bool>:        是否更改文件的交错类型。`None` 将不会更改当前的交错类型。`Some(true)` 开启交错，`Some(false)` 关闭交错。默认值: `Some(false)`
+    pub interlace: Option<bool>,
 
     /// optimize_alpha: bool:           是否允许更改透明像素以提高压缩率。
     pub optimize_alpha: bool,
@@ -42,22 +42,21 @@ pub struct NapiOxiPngOptions {
     /// strip: StripChunks:             从 PNG 文件中剥离哪些块（如果有的话）。默认值: `None`
     pub strip: StripChunks,
 
-    /// deflate: Deflaters:             使用哪种 DEFLATE 算法。默认值: `Libdeflater`
-    pub deflate: Deflaters,
+    /// deflater: Deflater:             使用哪种 DEFLATE 算法。默认值: `Libdeflater`
+    pub deflater: Deflater,
 
     /// fast_evaluation: bool:          是否使用快速评估来选择最佳过滤器。默认值: `true`
     pub fast_evaluation: bool,
 
-    /// timeout: Option<Duration>:      优化的最大时间。如果超时，将跳过进一步的潜在优化。
+    /// timeout: Option<Duration>:      优化的最大时间（毫秒）。如果超时，将跳过进一步的潜在优化。
     pub timeout: Option<BigInt>,
-    // 仅供参考的 demo
-    // pub date: Option<chrono::DateTime<Utc>>,
 }
 
+/// PNG 过滤策略
 #[allow(non_camel_case_types)]
 #[napi(string_enum)]
-pub enum RowFilter {
-    // 标准过滤器类型
+pub enum FilterStrategy {
+    // 基本过滤器类型 (Basic RowFilter)
     None,
     Sub,
     Up,
@@ -71,46 +70,57 @@ pub enum RowFilter {
     Brute,
 }
 
-// ! 未写全
-impl From<RowFilter> for export::IndexSet<export::RowFilter> {
-    fn from(value: RowFilter) -> Self {
+impl From<FilterStrategy> for export::IndexSet<export::FilterStrategy> {
+    fn from(value: FilterStrategy) -> Self {
+        let mut set = IndexSet::new();
         match value {
-            RowFilter::None => IndexSet::new(),
-            RowFilter::Sub => IndexSet::new(),
-            RowFilter::Up => IndexSet::new(),
-            RowFilter::Average => IndexSet::new(),
-            RowFilter::Paeth => IndexSet::new(),
-            RowFilter::MinSum => IndexSet::new(),
-            RowFilter::Entropy => IndexSet::new(),
-            RowFilter::Bigrams => IndexSet::new(),
-            RowFilter::BigEnt => IndexSet::new(),
-            RowFilter::Brute => IndexSet::new(),
+            FilterStrategy::None => {
+                set.insert(export::FilterStrategy::Basic(export::RowFilter::None));
+            }
+            FilterStrategy::Sub => {
+                set.insert(export::FilterStrategy::Basic(export::RowFilter::Sub));
+            }
+            FilterStrategy::Up => {
+                set.insert(export::FilterStrategy::Basic(export::RowFilter::Up));
+            }
+            FilterStrategy::Average => {
+                set.insert(export::FilterStrategy::Basic(export::RowFilter::Average));
+            }
+            FilterStrategy::Paeth => {
+                set.insert(export::FilterStrategy::Basic(export::RowFilter::Paeth));
+            }
+            FilterStrategy::MinSum => {
+                set.insert(export::FilterStrategy::MinSum);
+            }
+            FilterStrategy::Entropy => {
+                set.insert(export::FilterStrategy::Entropy);
+            }
+            FilterStrategy::Bigrams => {
+                set.insert(export::FilterStrategy::Bigrams);
+            }
+            FilterStrategy::BigEnt => {
+                set.insert(export::FilterStrategy::BigEnt);
+            }
+            FilterStrategy::Brute => {
+                // Brute 需要 num_lines 和 level 参数，使用默认值
+                set.insert(export::FilterStrategy::Brute {
+                    num_lines: 0,
+                    level: 6,
+                });
+            }
         }
-    }
-}
-
-#[napi(string_enum)]
-pub enum Interlacing {
-    None,
-    Adam7,
-}
-
-impl From<Interlacing> for export::Interlacing {
-    fn from(value: Interlacing) -> Self {
-        match value {
-            Interlacing::None => export::Interlacing::None,
-            Interlacing::Adam7 => export::Interlacing::Adam7,
-        }
+        set
     }
 }
 
 #[napi(discriminant = "type2")]
-pub enum Deflaters {
+pub enum Deflater {
     /// 使用 libdeflater.
     Libdeflater {
-        /// 对文件使用哪个压缩级别 （1-12）
+        /// 对文件使用哪个压缩级别 （0-12）
         compression: u8,
     },
+    // Zopfli 需要额外的配置，暂不支持
     // #[cfg(feature = "zopfli")]
     // /// 使用更好但速度较慢的 Zopfli 实现
     // Zopfli {
@@ -121,12 +131,10 @@ pub enum Deflaters {
     // },
 }
 
-impl From<Deflaters> for export::Deflaters {
-    fn from(value: Deflaters) -> Self {
+impl From<Deflater> for export::Deflater {
+    fn from(value: Deflater) -> Self {
         match value {
-            Deflaters::Libdeflater { compression } => {
-                export::Deflaters::Libdeflater { compression }
-            }
+            Deflater::Libdeflater { compression } => export::Deflater::Libdeflater { compression },
         }
     }
 }
@@ -135,24 +143,31 @@ impl From<Deflaters> for export::Deflaters {
 pub enum StripChunks {
     /// 无
     None,
-    /// 删除特定块, 长度为 4 的数组
+    /// 删除特定块, 长度为 4 的字符串数组，如 ["tEXt", "iTXt"]
     Strip(Array),
     /// 删除所有不会影响图像显示的数据块
     Safe,
-    /// 删除除这些之外的所有非关键块, 长度为 4 的数组
+    /// 删除除这些之外的所有非关键块, 长度为 4 的字符串数组
     Keep(Array),
     /// 所有非关键块
     All,
 }
 
-// ! 未写全
+// ! 未写全: Strip 和 Keep 变体需要从 JS Array 解析 chunk 名称，当前实现忽略了 Array 参数
 impl From<StripChunks> for export::StripChunks {
     fn from(value: StripChunks) -> Self {
         match value {
             StripChunks::None => export::StripChunks::None,
-            StripChunks::Strip(_) => export::StripChunks::Strip(IndexSet::new()),
+            StripChunks::Strip(_arr) => {
+                // TODO: 从 Array 中解析 [u8; 4] chunk 名称
+                // 每个元素应该是长度为 4 的字符串，如 "tEXt", "iTXt" 等
+                export::StripChunks::Strip(IndexSet::new())
+            }
             StripChunks::Safe => export::StripChunks::Safe,
-            StripChunks::Keep(_) => export::StripChunks::Keep(IndexSet::new()),
+            StripChunks::Keep(_arr) => {
+                // TODO: 从 Array 中解析 [u8; 4] chunk 名称
+                export::StripChunks::Keep(IndexSet::new())
+            }
             StripChunks::All => export::StripChunks::All,
         }
     }
@@ -160,13 +175,16 @@ impl From<StripChunks> for export::StripChunks {
 
 impl From<NapiOxiPngOptions> for export::OxiPngOptions {
     fn from(value: NapiOxiPngOptions) -> Self {
-        let (_signed, timeout, _is_lossless) = value.timeout.unwrap().get_u64();
+        let timeout = value.timeout.map(|t| {
+            let (_signed, millis, _is_lossless) = t.get_u64();
+            Duration::from_millis(millis)
+        });
 
         export::OxiPngOptions {
             fix_errors: value.fix_errors,
             force: value.force,
-            filter: value.filter.into(),
-            interlace: value.interlace.map(|x| x.into()),
+            filters: value.filters.into(),
+            interlace: value.interlace,
             optimize_alpha: value.optimize_alpha,
             bit_depth_reduction: value.bit_depth_reduction,
             color_type_reduction: value.color_type_reduction,
@@ -175,9 +193,10 @@ impl From<NapiOxiPngOptions> for export::OxiPngOptions {
             idat_recoding: value.idat_recoding,
             scale_16: value.scale_16,
             strip: value.strip.into(),
-            deflate: value.deflate.into(),
+            deflater: value.deflater.into(),
             fast_evaluation: value.fast_evaluation,
-            timeout: Some(Duration::from_millis(timeout)),
+            timeout,
+            ..Default::default()
         }
     }
 }
@@ -187,9 +206,11 @@ impl From<Object> for NapiOxiPngOptions {
         Self {
             fix_errors: value.get_named_property::<bool>("fixErrors").unwrap(),
             force: value.get_named_property::<bool>("force").unwrap(),
-            filter: value.get_named_property::<RowFilter>("filter").unwrap(),
+            filters: value
+                .get_named_property::<FilterStrategy>("filters")
+                .unwrap(),
             interlace: value
-                .get_named_property::<Option<Interlacing>>("interlace")
+                .get_named_property::<Option<bool>>("interlace")
                 .unwrap(),
             optimize_alpha: value.get_named_property::<bool>("optimizeAlpha").unwrap(),
             bit_depth_reduction: value
@@ -207,7 +228,7 @@ impl From<Object> for NapiOxiPngOptions {
             idat_recoding: value.get_named_property::<bool>("idatRecoding").unwrap(),
             scale_16: value.get_named_property::<bool>("scale16").unwrap(),
             strip: value.get_named_property::<StripChunks>("strip").unwrap(),
-            deflate: value.get_named_property::<Deflaters>("deflate").unwrap(),
+            deflater: value.get_named_property::<Deflater>("deflater").unwrap(),
             fast_evaluation: value.get_named_property::<bool>("fastEvaluation").unwrap(),
             timeout: value
                 .get_named_property::<Option<BigInt>>("timeout")

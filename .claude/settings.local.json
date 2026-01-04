@@ -7,7 +7,9 @@
       "mcp__firecrawl-mcp__firecrawl_scrape",
       "mcp__firecrawl-mcp__firecrawl_search",
       "Bash(cargo build:*)",
-      "Bash(cargo tree:*)"
+      "Bash(cargo tree:*)",
+      "Bash(cargo doc:*)",
+      "Bash(cargo test:*)"
     ]
   }
 }

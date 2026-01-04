@@ -1,4 +1,18 @@
-pub use libwebp_sys::WebPImageHint;
+/// WebP 图像提示类型
+/// 原本: pub use libwebp_sys::WebPImageHint; 现在使用自定义枚举避免 libwebp_sys 版本冲突
+#[derive(Debug, Clone, Copy, Default)]
+#[repr(i32)]
+pub enum WebPImageHint {
+    /// 默认提示
+    #[default]
+    Default = 0,
+    /// 图片类型
+    Picture = 1,
+    /// 照片类型
+    Photo = 2,
+    /// 图形类型
+    Graph = 3,
+}
 
 #[derive(Debug, Clone, Copy)]
 #[allow(non_snake_case)]
@@ -40,7 +54,7 @@ impl Default for WebPOptions {
             lossless: 0,
             quality: 75.0,
             method: 4,
-            image_hint: WebPImageHint::WEBP_HINT_DEFAULT,
+            image_hint: WebPImageHint::Default,
             target_size: 0,
             target_PSNR: 0.0,
             segments: 4,
@@ -77,7 +91,9 @@ impl From<WebPOptions> for webp::WebPConfig {
         config.lossless = value.lossless;
         config.quality = value.quality;
         config.method = value.method;
-        config.image_hint = value.image_hint;
+        // 使用 transmute 转换自定义枚举到 libwebp_sys 的枚举
+        // 两者的内存布局相同 (都是 i32)
+        config.image_hint = unsafe { std::mem::transmute(value.image_hint as i32) };
         config.target_size = value.target_size;
         config.target_PSNR = value.target_PSNR;
         config.segments = value.segments;

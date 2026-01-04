@@ -5,7 +5,7 @@ use std::ffi::OsString;
 use std::os::windows::ffi::OsStringExt;
 
 use windows::core::PCWSTR;
-use windows::Win32::Foundation::{CloseHandle, BOOL, HWND, LPARAM};
+use windows::Win32::Foundation::{CloseHandle, HWND, LPARAM};
 use windows::Win32::System::ProcessStatus::GetModuleFileNameExW;
 use windows::Win32::System::Threading::{OpenProcess, PROCESS_QUERY_INFORMATION, PROCESS_VM_READ};
 use windows::Win32::UI::WindowsAndMessaging::{
@@ -120,7 +120,7 @@ pub unsafe fn get_window_exec_path(window: HWND) -> anyhow::Result<String> {
     // }
 
     let mut buffer: [u16; 1024] = [0; 1024];
-    let len = GetModuleFileNameExW(process_handle, None, &mut buffer);
+    let len = GetModuleFileNameExW(Some(process_handle), None, &mut buffer);
 
     // if len == 0 {
     //     return Err(anyhow::anyhow!("无法获取模块文件名"));
@@ -153,7 +153,7 @@ pub unsafe fn get_window_info(window: HWND) -> anyhow::Result<WINDOWINFO> {
 // HWND 是一种数据类型，表示窗口句柄（Handle to a Window）。
 // EnumWindows(Some(enum_windows), LPARAM(0)).unwrap(); // EnumWindows 是一个 Windows API 函数，用于枚举所有顶级窗口。
 #[allow(dead_code)]
-pub unsafe extern "system" fn enum_windows(window: HWND, _: LPARAM) -> BOOL {
+pub unsafe extern "system" fn enum_windows(window: HWND, _: LPARAM) -> bool {
     let info = get_window_info(window).unwrap();
     let title = get_window_title(window);
     let path = get_window_program_path(window);
@@ -167,13 +167,13 @@ pub unsafe extern "system" fn enum_windows(window: HWND, _: LPARAM) -> BOOL {
         //     info.rcWindow.left, info.rcWindow.top, info
         // );
     }
-    true.into()
+    true
 }
 
 // 获取子窗口句柄
 // EnumChildWindows(explore_window, Some(enum_child_proc), LPARAM(0));
 #[allow(dead_code)]
-pub unsafe extern "system" fn enum_child_proc(window: HWND, _: LPARAM) -> BOOL {
+pub unsafe extern "system" fn enum_child_proc(window: HWND, _: LPARAM) -> bool {
     let classname = get_window_title_classname(window);
 
     if classname == "ShellTabWindowClass" {
@@ -184,5 +184,5 @@ pub unsafe extern "system" fn enum_child_proc(window: HWND, _: LPARAM) -> BOOL {
         println!(" ",);
     }
 
-    true.into()
+    true
 }

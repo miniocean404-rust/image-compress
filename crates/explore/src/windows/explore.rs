@@ -2,14 +2,15 @@
 
 #![cfg(target_os = "windows")]
 
-use windows::core::{IUnknown, Interface, Param, VARIANT};
+use windows::core::{IUnknown, Interface, Param};
+use windows::Win32::System::Variant::VARIANT;
 use windows::Win32::Foundation::{HWND, S_FALSE};
 use windows::Win32::System::Com::{
     CoCreateInstance, CoInitializeEx, CoTaskMemFree, IDispatch, CLSCTX_LOCAL_SERVER,
     COINIT_APARTMENTTHREADED, COINIT_DISABLE_OLE1DDE,
 };
 use windows::Win32::System::Ole::IEnumVARIANT;
-use windows::Win32::System::Variant::{VARENUM, VT_DISPATCH};
+use windows::Win32::System::Variant::VT_DISPATCH;
 use windows::Win32::UI::Shell::{
     IPersistIDList, IShellBrowser, IShellItem, IShellWindows, IUnknown_QueryService,
     SHCreateItemFromIDList, SID_STopLevelBrowser, ShellWindows, SIGDN_DESKTOPABSOLUTEPARSING,
@@ -48,16 +49,17 @@ fn dump_windows(shell_windows: &IShellWindows) -> anyhow::Result<Vec<SubExploreI
         }
 
         // 不是一个 IDispatch 接口？
-        if unsafe { VARENUM(rgvar[0].as_raw().Anonymous.Anonymous.vt) } != VT_DISPATCH {
+        if rgvar[0].vt() != VT_DISPATCH {
             continue;
         }
 
-        let unk = unsafe {
-            let c_void = rgvar[0].as_raw().Anonymous.Anonymous.Anonymous.pdispVal;
-            &IDispatch::from_raw(c_void)
+        // 使用 TryFrom 转换 VARIANT 到 IDispatch
+        let dispatch: IDispatch = match (&rgvar[0]).try_into() {
+            Ok(d) => d,
+            Err(_) => continue,
         };
 
-        infos.push(get_browser_info(unk)?);
+        infos.push(get_browser_info(&dispatch)?);
 
         // 将 UTF-16 转换为 UTF-8 以供显示
         // let location = String::from_utf16_lossy(&location);

@@ -1,4 +1,6 @@
 // jSquash 写法
+use std::io::Cursor;
+
 use rgb::{
     alt::{Gray, GrayAlpha},
     AsPixels, FromSlice, RGB8, RGBA8,
@@ -19,15 +21,16 @@ pub fn encode(data: &[u8], width: u32, height: u32) -> Vec<u8> {
     buf
 }
 
-pub fn decode(mut data: &[u8]) -> Vec<u8> {
-    let mut decoder = png::Decoder::new(&mut data);
+pub fn decode(data: &[u8]) -> Vec<u8> {
+    let cursor = Cursor::new(data);
+    let mut decoder = png::Decoder::new(cursor);
     decoder.set_transformations(
         png::Transformations::EXPAND | // Turn images <8bit to 8bit
         png::Transformations::STRIP_16, // Turn 16bit into 8 bit
     );
 
     let mut reader = decoder.read_info().expect("期望读取图片信息");
-    let mut buf = vec![0; reader.output_buffer_size()];
+    let mut buf = vec![0; reader.output_buffer_size().expect("无法获取输出缓冲区大小")];
 
     reader.next_frame(&mut buf).unwrap();
 

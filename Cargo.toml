@@ -118,7 +118,7 @@ lodepng = { version = "3.10.4", default-features = false, features = [
     "rust_backend",
     "deprecated_back_compat_error_type",
 ] }
-png = "0.17.11"
+png = "0.18.0"
 
 # JPEG
 mozjpeg = { version = "0.10.13", default-features = false, features = ["with_simd"] }

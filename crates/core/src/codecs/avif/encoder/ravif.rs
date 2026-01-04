@@ -30,7 +30,7 @@ impl Default for AvifOptions {
             quality: 50.,
             alpha_quality: None,
             speed: 5,
-            color_space: ravif::ColorSpace::YCbCr,
+            color_space: ravif::ColorModel::YCbCr,
             alpha_color_mode: ravif::AlphaColorMode::UnassociatedClean,
         }
     }
@@ -80,7 +80,7 @@ impl EncoderTrait for AvifEncoder {
             .with_quality(self.options.quality)
             .with_alpha_quality(self.options.alpha_quality.unwrap_or(self.options.quality))
             .with_speed(self.options.speed)
-            .with_internal_color_space(self.options.color_space)
+            .with_internal_color_model(self.options.color_space)
             .with_alpha_color_mode(self.options.alpha_color_mode);
 
         match image.colorspace() {

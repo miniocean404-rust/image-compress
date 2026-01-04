@@ -1,6 +1,6 @@
 pub use ravif::AlphaColorMode;
 
-pub type AvifColorSpace = ravif::ColorSpace;
+pub type AvifColorSpace = ravif::ColorModel;
 
 /// Advanced options for AVIF encoding
 #[derive(Debug, Clone, Copy)]

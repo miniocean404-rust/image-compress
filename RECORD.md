@@ -2,6 +2,10 @@
 
 1. bak 下 与 Rimage 差异-20260105 没有查看修改，暂时搁置
 
+# 已完成
+
+1. mozjpeg 调优
+
 # utools
 
 它的图片压缩使用了: gifsicle、mozjpeg、pngquant

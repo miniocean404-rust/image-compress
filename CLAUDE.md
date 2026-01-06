@@ -124,3 +124,4 @@ pnpm run publish  # 发布 @giegie/explore 和 @giegie/image-compress
 # 命令
 
 所有 node 包命令相关使用 pnpm
+参考文档使用 cargo doc 获取

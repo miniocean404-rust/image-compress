@@ -4,7 +4,7 @@ use std::{
     panic::AssertUnwindSafe,
 };
 
-use crate::codecs::jpeg::encoder::options::{MozJpegOptions, QtableOptimize};
+use crate::codecs::jpeg::encoder::options::{MozJpegOptions, QtableOptimize, QtableOptimizeChroma};
 use mozjpeg::qtable::*;
 use zune_core::{
     bit_depth::BitDepth, bytestream::ZByteWriterTrait, colorspace::ColorSpace, log,
@@ -124,6 +124,31 @@ fn build_qtable(
     })
 }
 
+/// 根据色度量化表类型和质量生成缩放后的色度量化表
+fn build_chroma_qtable(
+    qtable_type: Option<&QtableOptimizeChroma>,
+    quality: f32,
+) -> Option<mozjpeg::qtable::QTable> {
+    qtable_type.map(|qt| match qt {
+        QtableOptimizeChroma::AnnexK_Chroma => AnnexK_Chroma.scaled(quality, quality),
+        QtableOptimizeChroma::MSSSIM_Chroma => MSSSIM_Chroma.scaled(quality, quality),
+        QtableOptimizeChroma::PSNRHVS_Chroma => PSNRHVS_Chroma.scaled(quality, quality),
+    })
+}
+
+/// 根据质量自动计算色度子采样参数
+///
+/// 高质量(>90)使用 4:4:4 无子采样，保留最多细节
+/// 中等质量(>70)使用 4:2:2，平衡质量和压缩
+/// 低质量(<=70)使用 4:2:0，最大压缩
+fn auto_chroma_subsample(quality: f32) -> (u8, u8) {
+    match quality {
+        q if q > 90.0 => (1, 1), // 4:4:4 无子采样
+        q if q > 70.0 => (2, 1), // 4:2:2
+        _ => (2, 2),             // 4:2:0 最大压缩
+    }
+}
+
 // ============================================================================
 // MozJpeg 编码器
 // ============================================================================
@@ -203,25 +228,50 @@ impl MozJpegEncoder {
             self.options.color_space,
         ));
 
-        // Trellis 量化多遍优化
+        // Trellis 量化配置
+        // Trellis 多遍优化：在多次扫描中优化量化
         comp.set_use_scans_in_trellis(self.options.trellis_multipass);
 
-        // 色度子采样：降低色度分辨率以减小文件大小
+        // TODO: mozjpeg crate 0.10.13 未暴露以下方法，需要等待更新或使用 mozjpeg-sys
+        // 这些选项已在 MozJpegOptions 中定义，但当前无法生效
+        // - set_trellis_quant (DC 系数 Trellis 量化)
+        // - set_trellis_quant_ac (AC 系数 Trellis 量化)
+        // - set_overshoot_deringing (减少振铃效应)
+        // 底层 mozjpeg-sys 支持这些功能：
+        // - JBOOLEAN_TRELLIS_QUANT
+        // - JBOOLEAN_TRELLIS_QUANT_DC
+        // - JBOOLEAN_OVERSHOOT_DERINGING
+
+        // 色度子采样配置
         if let Some(sb) = self.options.chroma_subsample {
+            // 用户显式指定的子采样
             comp.set_chroma_sampling_pixel_sizes((sb, sb), (sb, sb));
+        } else if self.options.auto_chroma_subsample {
+            // 根据质量自动选择子采样
+            let (h, v) = auto_chroma_subsample(self.options.quality);
+            comp.set_chroma_sampling_pixel_sizes((h, v), (h, v));
         }
     }
 
     /// 应用量化表配置
     fn apply_qtable(&self, comp: &mut mozjpeg::Compress) {
+        // 亮度量化表
         if let Some(qtable) = build_qtable(self.options.qtable.as_ref(), self.options.quality) {
-            // 亮度量化表
             if self.options.luma {
                 comp.set_luma_qtable(&qtable);
             }
-            // 色度量化表
-            if self.options.chroma {
+            // 如果没有指定色度专用量化表，且启用了 chroma，则使用亮度量化表
+            if self.options.chroma && self.options.qtable_chroma.is_none() {
                 comp.set_chroma_qtable(&qtable);
+            }
+        }
+
+        // 色度专用量化表（优先级高于通用量化表）
+        if self.options.chroma {
+            if let Some(chroma_qtable) =
+                build_chroma_qtable(self.options.qtable_chroma.as_ref(), self.options.quality)
+            {
+                comp.set_chroma_qtable(&chroma_qtable);
             }
         }
     }

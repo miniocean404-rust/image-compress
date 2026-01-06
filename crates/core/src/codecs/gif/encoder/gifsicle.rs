@@ -38,7 +38,7 @@ impl GifEncoder {
     /// 从内存中的 GIF 数据进行压缩
     ///
     /// 注意：gifsicle 是基于文件的压缩库，需要通过临时文件进行处理
-    pub fn encode_mem(&mut self, buf: &Vec<u8>) -> anyhow::Result<Vec<u8>> {
+    pub fn encode_mem(&mut self, buf: &[u8]) -> anyhow::Result<Vec<u8>> {
         // 使用 gifsicle 进行压缩
         self.compress_with_gifsicle(buf)
     }
@@ -69,9 +69,9 @@ impl GifEncoder {
         // 清理输入文件
         let _ = std::fs::remove_file(&input_path);
 
-        if result.is_err() {
+        if let Err(e) = result {
             let _ = std::fs::remove_file(&output_path);
-            return Err(result.unwrap_err());
+            return Err(e);
         }
 
         // 读取输出文件
@@ -209,7 +209,7 @@ impl GifEncoder {
             let frames = image.flatten_to_u8();
             let colorspace = image.colorspace();
 
-            for (_idx, frame_data) in frames.iter().enumerate() {
+            for frame_data in frames.iter() {
                 // 转换为 RGBA 格式
                 let rgba_data = match colorspace {
                     ColorSpace::RGBA => frame_data.clone(),

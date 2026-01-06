@@ -27,6 +27,7 @@ cargo build --all
 # -- --nocapture：实时输出，测试运行时就能看到
 # -- --show-output：测试完成后统一显示输出
 cargo test -p image_compress_core --test avif --features avif -- encode_mem_avif --exact --nocapture
+cargo test -p image_compress_core --test jpeg --features jpeg -- encode_mem_jpeg --exact --nocapture
 ```
 
 压缩可参考项目：https://github.com/Lymphatus/libcaesium/blob/c09613dbc85b39f525ba0398768e38e564eacf30/src/gif.rs

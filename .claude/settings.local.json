@@ -10,7 +10,9 @@
       "Bash(cargo tree:*)",
       "Bash(cargo doc:*)",
       "Bash(cargo test:*)",
-      "Bash(pnpx prettier:*)"
-    ]
+      "Bash(pnpx prettier:*)",
+      "Bash(cargo clippy:*)"
+    ],
+    "deny": []
   }
 }

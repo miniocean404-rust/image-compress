@@ -14,9 +14,11 @@ use zune_image::{image::Image, traits::EncoderTrait};
 #[test]
 fn encode_mem_avif() -> Result<(), Box<dyn std::error::Error>> {
     let byte_vec = fs::read(get_workspace_file_path("assets/image/avif/f1t.avif"))?;
+
     let mut encoder = AvifEncoder::new();
     let compress_buf = encoder.encode_mem(&byte_vec)?;
 
+    // 默认参数结果: 原始字节数: 317 压缩后字节数: 306
     println!(
         "原始字节数: {} 压缩后字节数: {}",
         byte_vec.len(),

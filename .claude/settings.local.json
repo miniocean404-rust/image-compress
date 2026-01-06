@@ -9,7 +9,8 @@
       "Bash(cargo build:*)",
       "Bash(cargo tree:*)",
       "Bash(cargo doc:*)",
-      "Bash(cargo test:*)"
+      "Bash(cargo test:*)",
+      "Bash(pnpx prettier:*)"
     ]
   }
 }

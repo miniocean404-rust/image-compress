@@ -1,122 +1,126 @@
-# crates core 包目标
-
-用户给了一张图片，然后将这张图在保留清晰度的情况下尽可能压缩，并且不能在压缩图片后还比原图要更大
-
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+本文件为 Claude Code (claude.ai/code) 在此仓库中工作时提供指导。
 
-## Project Overview
+## 项目概述
 
-A Rust-based image compression library with Node.js (via napi-rs) and WebAssembly bindings. Supports PNG, JPEG, WebP, AVIF, GIF, and TIFF formats.
+基于 Rust 的图片压缩库，提供 Node.js (通过 napi-rs) 和 WebAssembly 绑定。支持 PNG、JPEG、WebP、AVIF、GIF 和 TIFF 格式。
 
-## Build Commands
+## 构建命令
 
-### Rust Core Library
+### Rust 核心库
 
 ```shell
-# Build default workspace (image-compress)
+# 构建默认工作区 (image-compress)
 cargo build
 
-# Build with release optimizations
+# 构建 release 优化版本
 cargo build --release
 
-# Run a specific package binary
+# 运行指定包的二进制文件
 cargo r --package explore --bin <bin_name>
 
-# Build core with native features (jpeg, webp, gif, tiff, avif)
+# 构建带 native 特性的核心库 (jpeg, webp, gif, tiff, avif)
 cargo build -p image_compress_core --features native
 
-# Build core with wasm features
+# 构建带 wasm 特性的核心库
 cargo build -p image_compress_core --features wasm
 ```
 
-### Node.js Bindings (napi-rs)
+### Node.js 绑定 (napi-rs)
 
 ```shell
-# From packages/image-compress or packages/explore:
-pnpm run build:node-dev   # Development build
-pnpm run build:node       # Release build
+# 在 packages/image-compress 或 packages/explore 目录下:
+pnpm run build:node-dev   # 开发构建
+pnpm run build:node       # 发布构建
 
-# Workspace-level build
-pnpm run build:node       # Builds all @giegie/* packages
+# 工作区级别构建
+pnpm run build:node       # 构建所有 @giegie/* 包
 ```
 
-### WebAssembly Bindings
+### WebAssembly 绑定
 
 ```shell
-# From packages/image-compress:
-pnpm run build:wasm-dev   # Development build
-pnpm run build:wasm       # Release build
+# 在 packages/image-compress 目录下:
+pnpm run build:wasm-dev   # 开发构建
+pnpm run build:wasm       # 发布构建
 
-# Workspace-level
+# 工作区级别
 pnpm run build:wasm
 ```
 
-### Testing
+### 测试
 
 ```shell
-# Node.js binding tests
-pnpm run test:node        # From packages/image-compress or packages/explore
+# Node.js 绑定测试
+pnpm run test:node        # 在 packages/image-compress 或 packages/explore 目录下
 ```
 
-## Architecture
+## 架构
 
-### Workspace Structure
+### 工作区结构
 
-**Root workspace** (`/Cargo.toml`): Contains core Rust crates
+**根工作区** (`/Cargo.toml`): 包含核心 Rust crates
 
-- `crates/core` - Core compression library (`image_compress_core`)
-- `crates/image-compress` - High-level compression API (`image_compress`)
-- `crates/cli` - CLI tool (`image_compress_cli`)
-- `crates/explore` - System exploration utilities
-- `crates/utils` - Shared utilities
+- `crates/core` - 核心压缩库 (`image_compress_core`)
+- `crates/image-compress` - 高级压缩 API (`image_compress`)
+- `crates/cli` - 命令行工具 (`image_compress_cli`)
+- `crates/explore` - 系统探索工具
+- `crates/utils` - 共享工具库
 
-**Bindings workspace** (`/bindings/Cargo.toml`): Contains FFI bindings
+**绑定工作区** (`/bindings/Cargo.toml`): 包含 FFI 绑定
 
-- `binding_compress_node` - Node.js bindings via napi-rs
-- `binding_compress_wasm` - WebAssembly bindings via wasm-bindgen
-- `binding_explore_node` - Node.js bindings for explore
-- `binding_demo_node` - Demo/example bindings
+- `binding_compress_node` - 通过 napi-rs 的 Node.js 绑定
+- `binding_compress_wasm` - 通过 wasm-bindgen 的 WebAssembly 绑定
+- `binding_explore_node` - explore 的 Node.js 绑定
+- `binding_demo_node` - 演示/示例绑定
 
-**NPM packages** (`/packages/`):
+**NPM 包** (`/packages/`):
 
-- `@giegie/image-compress` - Published npm package
-- `@giegie/explore` - Published npm package
+- `@giegie/image-compress` - 已发布的 npm 包
+- `@giegie/explore` - 已发布的 npm 包
 
-### Core Library Features (crates/core)
+### 核心库特性 (crates/core)
 
-Feature flags control codec and operation inclusion:
+特性标志控制编解码器和操作的包含:
 
-**Codec features:**
+**编解码器特性:**
 
-- `png` - PNG support (oxipng, imagequant, lodepng)
-- `jpeg` - JPEG support (mozjpeg)
-- `webp` - WebP support (libwebp)
-- `avif` - AVIF support (ravif, libavif)
-- `gif` - GIF support (gifsicle)
-- `tiff` - TIFF support (decode only)
+- `png` - PNG 支持 (oxipng, imagequant, lodepng)
+- `jpeg` - JPEG 支持 (mozjpeg)
+- `webp` - WebP 支持 (libwebp)
+- `avif` - AVIF 支持 (ravif, libavif)
+- `gif` - GIF 支持 (gifsicle)
+- `tiff` - TIFF 支持 (仅解码)
 
-**Operation features:**
+**操作特性:**
 
-- `transform` - Format conversion
-- `resize` - Image resizing (fast_image_resize)
-- `icc` - ICC color profile handling (lcms2)
-- `quantize` - Color quantization
+- `transform` - 格式转换
+- `resize` - 图片缩放 (fast_image_resize)
+- `icc` - ICC 色彩配置文件处理 (lcms2)
+- `quantize` - 颜色量化
 
-**Preset features:**
+**预设特性:**
 
-- `wasm` - Enables mem + png (for WebAssembly builds)
-- `native` - Enables jpeg, webp, gif, tiff, avif (for native builds)
-- `operations` - Enables transform, resize, icc, quantize
+- `wasm` - 启用 mem + png (用于 WebAssembly 构建)
+- `native` - 启用 jpeg, webp, gif, tiff, avif (用于原生构建)
+- `operations` - 启用 transform, resize, icc, quantize
 
-### Build Environment Requirements
+### 构建环境要求
 
-- **oxipng wasm**: Requires LLVM clang
-- **ravif (AVIF)**: Requires nasm assembler; Windows also needs Perl
+- **oxipng wasm**: 需要 LLVM clang
+- **ravif (AVIF)**: 需要 nasm 汇编器; Windows 还需要 Perl
 
-## NPM Publishing
+## NPM 发布
 
 ```shell
-pnpm run publish  # Publishes @giegie/explore and @giegie/image-compress
+pnpm run publish  # 发布 @giegie/explore 和 @giegie/image-compress
 ```
+
+# crates core 实现目标
+
+用户给了一张图片，然后将这张图在保留清晰度的情况下尽可能压缩，并且不能在压缩图片后还比原图要更大
+
+# 命令
+
+所有 node 包命令相关使用 pnpm

@@ -4,19 +4,13 @@ use std::{
     panic::AssertUnwindSafe,
 };
 
+use crate::codecs::jpeg::encoder::options::{MozJpegOptions, QtableOptimize};
 use mozjpeg::qtable::*;
 use zune_core::{
     bit_depth::BitDepth, bytestream::ZByteWriterTrait, colorspace::ColorSpace, log,
     options::DecoderOptions,
 };
 use zune_image::{codecs::ImageFormat, errors::ImageErrors, image::Image, traits::EncoderTrait};
-use crate::codecs::jpeg::encoder::options::{MozJpegOptions, QtableOptimize};
-
-/// A MozJpeg encoder
-#[derive(Default, Debug)]
-pub struct MozJpegEncoder {
-    options: MozJpegOptions,
-}
 
 struct MozJpegTempVt<T: ZByteWriterTrait> {
     inner: T,
@@ -48,6 +42,12 @@ impl<T: ZByteWriterTrait> io::Write for MozJpegTempVt<T> {
         self.bytes_written += buf.len();
         Ok(())
     }
+}
+
+/// A MozJpeg encoder
+#[derive(Default, Debug)]
+pub struct MozJpegEncoder {
+    options: MozJpegOptions,
 }
 
 impl MozJpegEncoder {

@@ -16,7 +16,7 @@ use zune_image::traits::EncoderTrait;
 
 #[test]
 fn encode_mem_jpeg() -> Result<(), Box<dyn std::error::Error>> {
-    let buf = fs::read(get_workspace_file_path("assets/image/jpeg/测试.jpg"))?;
+    let buf = fs::read(get_workspace_file_path("assets/image/jpeg/测试-已压缩.jpg"))?;
 
     let mut encoder = MozJpegEncoder::new();
 

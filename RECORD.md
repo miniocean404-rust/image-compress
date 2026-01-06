@@ -4,7 +4,7 @@
 
 # 已完成
 
-1. mozjpeg 调优
+1. mozjpeg 调优基本完成
 
 # utools
 

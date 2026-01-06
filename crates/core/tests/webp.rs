@@ -19,15 +19,23 @@ use zune_image::traits::EncoderTrait;
 
 #[test]
 fn encode_mem_webp() -> Result<(), Box<dyn std::error::Error>> {
-    let byte_vec = fs::read(get_workspace_file_path("assets/image/webp/time-icon.webp"))?;
-    let mut encoder = WebPEncoder::new();
-    let compress_buf = encoder.encode_mem(&byte_vec)?;
+    let input_path = get_workspace_file_path("assets/image/webp/time-icon.webp");
+    let output_path = get_workspace_file_path("assets/compress/webp/time-icon.webp");
+    fs::create_dir_all(output_path.parent().unwrap())?;
 
+    let read_buf = fs::read(input_path)?;
+
+    let mut encoder = WebPEncoder::new();
+
+    let encode_buf = encoder.encode_mem(&read_buf)?;
     println!(
         "原始字节数: {} 压缩后字节数: {}",
-        byte_vec.len(),
-        compress_buf.len()
+        read_buf.len(),
+        encode_buf.len()
     );
+
+    fs::write(&output_path, &encode_buf)?;
+    println!("输出路径: {:?}", output_path);
 
     Ok(())
 }

@@ -18,7 +18,7 @@ pub struct MozJpegOptions {
     /// 设置正在写入的 JPEG 的颜色空间，不同于输入的颜色空间
     pub color_space: MozJpegColorSpace,
 
-    /// 指定在网格量化期间是否应考虑多次扫描。
+    /// 指定在网格量化期间是否应考虑多次扫描。(会导致偏大一点点)
     pub trellis_multipass: bool,
 
     /// 设置色度子采样，保留为"None"以使用自动子采样（根据质量自动选择）
@@ -50,7 +50,7 @@ impl Default for MozJpegOptions {
             smoothing: 0,
             color_space: mozjpeg::ColorSpace::JCS_YCbCr,
             // 启用 Trellis 多遍优化，MozJpeg 核心优势
-            trellis_multipass: true,
+            trellis_multipass: false,
             chroma_subsample: None,
             // 默认启用自动色度子采样
             auto_chroma_subsample: true,

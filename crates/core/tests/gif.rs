@@ -96,27 +96,23 @@ fn encode_gif_animated() {
 
 #[test]
 fn encode_mem_gif() -> Result<(), Box<dyn std::error::Error>> {
-    // 首先创建一个简单的 GIF 文件用于测试
-    let image = create_test_image_u8(50, 50, ColorSpace::RGBA);
-    let mut encoder = GifEncoder::new();
+    let input_path = get_workspace_file_path("assets/image/gif/a.gif");
+    let output_path = get_workspace_file_path("assets/compress/gif/a.gif");
+    fs::create_dir_all(output_path.parent().unwrap())?;
 
-    let buf = Cursor::new(vec![]);
-    encoder.encode(&image, buf.clone())?;
+    let read_buf = fs::read(input_path)?;
 
-    // 获取编码后的数据
-    let gif_data = buf.into_inner();
+    let mut encoder = GifEncoder::new_with_options(GifOptions::lossy(70));
 
-    if !gif_data.is_empty() {
-        // 使用 encode_mem 进行压缩
-        let mut encoder2 = GifEncoder::new_with_options(GifOptions::lossy(70));
-        let compressed = encoder2.encode_mem(&gif_data)?;
+    let encode_buf = encoder.encode_mem(&read_buf)?;
+    println!(
+        "原始字节数: {} 压缩后字节数: {}",
+        read_buf.len(),
+        encode_buf.len()
+    );
 
-        println!(
-            "原始字节数: {} 压缩后字节数: {}",
-            gif_data.len(),
-            compressed.len()
-        );
-    }
+    fs::write(&output_path, &encode_buf)?;
+    println!("输出路径: {:?}", output_path);
 
     Ok(())
 }

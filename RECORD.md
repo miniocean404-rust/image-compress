@@ -2,6 +2,11 @@
 
 1. bak 下 与 Rimage 差异-20260105 没有查看修改，暂时搁置
 
+# utools
+
+它的图片压缩使用了: gifsicle、mozjpeg、pngquant
+图片批处理插件: glib、gobject2.0、vips
+
 # 命令
 
 ## workspack 命令
@@ -29,8 +34,3 @@ cargo test -p image_compress_core --test avif --features avif -- encode_mem_avif
 ### webp
 
 webp 封装了 libwebp-sys ：https://github.dev/jaredforth/webp
-
-# utools
-
-它的图片压缩使用了: gifsicle、mozjpeg、pngquant
-图片批处理插件: glib、gobject2.0、vips

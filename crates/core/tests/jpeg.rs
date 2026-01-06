@@ -16,12 +16,23 @@ use zune_image::traits::EncoderTrait;
 
 #[test]
 fn encode_mem_jpeg() -> Result<(), Box<dyn std::error::Error>> {
-    let buf = fs::read(get_workspace_file_path("assets/image/jpeg/测试-已压缩.jpg"))?;
+    let input_path = get_workspace_file_path("assets/image/jpeg/测试-已压缩.jpg");
+    let output_path = get_workspace_file_path("assets/compress/jpeg/测试-已压缩.jpg");
+    fs::create_dir_all(output_path.parent().unwrap())?;
+
+    let read_buf = fs::read(input_path)?;
 
     let mut encoder = MozJpegEncoder::new();
 
-    let result = encoder.encode_mem(&buf)?;
-    println!("原始字节数: {} 压缩后字节数: {}", buf.len(), result.len());
+    let encode_buf = encoder.encode_mem(&read_buf)?;
+    println!(
+        "原始字节数: {} 压缩后字节数: {}",
+        read_buf.len(),
+        encode_buf.len()
+    );
+
+    fs::write(&output_path, &encode_buf)?;
+    println!("输出路径: {:?}", output_path);
 
     Ok(())
 }

@@ -49,9 +49,11 @@ impl Default for MozJpegOptions {
             optimize_coding: true,
             smoothing: 0,
             color_space: mozjpeg::ColorSpace::JCS_YCbCr,
-            trellis_multipass: true, // 启用 Trellis 多遍优化，MozJpeg 核心优势
+            // 启用 Trellis 多遍优化，MozJpeg 核心优势
+            trellis_multipass: true,
             chroma_subsample: None,
-            auto_chroma_subsample: true, // 默认启用自动色度子采样
+            // 默认启用自动色度子采样
+            auto_chroma_subsample: true,
             luma: false,
             chroma: false,
             qtable: None,

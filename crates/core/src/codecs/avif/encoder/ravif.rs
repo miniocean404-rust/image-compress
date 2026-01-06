@@ -27,9 +27,9 @@ pub struct AvifEncoder {
 impl Default for AvifOptions {
     fn default() -> Self {
         Self {
-            quality: 50.,
+            quality: 75.,
             alpha_quality: None,
-            speed: 5,
+            speed: 4,
             color_space: ravif::ColorModel::YCbCr,
             alpha_color_mode: ravif::AlphaColorMode::UnassociatedClean,
         }

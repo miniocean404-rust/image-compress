@@ -13,7 +13,7 @@ use zune_image::{image::Image, traits::EncoderTrait};
 
 #[test]
 fn encode_mem_avif() -> Result<(), Box<dyn std::error::Error>> {
-    let byte_vec = fs::read(get_workspace_file_path("assets/image/avif/f1t.avif"))?;
+    let byte_vec = fs::read(get_workspace_file_path("assets/image/avif/测试.avif"))?;
 
     let mut encoder = AvifEncoder::new();
     let compress_buf = encoder.encode_mem(&byte_vec)?;

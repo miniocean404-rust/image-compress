@@ -26,14 +26,6 @@ codegen-units = 16 # debug build will cause runtime panic if codegen-unints is d
 debug = true
 # 增量构建
 incremental = true
-# `sccache` 是一个编译器缓存 (compiler cache)，它能存储编译产物，
-# 并在多次构建乃至不同项目之间复用这些产物。如果某个依赖项没有任何变更，它会立刻从缓存中拉取。
-# 无需重编，无需等待，即刻构建
-# 增量构建和 sccache 会随着时间推移占用大量空间。请使用 `cargo clean` 和 `sccache --zero-stats` 偶尔进行清理
-# 1. 安装 cargo install sccache
-# 2. 设置如下配置或 启用环境变量 export RUSTC_WRAPPER="sccache"
-# 3. 运行一次全新构建：cargo clean && cargo build
-rustc-wrapper = "sccache"
 
 # https://doc.rust-lang.org/cargo/reference/profiles.html
 # 优化方法：https://github.com/johnthagen/min-sized-rust

@@ -4,6 +4,16 @@ use std::{
     ptr,
 };
 
+/// GIF 写入标志常量 (来自 gifsicle gif.h)
+/// 使用更小的最小代码大小
+const GIF_WRITE_CAREFUL_MIN_CODE_SIZE: c_int = 1;
+/// 更积极地清除 LZW 字典
+const GIF_WRITE_EAGER_CLEAR: c_int = 2;
+/// 启用 LZW 压缩优化
+const GIF_WRITE_OPTIMIZE: c_int = 4;
+/// 启用收缩优化（更激进的压缩）
+const GIF_WRITE_SHRINK: c_int = 8;
+
 use zune_core::{
     bit_depth::BitDepth,
     bytestream::{ZByteWriterTrait, ZWriter},
@@ -119,8 +129,19 @@ impl GifEncoder {
         let padding: [*mut c_void; 7] = [ptr::null_mut(); 7];
         let loss = self.options.lossy as c_int;
 
+        // 根据优化级别设置标志
+        // optimize_level 1: 基本优化
+        // optimize_level 2: 中等优化 (OPTIMIZE)
+        // optimize_level 3: 最大优化 (OPTIMIZE + SHRINK)
+        let flags = match self.options.optimize_level {
+            1 => GIF_WRITE_CAREFUL_MIN_CODE_SIZE,
+            2 => GIF_WRITE_OPTIMIZE,
+            3 => GIF_WRITE_OPTIMIZE | GIF_WRITE_SHRINK,
+            _ => GIF_WRITE_OPTIMIZE | GIF_WRITE_SHRINK,
+        };
+
         let gc_info = gifsicle::Gif_CompressInfo {
-            flags: 0,
+            flags,
             loss,
             padding,
         };

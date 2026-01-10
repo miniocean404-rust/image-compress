@@ -32,7 +32,7 @@ use zune_image::traits::EncoderTrait;
 /// 从文件读取已压缩的 GIF 图像，使用默认选项进行编码，
 /// 并将结果写入输出文件。输出原始和压缩后的字节数以便比较压缩效果。
 #[test]
-fn encode_mem_gif_compressed() -> Result<(), Box<dyn std::error::Error>> {
+fn encode_mem_gif() -> Result<(), Box<dyn std::error::Error>> {
     let input_path = get_workspace_file_path("assets/image/gif/测试.gif");
     let output_path = get_workspace_file_path("assets/compress/gif/测试-已压缩.gif");
     fs::create_dir_all(output_path.parent().unwrap())?;
@@ -129,45 +129,18 @@ fn encode_gif_animated() {
     assert!(result.is_ok());
 }
 
-/// 测试 GIF 内存编码功能
-///
-/// 从文件读取 GIF 图像，使用质量为 70 的有损压缩进行编码，
-/// 并将结果写入输出文件。输出原始和压缩后的字节数以便比较压缩效果。
-#[test]
-fn encode_mem_gif() -> Result<(), Box<dyn std::error::Error>> {
-    let input_path = get_workspace_file_path("assets/image/gif/a.gif");
-    let output_path = get_workspace_file_path("assets/compress/gif/a.gif");
-    fs::create_dir_all(output_path.parent().unwrap())?;
-
-    let read_buf = fs::read(input_path)?;
-
-    let mut encoder = GifEncoder::new_with_options(GifOptions::lossy(70));
-
-    let encode_buf = encoder.encode_mem(&read_buf)?;
-    println!(
-        "原始字节数: {} 压缩后字节数: {}",
-        read_buf.len(),
-        encode_buf.len()
-    );
-
-    fs::write(&output_path, &encode_buf)?;
-    println!("输出路径: {:?}", output_path);
-
-    Ok(())
-}
-
 /// 测试 GifOptions 默认配置
 ///
 /// 验证 GifOptions::default() 返回的默认值是否正确：
-/// - lossy: 0（无损）
-/// - optimize_level: 2
+/// - lossy: 20（轻微有损，人眼无感知）
+/// - optimize_level: 3（最高优化）
 /// - reduce_colors: false
 /// - max_colors: 256
 #[test]
 fn gif_options_default() {
     let options = GifOptions::default();
-    assert_eq!(options.lossy, 0);
-    assert_eq!(options.optimize_level, 2);
+    assert_eq!(options.lossy, 20);
+    assert_eq!(options.optimize_level, 3);
     assert!(!options.reduce_colors);
     assert_eq!(options.max_colors, 256);
 }
@@ -192,6 +165,20 @@ fn gif_options_lossless() {
 fn gif_options_lossy() {
     let options = GifOptions::lossy(50);
     assert_eq!(options.lossy, 100); // (100 - 50) * 2 = 100
+}
+
+/// 测试 GifOptions 最大压缩配置
+///
+/// 验证 GifOptions::max_compression() 返回的配置是否正确：
+/// - lossy: 35（人眼难以察觉的临界值）
+/// - optimize_level: 3（最高优化级别）
+#[test]
+fn gif_options_max_compression() {
+    let options = GifOptions::max_compression();
+    assert_eq!(options.lossy, 35);
+    assert_eq!(options.optimize_level, 3);
+    assert!(!options.reduce_colors);
+    assert_eq!(options.max_colors, 256);
 }
 
 /// 测试 GifOptions 构建器模式

@@ -13,7 +13,13 @@
       "Bash(pnpx prettier:*)",
       "Bash(cargo clippy:*)",
       "mcp__desktop-commander__list_directory",
-      "mcp__desktop-commander__read_multiple_files"
+      "mcp__desktop-commander__read_multiple_files",
+      "mcp__github__search_code",
+      "mcp__github__get_file_contents",
+      "Bash(cargo metadata:*)",
+      "Bash(findstr:*)",
+      "Bash(dir:*)",
+      "Bash(ls:*)"
     ],
     "deny": []
   },

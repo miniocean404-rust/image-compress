@@ -74,6 +74,8 @@ impl From<NapiMozJpegOptions> for export::MozJpegOptions {
             qtable: value.qtable.map(|e| e.into()),
             auto_chroma_subsample: true,
             qtable_chroma: None,
+            optimize_scans: true,
+            auto_qtable: true,
         }
     }
 }

@@ -77,15 +77,14 @@ impl Default for ImageQuantOptions {
         ImageQuantOptions {
             // 允许任何质量级别，让算法自动选择最佳方案
             min_quality: 0,
-            // 目标质量 90: 高质量，人眼几乎无法察觉差异
-            max_quality: 90,
+            // 目标质量 85: 视觉无损阈值，在人眼难以察觉差异的前提下最大化压缩
+            max_quality: 85,
             // 速度 1: 最慢但质量最高
             speed: 1,
             // 不进行色阶化，保持最佳颜色精度
             min_posterization: 0,
-            // 抖动 0.8: 良好的视觉质量，减少色带效应
-            // 完全禁用抖动(0.0)会导致明显的色带，影响视觉质量
-            dithering: 0.8,
+            // 抖动 0.75: 良好的视觉质量，减少色带效应，同时略微减小文件大小
+            dithering: 0.75,
             // 标准 sRGB gamma 值
             gamma: 0.45455,
             // 不移动透明颜色，保持最佳压缩

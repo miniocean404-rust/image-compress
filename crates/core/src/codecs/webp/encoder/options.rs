@@ -251,9 +251,9 @@ impl Default for WebPOptions {
         Self {
             // 有损压缩，提供更好的压缩率
             lossless: 0,
-            // 质量 82: 高质量，人眼几乎无法察觉差异
-            // 研究表明 WebP 在 quality 80-85 范围内提供最佳的质量/大小平衡
-            quality: 82.0,
+            // 质量 80: 视觉无损阈值，Google 推荐的默认值
+            // 研究表明 WebP 在 quality 75-85 范围内人眼几乎无法察觉差异
+            quality: 80.0,
             // 方法 6: 最慢但压缩最好
             method: 6,
             // 自动选择
@@ -275,10 +275,10 @@ impl Default for WebPOptions {
             alpha_compression: 1,
             // 最佳 Alpha 滤波
             alpha_filtering: 2,
-            // 高质量 Alpha
-            alpha_quality: 90,
-            // 6 遍分析，良好的压缩/速度平衡
-            pass: 6,
+            // Alpha 通道质量 80: 透明通道对视觉影响较小，可以更激进压缩
+            alpha_quality: 80,
+            // 10 遍分析: 最大化压缩率
+            pass: 10,
             show_compressed: 0,
             preprocessing: 0,
             partitions: 0,

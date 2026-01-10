@@ -27,14 +27,14 @@ pub struct AvifEncoder {
 impl Default for AvifOptions {
     fn default() -> Self {
         Self {
-            // 质量 80: 在人眼难以察觉差异的前提下提供良好压缩
-            // 研究表明 AVIF 在 quality 75-85 范围内提供最佳的质量/大小平衡
-            quality: 80.,
-            // Alpha 通道跟随主质量
-            alpha_quality: None,
-            // 速度 4: 平衡压缩率和编码速度
-            // 速度 1-3 压缩率提升有限但时间大幅增加
-            speed: 4,
+            // 质量 78: 视觉无损阈值，在人眼难以察觉差异的前提下最大化压缩
+            // 研究表明 AVIF 在 quality 75-85 范围内人眼几乎无法察觉差异
+            quality: 78.,
+            // Alpha 通道质量 75: 透明通道对视觉影响较小，可以更激进压缩
+            alpha_quality: Some(75.),
+            // 速度 2: 更好的压缩率，编码时间适中
+            // 速度 1 压缩率提升有限但时间大幅增加，速度 2 是较好的平衡点
+            speed: 2,
             // YCbCr 是标准颜色模型，提供最佳压缩
             color_space: ravif::ColorModel::YCbCr,
             // 清理透明区域颜色值，提高压缩率

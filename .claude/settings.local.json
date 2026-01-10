@@ -11,7 +11,9 @@
       "Bash(cargo doc:*)",
       "Bash(cargo test:*)",
       "Bash(pnpx prettier:*)",
-      "Bash(cargo clippy:*)"
+      "Bash(cargo clippy:*)",
+      "mcp__desktop-commander__list_directory",
+      "mcp__desktop-commander__read_multiple_files"
     ],
     "deny": []
   },

@@ -1,3 +1,13 @@
+//! PNG 编解码器测试模块
+//!
+//! 本模块测试 PNG 格式的编码功能，包括：
+//! - ImageQuant 有损压缩（颜色量化）
+//! - OxiPng 无损压缩
+//! - 双重压缩（先无损后有损）
+//! - 不同色彩空间的编码支持
+//! - 不同位深度的编码支持（u8、u16、f32）
+//! - 动画 PNG 编码
+
 #![allow(unused_imports)]
 mod utils;
 
@@ -13,6 +23,10 @@ use zune_image::traits::EncoderTrait;
 
 use image_compress_core::codecs::png::encoder::imagequant_options::ImageQuantOptions;
 
+/// 测试 ImageQuant 有损压缩
+///
+/// 使用 ImageQuant 编码器对 PNG 图像进行有损压缩（颜色量化），
+/// 通过减少颜色数量来实现更高的压缩率。输出原始和压缩后的字节数。
 #[test]
 fn image_quant_compress_lossy() {
     let file_path = get_workspace_file_path("assets/image/png/time-icon.png");
@@ -30,6 +44,10 @@ fn image_quant_compress_lossy() {
     // fs::write(Path::new(&workspace_root).join("assets/compress/test.png"), buf.into_inner()).unwrap();
 }
 
+/// 测试 OxiPng 无损压缩
+///
+/// 使用 OxiPng 编码器对 PNG 图像进行无损压缩，采用最大压缩级别。
+/// 无损压缩不会损失任何图像质量，但压缩率相对有损压缩较低。
 #[test]
 fn oxipng_compress_lossless() {
     let buf = fs::read(get_workspace_file_path("assets/image/png/time-icon.png")).unwrap();
@@ -47,6 +65,11 @@ fn oxipng_compress_lossless() {
     // fs::write(Path::new(&workspace_root).join("assets/compress/test.png"), buf.into_inner()).unwrap();
 }
 
+/// 测试双重压缩策略
+///
+/// 先使用 OxiPng 进行无损压缩，再使用 ImageQuant 进行有损压缩。
+/// 这种组合策略可以在保持较好图像质量的同时获得更高的压缩率。
+/// ImageQuant 使用 max_quality=70 的配置进行颜色量化。
 #[test]
 fn double_compress() {
     let buf = fs::read(get_workspace_file_path("assets/image/png/time-icon.png")).unwrap();
@@ -70,6 +93,10 @@ fn double_compress() {
     );
 }
 
+/// 测试 u8 位深度图像的压缩效果
+///
+/// 创建 100x100 的 RGB u8 测试图像，先使用标准 PNG 编码，
+/// 再使用 OxiPng 最大压缩进行优化，比较压缩前后的字节数差异。
 #[test]
 fn compress_u8() {
     // 246 字节
@@ -85,6 +112,10 @@ fn compress_u8() {
     println!("原始字节数: {} 压缩后字节数: {}", write_len, byte_len);
 }
 
+/// 测试 u8 位深度下所有支持的色彩空间编码
+///
+/// 遍历 OxiPng 编码器支持的所有色彩空间，为每个色彩空间创建 200x200 的 u8 测试图像，
+/// 并验证编码是否成功。使用多线程并行测试以提高效率。
 #[test]
 fn encode_colorspaces_u8() {
     let mut results = vec![];
@@ -118,6 +149,10 @@ fn encode_colorspaces_u8() {
     results.into_iter().collect::<Result<Vec<()>, _>>().unwrap();
 }
 
+/// 测试 u16 位深度下所有支持的色彩空间编码
+///
+/// 遍历 OxiPng 编码器支持的所有色彩空间，为每个色彩空间创建 200x200 的 u16 测试图像，
+/// 并验证编码是否成功。使用多线程并行测试以提高效率。
 #[test]
 fn encode_colorspaces_u16() {
     let mut results = vec![];
@@ -151,6 +186,10 @@ fn encode_colorspaces_u16() {
     results.into_iter().collect::<Result<Vec<()>, _>>().unwrap();
 }
 
+/// 测试 f32 位深度下所有支持的色彩空间编码
+///
+/// 遍历 OxiPng 编码器支持的所有色彩空间，为每个色彩空间创建 200x200 的 f32 测试图像，
+/// 并验证编码是否成功。使用多线程并行测试以提高效率。
 #[test]
 fn encode_colorspaces_f32() {
     let mut results = vec![];
@@ -184,6 +223,9 @@ fn encode_colorspaces_f32() {
     results.into_iter().collect::<Result<Vec<()>, _>>().unwrap();
 }
 
+/// 测试 u8 位深度 RGB 色彩空间的基本编码
+///
+/// 创建 200x200 的 RGB u8 测试图像，验证基本编码功能是否正常工作。
 #[test]
 fn encode_u8() {
     let image = create_test_image_u8(200, 200, ColorSpace::RGB);
@@ -197,6 +239,9 @@ fn encode_u8() {
     assert!(result.is_ok());
 }
 
+/// 测试 u16 位深度 RGB 色彩空间的基本编码
+///
+/// 创建 200x200 的 RGB u16 测试图像，验证 16 位深度编码功能是否正常工作。
 #[test]
 fn encode_u16() {
     let image = create_test_image_u16(200, 200, ColorSpace::RGB);
@@ -210,6 +255,9 @@ fn encode_u16() {
     assert!(result.is_ok());
 }
 
+/// 测试 f32 位深度 RGB 色彩空间的基本编码
+///
+/// 创建 200x200 的 RGB f32 测试图像，验证浮点位深度编码功能是否正常工作。
 #[test]
 fn encode_f32() {
     let image = create_test_image_f32(200, 200, ColorSpace::RGB);
@@ -223,6 +271,9 @@ fn encode_f32() {
     assert!(result.is_ok());
 }
 
+/// 测试动画 PNG 编码
+///
+/// 创建包含多帧的 200x200 RGB 动画图像，验证 APNG（动画 PNG）编码功能是否正常工作。
 #[test]
 fn encode_animated() {
     let image = create_test_image_animated(200, 200, ColorSpace::RGB);

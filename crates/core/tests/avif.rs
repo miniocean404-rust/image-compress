@@ -1,3 +1,12 @@
+//! AVIF 编解码器测试模块
+//!
+//! 本模块测试 AVIF 格式的编码和解码功能，包括：
+//! - 内存编码（encode_mem）
+//! - 解码器功能
+//! - 不同色彩空间的编码支持（RGB、RGBA 等）
+//! - 不同位深度的编码支持（u8、u16、f32）
+//! - 动画图像编码
+
 #![cfg(feature = "avif")]
 
 use std::{
@@ -11,6 +20,10 @@ use utils::{mock::*, path::get_workspace_file_path};
 use zune_core::colorspace::ColorSpace;
 use zune_image::{image::Image, traits::EncoderTrait};
 
+/// 测试 AVIF 内存编码功能
+///
+/// 从文件读取 AVIF 图像，使用默认参数进行压缩编码，
+/// 并将结果写入输出文件。验证编码过程是否成功完成。
 #[test]
 fn encode_mem_avif() -> Result<(), Box<dyn std::error::Error>> {
     let input_path = get_workspace_file_path("assets/image/avif/测试.avif");
@@ -35,6 +48,10 @@ fn encode_mem_avif() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+/// 测试 AVIF 解码器功能
+///
+/// 从文件读取 AVIF 图像并解码，验证解码后的图像尺寸和色彩空间是否正确。
+/// 预期结果：尺寸为 48x80，色彩空间为 RGBA。
 #[test]
 fn decode() -> Result<(), Box<dyn std::error::Error>> {
     let buf = fs::read(get_workspace_file_path("assets/image/avif/f1t.avif"))?;
@@ -48,6 +65,10 @@ fn decode() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+/// 测试 u8 位深度下所有支持的色彩空间编码
+///
+/// 遍历编码器支持的所有色彩空间，为每个色彩空间创建 200x200 的 u8 测试图像，
+/// 并验证编码是否成功。使用多线程并行测试以提高效率。
 #[test]
 fn encode_colorspaces_u8() {
     let mut results = vec![];
@@ -81,6 +102,10 @@ fn encode_colorspaces_u8() {
     results.into_iter().collect::<Result<Vec<()>, _>>().unwrap();
 }
 
+/// 测试 u16 位深度下所有支持的色彩空间编码
+///
+/// 遍历编码器支持的所有色彩空间，为每个色彩空间创建 200x200 的 u16 测试图像，
+/// 并验证编码是否成功。使用多线程并行测试以提高效率。
 #[test]
 fn encode_colorspaces_u16() {
     let mut results = vec![];
@@ -114,6 +139,10 @@ fn encode_colorspaces_u16() {
     results.into_iter().collect::<Result<Vec<()>, _>>().unwrap();
 }
 
+/// 测试 f32 位深度下所有支持的色彩空间编码
+///
+/// 遍历编码器支持的所有色彩空间，为每个色彩空间创建 200x200 的 f32 测试图像，
+/// 并验证编码是否成功。使用多线程并行测试以提高效率。
 #[test]
 fn encode_colorspaces_f32() {
     let mut results = vec![];
@@ -147,6 +176,9 @@ fn encode_colorspaces_f32() {
     results.into_iter().collect::<Result<Vec<()>, _>>().unwrap();
 }
 
+/// 测试 u8 位深度 RGB 色彩空间的基本编码
+///
+/// 创建 200x200 的 RGB u8 测试图像，验证基本编码功能是否正常工作。
 #[test]
 fn encode_u8() {
     let image = create_test_image_u8(200, 200, ColorSpace::RGB);
@@ -160,6 +192,9 @@ fn encode_u8() {
     assert!(result.is_ok());
 }
 
+/// 测试 u16 位深度 RGB 色彩空间的基本编码
+///
+/// 创建 200x200 的 RGB u16 测试图像，验证 16 位深度编码功能是否正常工作。
 #[test]
 fn encode_u16() {
     let image = create_test_image_u16(200, 200, ColorSpace::RGB);
@@ -173,6 +208,9 @@ fn encode_u16() {
     assert!(result.is_ok());
 }
 
+/// 测试 f32 位深度 RGB 色彩空间的基本编码
+///
+/// 创建 200x200 的 RGB f32 测试图像，验证浮点位深度编码功能是否正常工作。
 #[test]
 fn encode_f32() {
     let image = create_test_image_f32(200, 200, ColorSpace::RGB);
@@ -186,6 +224,9 @@ fn encode_f32() {
     assert!(result.is_ok());
 }
 
+/// 测试动画 AVIF 编码
+///
+/// 创建包含多帧的 200x200 RGB 动画图像，验证动画编码功能是否正常工作。
 #[test]
 fn encode_animated() {
     let image = create_test_image_animated(200, 200, ColorSpace::RGB);

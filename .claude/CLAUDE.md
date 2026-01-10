@@ -2,6 +2,10 @@
 
 本文件为 Claude Code (claude.ai/code) 在此仓库中工作时提供指导。
 
+# crates 文档查询参考
+
+链接: https://docs.rs/crate/库名/版本
+
 ## 项目概述
 
 基于 Rust 的图片压缩库，提供 Node.js (通过 napi-rs) 和 WebAssembly 绑定。支持 PNG、JPEG、WebP、AVIF、GIF 和 TIFF 格式。

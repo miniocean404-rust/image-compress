@@ -25,7 +25,9 @@
       "Bash(cargo check:*)",
       "mcp__github__get_commit",
       "Bash(git show:*)",
-      "mcp__sequential-thinking__sequentialthinking"
+      "mcp__sequential-thinking__sequentialthinking",
+      "mcp__fetch__fetch_markdown",
+      "mcp__exa__web_search_exa"
     ],
     "deny": []
   },

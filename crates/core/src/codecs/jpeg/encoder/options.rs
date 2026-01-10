@@ -21,6 +21,9 @@ pub struct MozJpegOptions {
     /// 指定在网格量化期间是否应考虑多次扫描。(会导致偏大一点点)
     pub trellis_multipass: bool,
 
+    /// 优化渐进式扫描顺序，使渐进式图像文件更小
+    pub optimize_scans: bool,
+
     /// 设置色度子采样，保留为"None"以使用自动子采样（根据质量自动选择）
     pub chroma_subsample: Option<u8>,
 
@@ -39,6 +42,10 @@ pub struct MozJpegOptions {
 
     /// 色度专用量化表（如果为 None 则使用 qtable）
     pub qtable_chroma: Option<QtableOptimizeChroma>,
+
+    /// 是否自动根据质量选择优化量化表
+    /// 高质量(>=80)时自动使用 MSSSIM 量化表以获得更好的视觉质量
+    pub auto_qtable: bool,
 }
 
 impl Default for MozJpegOptions {
@@ -49,8 +56,10 @@ impl Default for MozJpegOptions {
             optimize_coding: true,
             smoothing: 0,
             color_space: mozjpeg::ColorSpace::JCS_YCbCr,
-            // 启用 Trellis 多遍优化，MozJpeg 核心优势
-            trellis_multipass: false,
+            // 启用 Trellis 多遍优化，MozJpeg 核心优势，可减少 3-5% 文件大小
+            trellis_multipass: true,
+            // 启用渐进式扫描优化，使渐进式图像文件更小
+            optimize_scans: true,
             chroma_subsample: None,
             // 默认启用自动色度子采样
             auto_chroma_subsample: true,
@@ -58,6 +67,8 @@ impl Default for MozJpegOptions {
             chroma: false,
             qtable: None,
             qtable_chroma: None,
+            // 默认启用自动量化表选择，高质量时使用 MSSSIM 优化
+            auto_qtable: true,
         }
     }
 }

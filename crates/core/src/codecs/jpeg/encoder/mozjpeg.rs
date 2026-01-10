@@ -232,6 +232,9 @@ impl MozJpegEncoder {
         // Trellis 多遍优化：在多次扫描中优化量化
         comp.set_use_scans_in_trellis(self.options.trellis_multipass);
 
+        // 渐进式扫描优化：使渐进式图像文件更小
+        comp.set_optimize_scans(self.options.optimize_scans);
+
         // TODO: mozjpeg crate 0.10.13 未暴露以下方法，需要等待更新或使用 mozjpeg-sys
         // 这些选项已在 MozJpegOptions 中定义，但当前无法生效
         // - set_trellis_quant (DC 系数 Trellis 量化)
@@ -255,23 +258,42 @@ impl MozJpegEncoder {
 
     /// 应用量化表配置
     fn apply_qtable(&self, comp: &mut mozjpeg::Compress) {
-        // 亮度量化表
-        if let Some(qtable) = build_qtable(self.options.qtable.as_ref(), self.options.quality) {
-            if self.options.luma {
+        // 如果用户显式指定了量化表，优先使用用户配置
+        if self.options.qtable.is_some() {
+            // 亮度量化表
+            if let Some(qtable) = build_qtable(self.options.qtable.as_ref(), self.options.quality) {
+                if self.options.luma {
+                    comp.set_luma_qtable(&qtable);
+                }
+                // 如果没有指定色度专用量化表，且启用了 chroma，则使用亮度量化表
+                if self.options.chroma && self.options.qtable_chroma.is_none() {
+                    comp.set_chroma_qtable(&qtable);
+                }
+            }
+
+            // 色度专用量化表（优先级高于通用量化表）
+            if self.options.chroma {
+                if let Some(chroma_qtable) =
+                    build_chroma_qtable(self.options.qtable_chroma.as_ref(), self.options.quality)
+                {
+                    comp.set_chroma_qtable(&chroma_qtable);
+                }
+            }
+        } else if self.options.auto_qtable && self.options.quality >= 80.0 {
+            // 自动量化表选择：高质量模式使用 MSSSIM 优化量化表
+            // MSSSIM 量化表针对人眼感知优化，在高质量场景下能获得更好的视觉效果
+            let luma_qtable =
+                build_qtable(Some(&QtableOptimize::MSSSIM_Luma), self.options.quality);
+            let chroma_qtable = build_chroma_qtable(
+                Some(&QtableOptimizeChroma::MSSSIM_Chroma),
+                self.options.quality,
+            );
+
+            if let Some(qtable) = luma_qtable {
                 comp.set_luma_qtable(&qtable);
             }
-            // 如果没有指定色度专用量化表，且启用了 chroma，则使用亮度量化表
-            if self.options.chroma && self.options.qtable_chroma.is_none() {
+            if let Some(qtable) = chroma_qtable {
                 comp.set_chroma_qtable(&qtable);
-            }
-        }
-
-        // 色度专用量化表（优先级高于通用量化表）
-        if self.options.chroma {
-            if let Some(chroma_qtable) =
-                build_chroma_qtable(self.options.qtable_chroma.as_ref(), self.options.quality)
-            {
-                comp.set_chroma_qtable(&chroma_qtable);
             }
         }
     }

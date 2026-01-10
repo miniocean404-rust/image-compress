@@ -14,6 +14,7 @@ use zune_image::{
 
 use crate::codecs::webp::decoder::WebPDecoder;
 use crate::codecs::webp::encoder::options::WebPOptions;
+use crate::error::{CompressError, Result};
 
 
 /// A WebP encoder
@@ -33,16 +34,19 @@ impl WebPEncoder {
         WebPEncoder { options }
     }
 
-    pub fn encode_mem(&mut self, buf: &Vec<u8>) -> anyhow::Result<Vec<u8>> {
+    pub fn encode_mem(&mut self, buf: &Vec<u8>) -> Result<Vec<u8>> {
         let cursor = Cursor::new(buf);
         let reader = BufReader::new(cursor);
 
-        let decoder = WebPDecoder::try_new(reader)?;
+        let decoder = WebPDecoder::try_new(reader)
+            .map_err(|e| CompressError::WebpDecode(e.to_string()))?;
 
-        let image = Image::from_decoder(decoder)?;
+        let image = Image::from_decoder(decoder)
+            .map_err(|e| CompressError::WebpDecode(e.to_string()))?;
 
         let mut compress_buf = Cursor::new(vec![]);
-        self.encode(&image, &mut compress_buf)?;
+        self.encode(&image, &mut compress_buf)
+            .map_err(|e| CompressError::WebpEncode(e.to_string()))?;
 
         Ok(compress_buf.into_inner())
     }
@@ -57,7 +61,7 @@ impl EncoderTrait for WebPEncoder {
         &mut self,
         image: &Image,
         sink: T,
-    ) -> Result<usize, ImageErrors> {
+    ) -> std::result::Result<usize, ImageErrors> {
         let options = webp::WebPConfig::from(self.options);
         let (width, height) = image.dimensions();
 

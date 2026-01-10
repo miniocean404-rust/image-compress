@@ -5,6 +5,7 @@ use std::{
 };
 
 use crate::codecs::jpeg::encoder::options::{MozJpegOptions, QtableOptimize, QtableOptimizeChroma};
+use crate::error::{CompressError, Result};
 use mozjpeg::qtable::*;
 use zune_core::{
     bit_depth::BitDepth, bytestream::ZByteWriterTrait, colorspace::ColorSpace, log,
@@ -190,13 +191,15 @@ impl MozJpegEncoder {
     ///
     /// # 返回
     /// 压缩后的 JPEG 数据
-    pub fn encode_mem(&mut self, buf: &[u8]) -> anyhow::Result<Vec<u8>> {
+    pub fn encode_mem(&mut self, buf: &[u8]) -> Result<Vec<u8>> {
         let cursor = Cursor::new(buf);
-        let image = Image::read(cursor, DecoderOptions::default())?;
+        let image = Image::read(cursor, DecoderOptions::default())
+            .map_err(|e| CompressError::JpegDecode(e.to_string()))?;
 
         let mut compress_buf = Cursor::new(vec![]);
         // 使用 MozJpegEncoder 进行编码
-        self.encode(&image, &mut compress_buf)?;
+        self.encode(&image, &mut compress_buf)
+            .map_err(|e| CompressError::JpegEncode(e.to_string()))?;
 
         Ok(compress_buf.into_inner())
     }
@@ -335,12 +338,12 @@ impl EncoderTrait for MozJpegEncoder {
         &mut self,
         image: &Image,
         sink: T,
-    ) -> Result<usize, ImageErrors> {
+    ) -> std::result::Result<usize, ImageErrors> {
         let (width, height) = image.dimensions();
         let data = &image.flatten_to_u8()[0];
 
         // 使用 catch_unwind 捕获 MozJpeg 可能的 panic
-        std::panic::catch_unwind(AssertUnwindSafe(|| -> Result<usize, ImageErrors> {
+        std::panic::catch_unwind(AssertUnwindSafe(|| -> std::result::Result<usize, ImageErrors> {
             let input_colorspace = map_colorspace(image.colorspace());
 
             // 创建并配置压缩器

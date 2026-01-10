@@ -54,7 +54,7 @@ fn encode_mem_avif() -> Result<(), Box<dyn std::error::Error>> {
 /// 预期结果：尺寸为 48x80，色彩空间为 RGBA。
 #[test]
 fn decode() -> Result<(), Box<dyn std::error::Error>> {
-    let buf = fs::read(get_workspace_file_path("assets/image/avif/f1t.avif"))?;
+    let buf = fs::read(get_workspace_file_path("assets/image/avif/测试.avif"))?;
     let cursor = Cursor::new(&buf);
     let decoder = AvifDecoder::try_new(cursor)?;
 

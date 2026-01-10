@@ -1,10 +1,14 @@
 # 未完成 TODO
 
 1. bak 下 与 Rimage 差异-20260105 没有查看修改，暂时搁置
+2. avif 优化有问题
 
 # 已完成
 
 1. mozjpeg 调优基本完成
+2. png
+3. webp
+4. gif
 
 # utools
 

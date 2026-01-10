@@ -6,7 +6,9 @@ use rgb::{
     AsPixels, FromSlice, RGB8, RGBA8,
 };
 
-pub fn encode(data: &[u8], width: u32, height: u32) -> Vec<u8> {
+use crate::error::{CompressError, Result};
+
+pub fn encode(data: &[u8], width: u32, height: u32) -> Result<Vec<u8>> {
     let mut buf = Vec::new();
 
     {
@@ -14,14 +16,18 @@ pub fn encode(data: &[u8], width: u32, height: u32) -> Vec<u8> {
         encoder.set_color(png::ColorType::Rgba);
         encoder.set_depth(png::BitDepth::Eight);
 
-        let mut writer = encoder.write_header().unwrap();
-        writer.write_image_data(data).unwrap();
+        let mut writer = encoder
+            .write_header()
+            .map_err(|e| CompressError::PngEncode(format!("写入 PNG 头失败: {}", e)))?;
+        writer
+            .write_image_data(data)
+            .map_err(|e| CompressError::PngEncode(format!("写入 PNG 数据失败: {}", e)))?;
     }
 
-    buf
+    Ok(buf)
 }
 
-pub fn decode(data: &[u8]) -> Vec<u8> {
+pub fn decode(data: &[u8]) -> Result<Vec<u8>> {
     let cursor = Cursor::new(data);
     let mut decoder = png::Decoder::new(cursor);
     decoder.set_transformations(
@@ -29,10 +35,17 @@ pub fn decode(data: &[u8]) -> Vec<u8> {
         png::Transformations::STRIP_16, // Turn 16bit into 8 bit
     );
 
-    let mut reader = decoder.read_info().expect("期望读取图片信息");
-    let mut buf = vec![0; reader.output_buffer_size().expect("无法获取输出缓冲区大小")];
+    let mut reader = decoder
+        .read_info()
+        .map_err(|e| CompressError::PngDecode(format!("读取 PNG 信息失败: {}", e)))?;
+    let output_size = reader
+        .output_buffer_size()
+        .ok_or_else(|| CompressError::PngDecode("无法获取输出缓冲区大小".to_string()))?;
+    let mut buf = vec![0; output_size];
 
-    reader.next_frame(&mut buf).unwrap();
+    reader
+        .next_frame(&mut buf)
+        .map_err(|e| CompressError::PngDecode(format!("读取 PNG 帧失败: {}", e)))?;
 
     let info = reader.info();
 
@@ -45,11 +58,13 @@ pub fn decode(data: &[u8]) -> Vec<u8> {
         png::ColorType::GrayscaleAlpha => expand_pixels(&mut buf, Gray::<u8>::into),
         png::ColorType::Grayscale => expand_pixels(&mut buf, |gray: GrayAlpha<u8>| gray.into()),
         png::ColorType::Indexed => {
-            unreachable!("找到已索引的颜色类型，但期望它已经展开")
+            return Err(CompressError::PngDecode(
+                "找到已索引的颜色类型，但期望它已经展开".to_string(),
+            ));
         }
     }
 
-    buf
+    Ok(buf)
 }
 
 // Convert pixels in-place within buffer containing source data but preallocated

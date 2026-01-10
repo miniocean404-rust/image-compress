@@ -15,6 +15,7 @@ use zune_image::{
 };
 
 use crate::codecs::avif::decoder::AvifDecoder;
+use crate::error::{CompressError, Result};
 
 use super::options::AvifOptions;
 
@@ -54,15 +55,19 @@ impl AvifEncoder {
         AvifEncoder { options }
     }
 
-    pub fn encode_mem(&mut self, buf: &Vec<u8>) -> anyhow::Result<Vec<u8>> {
+    pub fn encode_mem(&mut self, buf: &Vec<u8>) -> Result<Vec<u8>> {
         let cursor = Cursor::new(buf);
         let reader = BufReader::new(cursor);
 
-        let decoder = AvifDecoder::try_new(reader)?;
-        let image = Image::from_decoder(decoder)?;
+        let decoder =
+            AvifDecoder::try_new(reader).map_err(|e| CompressError::AvifDecode(e.to_string()))?;
+
+        let image =
+            Image::from_decoder(decoder).map_err(|e| CompressError::AvifDecode(e.to_string()))?;
 
         let mut compress_buf = Cursor::new(vec![]);
-        self.encode(&image, &mut compress_buf)?;
+        self.encode(&image, &mut compress_buf)
+            .map_err(|e| CompressError::AvifEncode(e.to_string()))?;
 
         Ok(compress_buf.into_inner())
     }
@@ -77,7 +82,7 @@ impl EncoderTrait for AvifEncoder {
         &mut self,
         image: &Image,
         sink: T,
-    ) -> Result<usize, ImageErrors> {
+    ) -> std::result::Result<usize, ImageErrors> {
         let (width, height) = image.dimensions();
         let data = &image.flatten_to_u8()[0];
 

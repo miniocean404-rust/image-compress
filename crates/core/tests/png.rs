@@ -56,7 +56,7 @@ fn image_quant_compress_lossy() -> Result<(), Box<dyn std::error::Error>> {
 /// 无损压缩不会损失任何图像质量，但压缩率相对有损压缩较低。
 #[test]
 fn oxipng_compress_lossless() {
-    let buf = fs::read(get_workspace_file_path("assets/image/png/time-icon.png")).unwrap();
+    let buf = fs::read(get_workspace_file_path("assets/image/png/测试.png")).unwrap();
 
     // let img = image::open(path).unwrap();
 
@@ -78,7 +78,7 @@ fn oxipng_compress_lossless() {
 /// ImageQuant 使用 max_quality=70 的配置进行颜色量化。
 #[test]
 fn double_compress() {
-    let buf = fs::read(get_workspace_file_path("assets/image/png/time-icon.png")).unwrap();
+    let buf = fs::read(get_workspace_file_path("assets/image/png/测试.png")).unwrap();
 
     // 无损压缩
     // let img = image::open(path).unwrap();

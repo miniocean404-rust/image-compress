@@ -31,7 +31,9 @@ where
     R: BufRead,
 {
     fn decode(&mut self) -> Result<Image, ImageErrors> {
-        let (width, height) = <WebPDecoder<R> as DecoderTrait>::dimensions(self).unwrap();
+        let (width, height) = <WebPDecoder<R> as DecoderTrait>::dimensions(self).ok_or_else(|| {
+            ImageErrors::ImageDecodeErrors("无法获取 WebP 图像尺寸".to_string())
+        })?;
         let color = <WebPDecoder<R> as DecoderTrait>::out_colorspace(self);
 
         let frames = self
@@ -53,18 +55,19 @@ where
     }
 
     fn dimensions(&self) -> Option<(usize, usize)> {
-        let frame = self.inner.get_frame(0).unwrap();
-
-        Some((frame.width() as usize, frame.height() as usize))
+        self.inner
+            .get_frame(0)
+            .map(|frame| (frame.width() as usize, frame.height() as usize))
     }
 
     fn out_colorspace(&self) -> ColorSpace {
-        let frame = self.inner.get_frame(0).unwrap();
-
-        match frame.get_layout() {
-            webp::PixelLayout::Rgb => ColorSpace::RGB,
-            webp::PixelLayout::Rgba => ColorSpace::RGBA,
-        }
+        self.inner
+            .get_frame(0)
+            .map(|frame| match frame.get_layout() {
+                webp::PixelLayout::Rgb => ColorSpace::RGB,
+                webp::PixelLayout::Rgba => ColorSpace::RGBA,
+            })
+            .unwrap_or(ColorSpace::RGBA)
     }
 
     fn name(&self) -> &'static str {

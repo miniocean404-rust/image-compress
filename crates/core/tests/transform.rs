@@ -19,10 +19,10 @@ use utils::path::*;
 /// 此测试验证格式转换操作是否能正确执行，包括色彩空间和编码格式的转换。
 #[test]
 fn transform() {
-    let file_path = get_workspace_file_path("assets/image/png/little.png");
+    let file_path = get_workspace_file_path("assets/image/png/测试.png");
     let buffer = fs::read(file_path).unwrap();
 
-    let mut transform = ImageFormatTransform::new(buffer, ImageFormat::Jpeg);
+    let mut transform = ImageFormatTransform::new(buffer, ImageFormat::Jpeg).unwrap();
     transform.transform().unwrap();
 
     fs::write("./test.jpg", transform.after).unwrap();

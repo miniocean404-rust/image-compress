@@ -72,6 +72,8 @@ impl From<NapiMozJpegOptions> for export::MozJpegOptions {
             luma: value.luma,
             chroma: value.chroma,
             qtable: value.qtable.map(|e| e.into()),
+            auto_chroma_subsample: true,
+            qtable_chroma: None,
         }
     }
 }

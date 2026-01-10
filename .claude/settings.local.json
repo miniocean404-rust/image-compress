@@ -1,5 +1,4 @@
 {
-  "enabledPlugins": {},
   "permissions": {
     "allow": [
       "mcp__context7__resolve-library-id",
@@ -23,8 +22,12 @@
       "Bash(ls:*)",
       "mcp__grep__searchGitHub",
       "mcp__exa__get_code_context_exa",
-      "Bash(cargo check:*)"
+      "Bash(cargo check:*)",
+      "mcp__github__get_commit",
+      "Bash(git show:*)",
+      "mcp__sequential-thinking__sequentialthinking"
     ],
     "deny": []
-  }
+  },
+  "enabledPlugins": {}
 }

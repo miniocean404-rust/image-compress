@@ -15,7 +15,5 @@
     ],
     "deny": []
   },
-  "enabledPlugins": {
-    "systems-programming@claude-code-workflows": true
-  }
+  "enabledPlugins": {}
 }

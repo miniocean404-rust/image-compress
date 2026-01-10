@@ -4,13 +4,14 @@ version.workspace = true
 edition.workspace = true
 
 [features]
-default = ["wasm", "operations"]
+default = ["wasm", "operations", "native"]
 
-mem = []
 wasm = ["mem", "png"]
 native = ["jpeg", "webp", "gif", "tiff", "avif"]
-
 operations = ["transform", "resize", "icc", "quantize"]
+
+mem = []
+
 transform = ["dep:webp"]
 resize = ["dep:fast_image_resize"]
 icc = []

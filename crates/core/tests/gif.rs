@@ -18,7 +18,7 @@ use zune_image::traits::EncoderTrait;
 
 #[test]
 fn decode_gif() -> Result<(), Box<dyn std::error::Error>> {
-    let byte_vec = fs::read(get_workspace_file_path("assets/image/gif/a.gif"))?;
+    let byte_vec = fs::read(get_workspace_file_path("assets/image/gif/测试.gif"))?;
     let cursor = Cursor::new(&byte_vec);
     let reader = BufReader::new(cursor);
     let decoder = GifDecoder::try_new(reader)?;

@@ -14,5 +14,8 @@
       "Bash(cargo clippy:*)"
     ],
     "deny": []
+  },
+  "enabledPlugins": {
+    "systems-programming@claude-code-workflows": true
   }
 }

@@ -70,10 +70,7 @@ impl GifEncoder {
 
         // 使用 gifsicle FFI 进行压缩
         let result = unsafe {
-            self.compress_gif_file(
-                input_path.to_str().unwrap(),
-                output_path.to_str().unwrap(),
-            )
+            self.compress_gif_file(input_path.to_str().unwrap(), output_path.to_str().unwrap())
         };
 
         // 清理输入文件
@@ -94,11 +91,7 @@ impl GifEncoder {
     }
 
     /// 使用 gifsicle FFI 压缩 GIF 文件
-    unsafe fn compress_gif_file(
-        &self,
-        input_path: &str,
-        output_path: &str,
-    ) -> anyhow::Result<()> {
+    unsafe fn compress_gif_file(&self, input_path: &str, output_path: &str) -> anyhow::Result<()> {
         let input_cstr = CString::new(input_path)?;
         let output_cstr = CString::new(output_path)?;
         let read_mode = CString::new("rb")?;
@@ -130,14 +123,14 @@ impl GifEncoder {
         let loss = self.options.lossy as c_int;
 
         // 根据优化级别设置标志
-        // optimize_level 1: 基本优化
-        // optimize_level 2: 中等优化 (OPTIMIZE)
-        // optimize_level 3: 最大优化 (OPTIMIZE + SHRINK)
+        // optimize_level 1: 基本优化 (OPTIMIZE + CAREFUL_MIN_CODE_SIZE)
+        // optimize_level 2: 中等优化 (OPTIMIZE + EAGER_CLEAR)
+        // optimize_level 3: 最大优化 (OPTIMIZE + SHRINK + EAGER_CLEAR)
+        // 所有级别都启用 OPTIMIZE 以确保基本的帧优化
         let flags = match self.options.optimize_level {
-            1 => GIF_WRITE_CAREFUL_MIN_CODE_SIZE,
-            2 => GIF_WRITE_OPTIMIZE,
-            3 => GIF_WRITE_OPTIMIZE | GIF_WRITE_SHRINK,
-            _ => GIF_WRITE_OPTIMIZE | GIF_WRITE_SHRINK,
+            1 => GIF_WRITE_OPTIMIZE | GIF_WRITE_CAREFUL_MIN_CODE_SIZE,
+            2 => GIF_WRITE_OPTIMIZE | GIF_WRITE_EAGER_CLEAR,
+            _ => GIF_WRITE_OPTIMIZE | GIF_WRITE_SHRINK | GIF_WRITE_EAGER_CLEAR,
         };
 
         let gc_info = gifsicle::Gif_CompressInfo {
@@ -210,17 +203,17 @@ impl EncoderTrait for GifEncoder {
 
 impl GifEncoder {
     /// 将图像编码为标准 GIF 格式
-    fn encode_to_gif(&self, image: &Image, width: usize, height: usize) -> Result<Vec<u8>, ImageErrors> {
+    fn encode_to_gif(
+        &self,
+        image: &Image,
+        width: usize,
+        height: usize,
+    ) -> Result<Vec<u8>, ImageErrors> {
         let mut buffer = Vec::new();
 
         {
-            let mut encoder = gif::Encoder::new(
-                &mut buffer,
-                width as u16,
-                height as u16,
-                &[],
-            )
-            .map_err(|e| ImgEncodeErrors::ImageEncodeErrors(e.to_string()))?;
+            let mut encoder = gif::Encoder::new(&mut buffer, width as u16, height as u16, &[])
+                .map_err(|e| ImgEncodeErrors::ImageEncodeErrors(e.to_string()))?;
 
             // 设置重复次数 (0 表示无限循环)
             encoder

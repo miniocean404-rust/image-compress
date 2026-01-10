@@ -24,9 +24,9 @@ pub struct GifOptions {
 impl Default for GifOptions {
     fn default() -> Self {
         Self {
-            // 默认使用轻微有损压缩 (lossy=20)，人眼几乎无法察觉
-            // 但能显著提高压缩率
-            lossy: 20,
+            // 默认使用有损压缩 (lossy=40)，人眼几乎无法察觉
+            // 官方默认 20，40 在人眼无感知范围内且压缩效果更好
+            lossy: 40,
             // 默认使用最高优化级别
             optimize_level: 3,
             reduce_colors: false,
@@ -66,13 +66,15 @@ impl GifOptions {
 
     /// 创建最大压缩选项（人眼无感知）
     ///
-    /// 使用 lossy=35 的有损压缩，这是人眼几乎无法察觉的最大值，
+    /// 使用 lossy=50 的有损压缩，这是人眼几乎无法察觉的临界值，
     /// 同时启用最高优化级别以获得最佳压缩效果。
+    /// 根据社区经验，lossy 在 20-65 范围内通常人眼难以察觉，
+    /// 50 是在压缩率和质量之间的最佳平衡点。
     pub fn max_compression() -> Self {
         Self {
-            // lossy 35 是人眼难以察觉的临界值
+            // lossy 50 是人眼难以察觉的临界值
             // 超过此值可能会出现可见的色带和伪影
-            lossy: 35,
+            lossy: 50,
             optimize_level: 3,
             reduce_colors: false,
             max_colors: 256,

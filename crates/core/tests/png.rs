@@ -28,20 +28,26 @@ use image_compress_core::codecs::png::encoder::imagequant_options::ImageQuantOpt
 /// 使用 ImageQuant 编码器对 PNG 图像进行有损压缩（颜色量化），
 /// 通过减少颜色数量来实现更高的压缩率。输出原始和压缩后的字节数。
 #[test]
-fn image_quant_compress_lossy() {
-    let file_path = get_workspace_file_path("assets/image/png/time-icon.png");
+fn image_quant_compress_lossy() -> Result<(), Box<dyn std::error::Error>> {
+    let input_path = get_workspace_file_path("assets/image/png/测试.png");
+    let output_path = get_workspace_file_path("assets/compress/png/测试-已压缩.png");
+    fs::create_dir_all(output_path.parent().unwrap())?;
 
-    let buf = fs::read(&file_path).unwrap();
+    let read_buf = fs::read(input_path)?;
 
     let mut encoder = ImageQuantEncoder::new();
-    let lossy_vec = encoder.encode_mem(&buf).unwrap();
 
+    let encode_buf = encoder.encode_mem(&read_buf)?;
     println!(
         "原始字节数: {} 压缩后字节数: {}",
-        buf.len(),
-        lossy_vec.len()
+        read_buf.len(),
+        encode_buf.len()
     );
-    // fs::write(Path::new(&workspace_root).join("assets/compress/test.png"), buf.into_inner()).unwrap();
+
+    fs::write(&output_path, &encode_buf)?;
+    println!("输出路径: {:?}", output_path);
+
+    Ok(())
 }
 
 /// 测试 OxiPng 无损压缩

@@ -28,7 +28,7 @@ use zune_image::traits::EncoderTrait;
 /// 并将结果写入输出文件。输出原始和压缩后的字节数以便比较压缩效果。
 #[test]
 fn encode_mem_jpeg() -> Result<(), Box<dyn std::error::Error>> {
-    let input_path = get_workspace_file_path("assets/image/jpeg/测试-已压缩.jpg");
+    let input_path = get_workspace_file_path("assets/image/jpeg/测试.jpg");
     let output_path = get_workspace_file_path("assets/compress/jpeg/测试-已压缩.jpg");
     fs::create_dir_all(output_path.parent().unwrap())?;
 

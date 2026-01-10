@@ -32,8 +32,8 @@ use zune_image::traits::EncoderTrait;
 /// 并将结果写入输出文件。输出原始和压缩后的字节数以便比较压缩效果。
 #[test]
 fn encode_mem_webp() -> Result<(), Box<dyn std::error::Error>> {
-    let input_path = get_workspace_file_path("assets/image/webp/time-icon.webp");
-    let output_path = get_workspace_file_path("assets/compress/webp/time-icon.webp");
+    let input_path = get_workspace_file_path("assets/image/webp/测试.webp");
+    let output_path = get_workspace_file_path("assets/compress/webp/测试-已压缩.webp");
     fs::create_dir_all(output_path.parent().unwrap())?;
 
     let read_buf = fs::read(input_path)?;

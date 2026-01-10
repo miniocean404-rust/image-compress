@@ -13,19 +13,24 @@ use zune_image::{
     traits::EncoderTrait,
 };
 
-use crate::codecs::png::encoder::oxipng_options::OxiPngOptions;
+use crate::codecs::png::encoder::oxipng_options::{create_optimized_oxipng_options, OxiPngOptions};
 
-// impl OptionsTrait for OxiPngOptions {
-//     fn as_any(&self) -> &dyn std::any::Any {
-//         self
-//     }
-// }
-
-//  无损压缩 lossless
-/// OxiPNG 编码器
-#[derive(Default, Debug)]
+/// OxiPNG 无损压缩编码器
+///
+/// OxiPNG 是一个多线程无损 PNG 压缩优化器，通过尝试不同的
+/// 过滤器和压缩参数来找到最小的文件大小，同时保持图像完全无损。
+#[derive(Debug)]
 pub struct OxiPngEncoder {
     options: OxiPngOptions,
+}
+
+impl Default for OxiPngEncoder {
+    fn default() -> Self {
+        Self {
+            // 使用优化的默认配置
+            options: create_optimized_oxipng_options(),
+        }
+    }
 }
 
 impl OxiPngEncoder {

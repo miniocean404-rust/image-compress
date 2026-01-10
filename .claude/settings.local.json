@@ -1,4 +1,5 @@
 {
+  "enabledPlugins": {},
   "permissions": {
     "allow": [
       "mcp__context7__resolve-library-id",
@@ -19,9 +20,11 @@
       "Bash(cargo metadata:*)",
       "Bash(findstr:*)",
       "Bash(dir:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "mcp__grep__searchGitHub",
+      "mcp__exa__get_code_context_exa",
+      "Bash(cargo check:*)"
     ],
     "deny": []
-  },
-  "enabledPlugins": {}
+  }
 }

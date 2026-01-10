@@ -193,13 +193,13 @@ impl MozJpegEncoder {
     /// 压缩后的 JPEG 数据
     pub fn encode_mem(&mut self, buf: &[u8]) -> Result<Vec<u8>> {
         let cursor = Cursor::new(buf);
-        let image = Image::read(cursor, DecoderOptions::default())
-            .map_err(|e| CompressError::JpegDecode(e.to_string()))?;
+        let image =
+            Image::read(cursor, DecoderOptions::default()).map_err(CompressError::jpeg_decode)?;
 
         let mut compress_buf = Cursor::new(vec![]);
         // 使用 MozJpegEncoder 进行编码
         self.encode(&image, &mut compress_buf)
-            .map_err(|e| CompressError::JpegEncode(e.to_string()))?;
+            .map_err(CompressError::jpeg_encode)?;
 
         Ok(compress_buf.into_inner())
     }
@@ -343,29 +343,31 @@ impl EncoderTrait for MozJpegEncoder {
         let data = &image.flatten_to_u8()[0];
 
         // 使用 catch_unwind 捕获 MozJpeg 可能的 panic
-        std::panic::catch_unwind(AssertUnwindSafe(|| -> std::result::Result<usize, ImageErrors> {
-            let input_colorspace = map_colorspace(image.colorspace());
+        std::panic::catch_unwind(AssertUnwindSafe(
+            || -> std::result::Result<usize, ImageErrors> {
+                let input_colorspace = map_colorspace(image.colorspace());
 
-            // 创建并配置压缩器
-            let mut comp = mozjpeg::Compress::new(input_colorspace);
-            self.configure_compressor(&mut comp, width, height, input_colorspace);
-            self.apply_qtable(&mut comp);
+                // 创建并配置压缩器
+                let mut comp = mozjpeg::Compress::new(input_colorspace);
+                self.configure_compressor(&mut comp, width, height, input_colorspace);
+                self.apply_qtable(&mut comp);
 
-            // 创建写入适配器并开始压缩
-            let writer = WriteAdapter {
-                inner: sink,
-                bytes_written: 0,
-            };
-            let mut comp = comp.start_compress(writer)?;
+                // 创建写入适配器并开始压缩
+                let writer = WriteAdapter {
+                    inner: sink,
+                    bytes_written: 0,
+                };
+                let mut comp = comp.start_compress(writer)?;
 
-            // 写入 EXIF 元数据（如果启用）
-            #[cfg(feature = "metadata")]
-            Self::write_exif_metadata(image, &mut comp);
+                // 写入 EXIF 元数据（如果启用）
+                #[cfg(feature = "metadata")]
+                Self::write_exif_metadata(image, &mut comp);
 
-            // 写入图像扫描线并完成压缩
-            comp.write_scanlines(data)?;
-            Ok(comp.finish()?.bytes_written)
-        }))
+                // 写入图像扫描线并完成压缩
+                comp.write_scanlines(data)?;
+                Ok(comp.finish()?.bytes_written)
+            },
+        ))
         .map_err(|err| {
             // 将 panic 转换为 ImageErrors
             let msg = if let Ok(mut err) = err.downcast::<String>() {

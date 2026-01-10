@@ -59,15 +59,13 @@ impl AvifEncoder {
         let cursor = Cursor::new(buf);
         let reader = BufReader::new(cursor);
 
-        let decoder =
-            AvifDecoder::try_new(reader).map_err(|e| CompressError::AvifDecode(e.to_string()))?;
+        let decoder = AvifDecoder::try_new(reader).map_err(CompressError::avif_decode)?;
 
-        let image =
-            Image::from_decoder(decoder).map_err(|e| CompressError::AvifDecode(e.to_string()))?;
+        let image = Image::from_decoder(decoder).map_err(CompressError::avif_decode)?;
 
         let mut compress_buf = Cursor::new(vec![]);
         self.encode(&image, &mut compress_buf)
-            .map_err(|e| CompressError::AvifEncode(e.to_string()))?;
+            .map_err(CompressError::avif_encode)?;
 
         Ok(compress_buf.into_inner())
     }

@@ -16,7 +16,6 @@ use crate::codecs::webp::decoder::WebPDecoder;
 use crate::codecs::webp::encoder::options::WebPOptions;
 use crate::error::{CompressError, Result};
 
-
 /// A WebP encoder
 #[derive(Debug, Default)]
 pub struct WebPEncoder {
@@ -38,15 +37,13 @@ impl WebPEncoder {
         let cursor = Cursor::new(buf);
         let reader = BufReader::new(cursor);
 
-        let decoder = WebPDecoder::try_new(reader)
-            .map_err(|e| CompressError::WebpDecode(e.to_string()))?;
+        let decoder = WebPDecoder::try_new(reader).map_err(CompressError::webp_decode)?;
 
-        let image = Image::from_decoder(decoder)
-            .map_err(|e| CompressError::WebpDecode(e.to_string()))?;
+        let image = Image::from_decoder(decoder).map_err(CompressError::webp_decode)?;
 
         let mut compress_buf = Cursor::new(vec![]);
         self.encode(&image, &mut compress_buf)
-            .map_err(|e| CompressError::WebpEncode(e.to_string()))?;
+            .map_err(CompressError::webp_encode)?;
 
         Ok(compress_buf.into_inner())
     }

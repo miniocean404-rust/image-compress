@@ -19,7 +19,7 @@ impl ImageFormatTransform {
 
     pub fn new(buffer: Vec<u8>, format: ImageFormat) -> Result<Self> {
         let origin_format = image::guess_format(&buffer)
-            .map_err(|e| CompressError::UnsupportedFormat(format!("无法解析图像格式: {}", e)))?;
+            .map_err(|e| CompressError::unsupported_format(format!("无法解析图像格式: {}", e)))?;
 
         Ok(Self {
             origin: buffer,
@@ -31,7 +31,7 @@ impl ImageFormatTransform {
 
     pub fn transform(&mut self) -> Result<Vec<u8>> {
         let mut image = image::load_from_memory(&self.origin)
-            .map_err(|e| CompressError::Transform(format!("加载图像失败: {}", e)))?;
+            .map_err(|e| CompressError::transform(format!("加载图像失败: {}", e)))?;
 
         if self.after_format == ImageFormat::Jpeg {
             let buffer = image.to_rgb8();
@@ -41,7 +41,7 @@ impl ImageFormatTransform {
         let mut bytes: Cursor<Vec<u8>> = Cursor::new(vec![]);
         image
             .write_to(&mut bytes, self.after_format)
-            .map_err(|e| CompressError::Transform(format!("写入图像失败: {}", e)))?;
+            .map_err(|e| CompressError::transform(format!("写入图像失败: {}", e)))?;
 
         self.after = bytes.into_inner();
 

@@ -18,10 +18,10 @@ pub fn encode(data: &[u8], width: u32, height: u32) -> Result<Vec<u8>> {
 
         let mut writer = encoder
             .write_header()
-            .map_err(|e| CompressError::PngEncode(format!("写入 PNG 头失败: {}", e)))?;
+            .map_err(|e| CompressError::png_encode(format!("写入 PNG 头失败: {}", e)))?;
         writer
             .write_image_data(data)
-            .map_err(|e| CompressError::PngEncode(format!("写入 PNG 数据失败: {}", e)))?;
+            .map_err(|e| CompressError::png_encode(format!("写入 PNG 数据失败: {}", e)))?;
     }
 
     Ok(buf)
@@ -37,15 +37,15 @@ pub fn decode(data: &[u8]) -> Result<Vec<u8>> {
 
     let mut reader = decoder
         .read_info()
-        .map_err(|e| CompressError::PngDecode(format!("读取 PNG 信息失败: {}", e)))?;
+        .map_err(|e| CompressError::png_decode(format!("读取 PNG 信息失败: {}", e)))?;
     let output_size = reader
         .output_buffer_size()
-        .ok_or_else(|| CompressError::PngDecode("无法获取输出缓冲区大小".to_string()))?;
+        .ok_or_else(|| CompressError::png_decode("无法获取输出缓冲区大小"))?;
     let mut buf = vec![0; output_size];
 
     reader
         .next_frame(&mut buf)
-        .map_err(|e| CompressError::PngDecode(format!("读取 PNG 帧失败: {}", e)))?;
+        .map_err(|e| CompressError::png_decode(format!("读取 PNG 帧失败: {}", e)))?;
 
     let info = reader.info();
 
@@ -58,8 +58,8 @@ pub fn decode(data: &[u8]) -> Result<Vec<u8>> {
         png::ColorType::GrayscaleAlpha => expand_pixels(&mut buf, Gray::<u8>::into),
         png::ColorType::Grayscale => expand_pixels(&mut buf, |gray: GrayAlpha<u8>| gray.into()),
         png::ColorType::Indexed => {
-            return Err(CompressError::PngDecode(
-                "找到已索引的颜色类型，但期望它已经展开".to_string(),
+            return Err(CompressError::png_decode(
+                "找到已索引的颜色类型，但期望它已经展开",
             ));
         }
     }

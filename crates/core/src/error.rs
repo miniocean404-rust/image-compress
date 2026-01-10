@@ -129,6 +129,113 @@ impl From<std::ffi::NulError> for CompressError {
 // ============================================================================
 
 impl CompressError {
+    // ========================================================================
+    // 编解码错误构造方法
+    // ========================================================================
+
+    /// 创建 PNG 编码错误
+    pub fn png_encode(e: impl ToString) -> Self {
+        CompressError::PngEncode(e.to_string())
+    }
+
+    /// 创建 PNG 解码错误
+    pub fn png_decode(e: impl ToString) -> Self {
+        CompressError::PngDecode(e.to_string())
+    }
+
+    /// 创建 JPEG 编码错误
+    pub fn jpeg_encode(e: impl ToString) -> Self {
+        CompressError::JpegEncode(e.to_string())
+    }
+
+    /// 创建 JPEG 解码错误
+    pub fn jpeg_decode(e: impl ToString) -> Self {
+        CompressError::JpegDecode(e.to_string())
+    }
+
+    /// 创建 WebP 编码错误
+    pub fn webp_encode(e: impl ToString) -> Self {
+        CompressError::WebpEncode(e.to_string())
+    }
+
+    /// 创建 WebP 解码错误
+    pub fn webp_decode(e: impl ToString) -> Self {
+        CompressError::WebpDecode(e.to_string())
+    }
+
+    /// 创建 GIF 编码错误
+    pub fn gif_encode(e: impl ToString) -> Self {
+        CompressError::GifEncode(e.to_string())
+    }
+
+    /// 创建 GIF 解码错误
+    pub fn gif_decode(e: impl ToString) -> Self {
+        CompressError::GifDecode(e.to_string())
+    }
+
+    /// 创建 AVIF 编码错误
+    pub fn avif_encode(e: impl ToString) -> Self {
+        CompressError::AvifEncode(e.to_string())
+    }
+
+    /// 创建 AVIF 解码错误
+    pub fn avif_decode(e: impl ToString) -> Self {
+        CompressError::AvifDecode(e.to_string())
+    }
+
+    /// 创建 TIFF 解码错误
+    pub fn tiff_decode(e: impl ToString) -> Self {
+        CompressError::TiffDecode(e.to_string())
+    }
+
+    // ========================================================================
+    // 图像操作错误构造方法
+    // ========================================================================
+
+    /// 创建格式转换错误
+    pub fn transform(e: impl ToString) -> Self {
+        CompressError::Transform(e.to_string())
+    }
+
+    /// 创建图像缩放错误
+    pub fn resize(e: impl ToString) -> Self {
+        CompressError::Resize(e.to_string())
+    }
+
+    /// 创建 ICC 配置文件处理错误
+    pub fn icc(e: impl ToString) -> Self {
+        CompressError::Icc(e.to_string())
+    }
+
+    /// 创建颜色量化错误
+    pub fn quantize(e: impl ToString) -> Self {
+        CompressError::Quantize(e.to_string())
+    }
+
+    // ========================================================================
+    // 通用错误构造方法
+    // ========================================================================
+
+    /// 创建不支持的图像格式错误
+    pub fn unsupported_format(e: impl ToString) -> Self {
+        CompressError::UnsupportedFormat(e.to_string())
+    }
+
+    /// 创建不支持的色彩空间错误
+    pub fn unsupported_colorspace(e: impl ToString) -> Self {
+        CompressError::UnsupportedColorspace(e.to_string())
+    }
+
+    /// 创建无效的图像数据错误
+    pub fn invalid_data(e: impl ToString) -> Self {
+        CompressError::InvalidData(e.to_string())
+    }
+
+    /// 创建无效的参数错误
+    pub fn invalid_parameter(e: impl ToString) -> Self {
+        CompressError::InvalidParameter(e.to_string())
+    }
+
     /// 创建一个通用错误
     ///
     /// 用于不属于特定分类的错误情况。优先使用具体的错误变体。
@@ -146,74 +253,6 @@ impl From<CompressError> for ImageErrors {
         use zune_image::errors::ImgEncodeErrors;
         ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(e.to_string()))
     }
-}
-
-// ============================================================================
-// 辅助宏
-// ============================================================================
-
-/// 创建 PNG 编码错误
-#[macro_export]
-macro_rules! png_err {
-    ($($arg:tt)*) => {
-        $crate::error::CompressError::PngEncode(format!($($arg)*))
-    };
-}
-
-/// 创建 JPEG 编码错误
-#[macro_export]
-macro_rules! jpeg_err {
-    ($($arg:tt)*) => {
-        $crate::error::CompressError::JpegEncode(format!($($arg)*))
-    };
-}
-
-/// 创建 WebP 编码错误
-#[macro_export]
-macro_rules! webp_err {
-    ($($arg:tt)*) => {
-        $crate::error::CompressError::WebpEncode(format!($($arg)*))
-    };
-}
-
-/// 创建 GIF 编码错误
-#[macro_export]
-macro_rules! gif_err {
-    ($($arg:tt)*) => {
-        $crate::error::CompressError::GifEncode(format!($($arg)*))
-    };
-}
-
-/// 创建 AVIF 编码错误
-#[macro_export]
-macro_rules! avif_err {
-    ($($arg:tt)*) => {
-        $crate::error::CompressError::AvifEncode(format!($($arg)*))
-    };
-}
-
-/// 创建格式转换错误
-#[macro_export]
-macro_rules! transform_err {
-    ($($arg:tt)*) => {
-        $crate::error::CompressError::Transform(format!($($arg)*))
-    };
-}
-
-/// 创建无效参数错误
-#[macro_export]
-macro_rules! invalid_param {
-    ($($arg:tt)*) => {
-        $crate::error::CompressError::InvalidParameter(format!($($arg)*))
-    };
-}
-
-/// 创建无效数据错误
-#[macro_export]
-macro_rules! invalid_data {
-    ($($arg:tt)*) => {
-        $crate::error::CompressError::InvalidData(format!($($arg)*))
-    };
 }
 
 // ============================================================================

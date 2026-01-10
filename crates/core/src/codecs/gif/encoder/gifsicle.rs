@@ -72,11 +72,11 @@ impl GifEncoder {
         // 使用 gifsicle FFI 进行压缩
         let input_str = input_path
             .to_str()
-            .ok_or_else(|| CompressError::InvalidData("输入路径包含无效字符".to_string()))?;
+            .ok_or_else(|| CompressError::invalid_data("输入路径包含无效字符"))?;
 
         let output_str = output_path
             .to_str()
-            .ok_or_else(|| CompressError::InvalidData("输出路径包含无效字符".to_string()))?;
+            .ok_or_else(|| CompressError::invalid_data("输出路径包含无效字符"))?;
 
         let result = unsafe { self.compress_gif_file(input_str, output_str) };
 
@@ -107,7 +107,7 @@ impl GifEncoder {
         // 打开输入文件
         let input_file = libc::fopen(input_cstr.as_ptr(), read_mode.as_ptr());
         if input_file.is_null() {
-            return Err(CompressError::GifEncode(format!(
+            return Err(CompressError::gif_encode(format!(
                 "无法打开输入文件: {}",
                 input_path
             )));
@@ -118,14 +118,14 @@ impl GifEncoder {
         libc::fclose(input_file);
 
         if input_stream.is_null() {
-            return Err(CompressError::GifDecode("无法读取 GIF 文件".to_string()));
+            return Err(CompressError::gif_decode("无法读取 GIF 文件"));
         }
 
         // 打开输出文件
         let output_file = libc::fopen(output_cstr.as_ptr(), write_mode.as_ptr());
         if output_file.is_null() {
             gifsicle::Gif_DeleteStream(input_stream);
-            return Err(CompressError::GifEncode(format!(
+            return Err(CompressError::gif_encode(format!(
                 "无法创建输出文件: {}",
                 output_path
             )));
@@ -159,7 +159,7 @@ impl GifEncoder {
 
         match write_result {
             1 => Ok(()),
-            _ => Err(CompressError::GifEncode("GIF 压缩失败".to_string())),
+            _ => Err(CompressError::gif_encode("GIF 压缩失败")),
         }
     }
 }

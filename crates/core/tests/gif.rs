@@ -27,24 +27,29 @@ use zune_core::colorspace::ColorSpace;
 use zune_image::image::Image;
 use zune_image::traits::EncoderTrait;
 
-/// 测试 GIF 解码器功能
+/// 测试已压缩 GIF 文件的内存编码功能
 ///
-/// 从文件读取 GIF 图像并解码，输出图像的尺寸、色彩空间和帧数信息。
-/// 验证解码后的色彩空间是否为 RGBA。
+/// 从文件读取已压缩的 GIF 图像，使用默认选项进行编码，
+/// 并将结果写入输出文件。输出原始和压缩后的字节数以便比较压缩效果。
 #[test]
-fn decode_gif() -> Result<(), Box<dyn std::error::Error>> {
-    let byte_vec = fs::read(get_workspace_file_path("assets/image/gif/测试.gif"))?;
-    let cursor = Cursor::new(&byte_vec);
-    let reader = BufReader::new(cursor);
-    let decoder = GifDecoder::try_new(reader)?;
+fn encode_mem_gif_compressed() -> Result<(), Box<dyn std::error::Error>> {
+    let input_path = get_workspace_file_path("assets/image/gif/测试.gif");
+    let output_path = get_workspace_file_path("assets/compress/gif/测试-已压缩.gif");
+    fs::create_dir_all(output_path.parent().unwrap())?;
 
-    let img = Image::from_decoder(decoder)?;
+    let read_buf = fs::read(input_path)?;
 
-    println!("GIF 尺寸: {:?}", img.dimensions());
-    println!("GIF 色彩空间: {:?}", img.colorspace());
-    println!("GIF 帧数: {}", img.frames_ref().len());
+    let mut encoder = GifEncoder::new();
 
-    assert_eq!(img.colorspace(), ColorSpace::RGBA);
+    let encode_buf = encoder.encode_mem(&read_buf)?;
+    println!(
+        "原始字节数: {} 压缩后字节数: {}",
+        read_buf.len(),
+        encode_buf.len()
+    );
+
+    fs::write(&output_path, &encode_buf)?;
+    println!("输出路径: {:?}", output_path);
 
     Ok(())
 }
@@ -54,7 +59,7 @@ fn decode_gif() -> Result<(), Box<dyn std::error::Error>> {
 /// 创建 100x100 的 RGBA 测试图像，使用无损压缩选项进行编码，
 /// 验证编码过程是否成功完成。
 #[test]
-fn encode_gif_lossless() {
+fn encode_gif_lossless_100_100() {
     let image = create_test_image_u8(100, 100, ColorSpace::RGBA);
     let mut encoder = GifEncoder::new_with_options(GifOptions::lossless());
 
@@ -73,7 +78,7 @@ fn encode_gif_lossless() {
 /// 创建 100x100 的 RGBA 测试图像，使用质量为 80 的有损压缩选项进行编码，
 /// 验证编码过程是否成功完成。
 #[test]
-fn encode_gif_lossy() {
+fn encode_gif_lossy_100_100() {
     let image = create_test_image_u8(100, 100, ColorSpace::RGBA);
     let mut encoder = GifEncoder::new_with_options(GifOptions::lossy(80));
 
@@ -208,4 +213,26 @@ fn gif_options_builder() {
     assert_eq!(options.optimize_level, 3);
     assert!(options.reduce_colors);
     assert_eq!(options.max_colors, 128);
+}
+
+/// 测试 GIF 解码器功能
+///
+/// 从文件读取 GIF 图像并解码，输出图像的尺寸、色彩空间和帧数信息。
+/// 验证解码后的色彩空间是否为 RGBA。
+#[test]
+fn decode_gif() -> Result<(), Box<dyn std::error::Error>> {
+    let byte_vec = fs::read(get_workspace_file_path("assets/image/gif/测试.gif"))?;
+    let cursor = Cursor::new(&byte_vec);
+    let reader = BufReader::new(cursor);
+    let decoder = GifDecoder::try_new(reader)?;
+
+    let img = Image::from_decoder(decoder)?;
+
+    println!("GIF 尺寸: {:?}", img.dimensions());
+    println!("GIF 色彩空间: {:?}", img.colorspace());
+    println!("GIF 帧数: {}", img.frames_ref().len());
+
+    assert_eq!(img.colorspace(), ColorSpace::RGBA);
+
+    Ok(())
 }

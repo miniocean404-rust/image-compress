@@ -27,7 +27,10 @@
       "Bash(git show:*)",
       "mcp__sequential-thinking__sequentialthinking",
       "mcp__fetch__fetch_markdown",
-      "mcp__exa__web_search_exa"
+      "mcp__exa__web_search_exa",
+      "mcp__desktop-commander__read_file",
+      "mcp__desktop-commander__create_directory",
+      "mcp__desktop-commander__write_file"
     ],
     "deny": []
   },

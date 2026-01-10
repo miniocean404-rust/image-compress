@@ -33,6 +33,7 @@ cargo build --all
 cargo test -p image_compress_core --test avif --features avif -- encode_mem_avif --exact --nocapture
 cargo test -p image_compress_core --test jpeg --features jpeg -- encode_mem_jpeg --exact --nocapture
 cargo test -p image_compress_core --test gif --features gif -- decode_gif --exact --nocapture
+cargo test -p image_compress_core --test png  -- image_quant_compress_lossy --exact --nocapture
 ```
 
 压缩可参考项目：https://github.com/Lymphatus/libcaesium/blob/c09613dbc85b39f525ba0398768e38e564eacf30/src/gif.rs

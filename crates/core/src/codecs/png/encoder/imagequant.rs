@@ -40,6 +40,7 @@ impl ImageQuantEncoder {
         let image = Image::read(cursor, DecoderOptions::default())?;
 
         let mut compress_buf = Cursor::new(vec![]);
+
         self.encode(&image, &mut compress_buf)?;
 
         Ok(compress_buf.into_inner())
@@ -69,7 +70,9 @@ impl ImageQuantEncoder {
         quantize_res.set_dithering_level(self.options.dithering)?;
         // 颜色从输入 Gamma 转换为此 Gamma
         quantize_res.set_output_gamma(self.options.gamma)?;
+
         let (_palette, pixels) = quantize_res.remapped(&mut img)?;
+
         // 获取调色板并用新像素覆盖以前的像素，也可以使用 remapped 获取调色板
         let palette = quantize_res.palette();
 
@@ -110,8 +113,18 @@ impl EncoderTrait for ImageQuantEncoder {
         image: &Image,
         sink: T,
     ) -> Result<usize, ImageErrors> {
-        let colorspace = image.colorspace();
         let (width, height) = image.dimensions();
+
+        // 确保图片是 RGBA 色彩空间，imagequant 只支持 RGBA
+        let image = if image.colorspace() != ColorSpace::RGBA {
+            let mut img_clone = image.clone();
+            img_clone.convert_color(ColorSpace::RGBA)?;
+            img_clone
+        } else {
+            image.clone()
+        };
+
+        let colorspace = image.colorspace();
 
         let vec_data = if image.depth() == BitDepth::Eight {
             // 如果是 8 个字节就拍平
@@ -131,6 +144,17 @@ impl EncoderTrait for ImageQuantEncoder {
         .unwrap();
 
         let mut writer = ZWriter::new(sink);
+
+        // 验证数据长度是否正确（width * height * 4 字节 = RGBA）
+        let expected_len = width * height * 4;
+        if vec_data.len() != expected_len {
+            return Err(ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(
+                format!(
+                    "像素数据长度不匹配: 期望 {} 字节 ({}x{}x4), 实际 {} 字节",
+                    expected_len, width, height, vec_data.len()
+                ),
+            )));
+        }
 
         let data = self.convert_to_rgba(vec_data)?;
 

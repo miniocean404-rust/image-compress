@@ -30,7 +30,16 @@
       "mcp__exa__web_search_exa",
       "mcp__desktop-commander__read_file",
       "mcp__desktop-commander__create_directory",
-      "mcp__desktop-commander__write_file"
+      "mcp__desktop-commander__write_file",
+      "Bash(cargo r:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "mcp__github__search_issues",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "mcp__github__get_release_by_tag",
+      "WebFetch(domain:docs.rs)",
+      "Bash(powershell:*)",
+      "Bash(where:*)"
     ],
     "deny": []
   },

@@ -31,9 +31,8 @@ where
     R: BufRead,
 {
     fn decode(&mut self) -> Result<Image, ImageErrors> {
-        let (width, height) = <WebPDecoder<R> as DecoderTrait>::dimensions(self).ok_or_else(|| {
-            ImageErrors::ImageDecodeErrors("无法获取 WebP 图像尺寸".to_string())
-        })?;
+        let (width, height) = <WebPDecoder<R> as DecoderTrait>::dimensions(self)
+            .ok_or_else(|| ImageErrors::ImageDecodeErrors("无法获取 WebP 图像尺寸".to_string()))?;
         let color = <WebPDecoder<R> as DecoderTrait>::out_colorspace(self);
 
         let frames = self

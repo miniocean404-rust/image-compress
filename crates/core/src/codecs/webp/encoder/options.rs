@@ -304,8 +304,7 @@ impl From<WebPOptions> for webp::WebPConfig {
     fn from(value: WebPOptions) -> Self {
         // WebPConfig::new() 只有在内部参数无效时才会失败
         // 由于我们使用的是有效的默认值，这里不会失败
-        let mut config = webp::WebPConfig::new()
-            .expect("WebPConfig 初始化失败: 内部参数无效");
+        let mut config = webp::WebPConfig::new().expect("WebPConfig 初始化失败: 内部参数无效");
 
         config.lossless = value.lossless;
         config.quality = value.quality;

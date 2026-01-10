@@ -1,6 +1,5 @@
 use std::fmt::{self};
 
-use anyhow::anyhow;
 use image_compress_core::codecs::png::encoder::{
     imagequant::ImageQuantEncoder, oxipng::OxiPngEncoder,
 };
@@ -9,6 +8,7 @@ use image_compress_core::codecs::{
     avif::encoder::ravif::AvifEncoder, jpeg::encoder::mozjpeg::MozJpegEncoder,
     webp::encoder::webp::WebPEncoder,
 };
+use image_compress_core::error::CompressError;
 use utils::file::mime::get_mime_for_memory;
 
 use crate::export::*;
@@ -106,7 +106,9 @@ impl ImageCompress {
             Options::Avif(options) => {
                 AvifEncoder::new_with_options(options).encode_mem(&self.image)
             }
-            Options::Unknown => Err(anyhow!("没有设置 options 或 不能压缩的类型")),
+            Options::Unknown => Err(CompressError::InvalidParameter(
+                "没有设置 options 或 不能压缩的类型".to_string(),
+            )),
         }?;
 
         self.after_size = self.compressed_image.len();

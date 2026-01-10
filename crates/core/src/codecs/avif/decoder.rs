@@ -29,7 +29,8 @@ where
     R: BufRead,
 {
     fn decode(&mut self) -> Result<Image, ImageErrors> {
-        let img = libavif::decode_rgb(&self.inner).map_err(|e| ImageErrors::ImageDecodeErrors(e.to_string()))?;
+        let img = libavif::decode_rgb(&self.inner)
+            .map_err(|e| ImageErrors::ImageDecodeErrors(e.to_string()))?;
 
         let (w, h) = (img.width() as usize, img.height() as usize);
         self.dimensions = Some((w, h));

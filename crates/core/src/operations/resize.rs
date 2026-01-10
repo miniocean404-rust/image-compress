@@ -100,12 +100,11 @@ impl OperationsTrait for Resize {
             errors
                 .into_iter()
                 .map(|x| {
-                    x.join()
-                        .map_err(|_| {
-                            ImageErrors::OperationsError(ImageOperationsErrors::GenericString(
-                                "线程执行失败".to_string(),
-                            ))
-                        })?
+                    x.join().map_err(|_| {
+                        ImageErrors::OperationsError(ImageOperationsErrors::GenericString(
+                            "线程执行失败".to_string(),
+                        ))
+                    })?
                 })
                 .collect::<Result<Vec<()>, ImageErrors>>()
         })?;

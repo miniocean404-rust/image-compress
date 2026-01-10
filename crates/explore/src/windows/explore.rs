@@ -3,13 +3,13 @@
 #![cfg(target_os = "windows")]
 
 use windows::core::{IUnknown, Interface, Param};
-use windows::Win32::System::Variant::VARIANT;
 use windows::Win32::Foundation::{HWND, S_FALSE};
 use windows::Win32::System::Com::{
     CoCreateInstance, CoInitializeEx, CoTaskMemFree, IDispatch, CLSCTX_LOCAL_SERVER,
     COINIT_APARTMENTTHREADED, COINIT_DISABLE_OLE1DDE,
 };
 use windows::Win32::System::Ole::IEnumVARIANT;
+use windows::Win32::System::Variant::VARIANT;
 use windows::Win32::System::Variant::VT_DISPATCH;
 use windows::Win32::UI::Shell::{
     IPersistIDList, IShellBrowser, IShellItem, IShellWindows, IUnknown_QueryService,

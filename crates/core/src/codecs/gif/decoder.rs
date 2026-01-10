@@ -38,9 +38,9 @@ impl<R: BufRead> GifDecoder<R> {
 
 impl<R: BufRead> DecoderTrait for GifDecoder<R> {
     fn decode(&mut self) -> Result<Image, ImageErrors> {
-        let (width, height) = self.dimensions().ok_or_else(|| {
-            ImageErrors::ImageDecodeErrors("无法获取 GIF 图像尺寸".to_string())
-        })?;
+        let (width, height) = self
+            .dimensions()
+            .ok_or_else(|| ImageErrors::ImageDecodeErrors("无法获取 GIF 图像尺寸".to_string()))?;
         let colorspace = ColorSpace::RGBA;
 
         let mut frames = Vec::new();

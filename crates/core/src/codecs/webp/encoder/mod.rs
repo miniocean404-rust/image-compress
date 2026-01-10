@@ -1,2 +1,2 @@
-pub mod webp;
 pub mod options;
+pub mod webp;

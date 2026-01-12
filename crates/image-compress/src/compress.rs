@@ -16,36 +16,57 @@ use utils::file::mime::get_mime_for_memory;
 
 use crate::{state::CompressState, support::SupportedFileTypes};
 
+/// 压缩选项枚举
+///
+/// 根据不同的图片格式选择对应的压缩选项
 #[derive(Debug, Clone)]
 pub enum Options {
+    /// PNG 格式压缩选项 (使用 oxipng)
     OxiPng(OxiPngOptions),
+    /// PNG 格式量化压缩选项 (使用 imagequant)
     ImageQuant(ImageQuantOptions),
+    /// JPEG 格式压缩选项 (使用 mozjpeg)
     #[cfg(feature = "native")]
     MozJpeg(MozJpegOptions),
+    /// WebP 格式压缩选项 (使用 libwebp)
     #[cfg(feature = "native")]
     WebP(WebPOptions),
+    /// AVIF 格式压缩选项 (使用 ravif)
     #[cfg(feature = "native")]
     Avif(AvifOptions),
+    /// 未知/未设置选项
     Unknown,
 }
 
+/// 图片压缩器
+///
+/// 提供图片压缩的核心功能，支持多种图片格式。
 pub struct ImageCompress {
+    /// 原始图片数据
     pub image: Vec<u8>,
 
+    /// 压缩后的图片数据
     pub compressed_image: Vec<u8>,
 
+    /// 图片格式类型
     pub ext: SupportedFileTypes,
 
+    /// 当前压缩状态
     pub state: CompressState,
 
+    /// 压缩质量 (0-100)
     pub quality: u8,
 
+    /// 压缩前文件大小 (字节)
     pub before_size: usize,
 
+    /// 压缩后文件大小 (字节)
     pub after_size: usize,
 
+    /// 压缩率 (百分比，正值表示体积减小)
     pub rate: f64,
 
+    /// 压缩选项配置
     options: Options,
 }
 
@@ -66,10 +87,20 @@ impl Default for ImageCompress {
 }
 
 impl ImageCompress {
+    /// 创建一个新的图片压缩器实例
     pub fn new() -> Self {
         Self::default()
     }
 
+    /// 设置要压缩的图片数据
+    ///
+    /// ### 参数
+    ///
+    /// * `image` - 原始图片的字节数据
+    ///
+    /// ### 返回
+    ///
+    /// 返回配置了图片数据的 `ImageCompress` 实例
     pub fn with_buffer(self, image: Vec<u8>) -> Self {
         let before_size = image.len();
         let ext = get_mime_for_memory(&image).into();
@@ -82,16 +113,38 @@ impl ImageCompress {
         }
     }
 
+    /// 设置压缩选项
+    ///
+    /// ### 参数
+    ///
+    /// * `options` - 压缩选项，根据图片格式选择对应的选项类型
+    ///
+    /// ### 返回
+    ///
+    /// 返回配置了压缩选项的 `ImageCompress` 实例
     pub fn with_options(self, options: Options) -> Self {
         Self { options, ..self }
     }
 
+    /// 执行图片压缩
+    ///
+    /// 根据设置的选项对图片进行压缩，并更新压缩状态和统计信息。
+    ///
+    /// ### 返回
+    ///
+    /// * `Ok(Vec<u8>)` - 压缩成功，返回压缩后的图片数据
+    /// * `Err` - 压缩失败，返回错误信息
+    ///
+    /// ### 错误
+    ///
+    /// * 未设置压缩选项时返回 `InvalidParameter` 错误
+    /// * 编码器内部错误
     pub fn compress(&mut self) -> anyhow::Result<Vec<u8>> {
         self.state = CompressState::Compressing;
 
         self.compressed_image = match self.options.clone() {
             Options::OxiPng(options) => {
-                OxiPngEncoder::new_with_options((options).clone()).encode_mem(&self.image)
+                OxiPngEncoder::new_with_options(options).encode_mem(&self.image)
             }
             Options::ImageQuant(options) => {
                 ImageQuantEncoder::new_with_options(options).encode_mem(&self.image)

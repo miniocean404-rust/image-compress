@@ -148,7 +148,7 @@ svgtypes = "0.16.0"
 # macOS
 cocoa = "0.26.1"
 objc = "0.2.7"
-objc2 = "0.5.0"
+objc2 = "0.6.3"
 
 # Windows
 windows = { version = "0.62.2", features = [

@@ -1,17 +1,19 @@
 use std::fmt::{self};
 
 use image_compress_core::codecs::png::encoder::{
-    imagequant::ImageQuantEncoder, oxipng::OxiPngEncoder,
+    imagequant::ImageQuantEncoder, imagequant_options::ImageQuantOptions, oxipng::OxiPngEncoder,
+    oxipng_options::OxiPngOptions,
 };
+
 #[cfg(feature = "native")]
 use image_compress_core::codecs::{
-    avif::encoder::ravif::AvifEncoder, jpeg::encoder::mozjpeg::MozJpegEncoder,
-    webp::encoder::webp::WebPEncoder,
+    avif::encoder::{options::AvifOptions, ravif::AvifEncoder},
+    jpeg::encoder::{mozjpeg::MozJpegEncoder, options::MozJpegOptions},
+    webp::encoder::{options::WebPOptions, webp::WebPEncoder},
 };
 use image_compress_core::error::CompressError;
 use utils::file::mime::get_mime_for_memory;
 
-use crate::export::*;
 use crate::{state::CompressState, support::SupportedFileTypes};
 
 #[derive(Debug, Clone)]

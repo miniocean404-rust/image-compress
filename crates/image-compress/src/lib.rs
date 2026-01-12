@@ -7,5 +7,4 @@ pub use png::encoder::oxipng_options::*;
 pub use webp::encoder::options::*;
 
 pub mod compress;
-pub mod state;
-pub mod support;
+pub mod consts;

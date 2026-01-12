@@ -1,7 +1,4 @@
-use image_compress::{
-    compress::{ImageCompress, Options},
-    ImageQuantOptions, OxiPngOptions,
-};
+use image_compress::{compress::ImageCompress, consts::Options, ImageQuantOptions, OxiPngOptions};
 
 #[cfg(feature = "native")]
 use image_compress::{

@@ -1,42 +1,18 @@
 use std::fmt::{self};
 
 use image_compress_core::codecs::png::encoder::{
-    imagequant::ImageQuantEncoder, imagequant_options::ImageQuantOptions, oxipng::OxiPngEncoder,
-    oxipng_options::OxiPngOptions,
+    imagequant::ImageQuantEncoder, oxipng::OxiPngEncoder,
 };
 
 #[cfg(feature = "native")]
 use image_compress_core::codecs::{
-    avif::encoder::{options::AvifOptions, ravif::AvifEncoder},
-    jpeg::encoder::{mozjpeg::MozJpegEncoder, options::MozJpegOptions},
-    webp::encoder::{options::WebPOptions, webp::WebPEncoder},
+    avif::encoder::ravif::AvifEncoder, jpeg::encoder::mozjpeg::MozJpegEncoder,
+    webp::encoder::webp::WebPEncoder,
 };
 use image_compress_core::error::CompressError;
 use utils::file::mime::get_mime_for_memory;
 
-use crate::{state::CompressState, support::SupportedFileTypes};
-
-/// 压缩选项枚举
-///
-/// 根据不同的图片格式选择对应的压缩选项
-#[derive(Debug, Clone)]
-pub enum Options {
-    /// PNG 格式压缩选项 (使用 oxipng)
-    OxiPng(OxiPngOptions),
-    /// PNG 格式量化压缩选项 (使用 imagequant)
-    ImageQuant(ImageQuantOptions),
-    /// JPEG 格式压缩选项 (使用 mozjpeg)
-    #[cfg(feature = "native")]
-    MozJpeg(MozJpegOptions),
-    /// WebP 格式压缩选项 (使用 libwebp)
-    #[cfg(feature = "native")]
-    WebP(WebPOptions),
-    /// AVIF 格式压缩选项 (使用 ravif)
-    #[cfg(feature = "native")]
-    Avif(AvifOptions),
-    /// 未知/未设置选项
-    Unknown,
-}
+use crate::consts::{CompressState, Options, SupportedFileTypes};
 
 /// 图片压缩器
 ///
@@ -83,6 +59,26 @@ impl Default for ImageCompress {
             after_size: 0,
             rate: 0.0,
         }
+    }
+}
+
+impl fmt::Display for ImageCompress {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:#?}", self)
+    }
+}
+
+impl fmt::Debug for ImageCompress {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("ImageCompress")
+            .field("ext", &self.ext)
+            .field("state", &self.state)
+            .field("quality", &self.quality)
+            .field("before_size", &self.before_size)
+            .field("after_size", &self.after_size)
+            .field("rate", &self.rate)
+            .field("options", &self.options)
+            .finish()
     }
 }
 
@@ -177,25 +173,5 @@ impl ImageCompress {
         self.state = CompressState::Done;
 
         Ok(self.compressed_image.clone().to_vec())
-    }
-}
-
-impl fmt::Display for ImageCompress {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{:#?}", self)
-    }
-}
-
-impl fmt::Debug for ImageCompress {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("ImageCompress")
-            .field("ext", &self.ext)
-            .field("state", &self.state)
-            .field("quality", &self.quality)
-            .field("before_size", &self.before_size)
-            .field("after_size", &self.after_size)
-            .field("rate", &self.rate)
-            .field("options", &self.options)
-            .finish()
     }
 }

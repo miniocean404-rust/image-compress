@@ -20,6 +20,7 @@ impl From<SupportedFileTypes> for Kind {
             SupportedFileTypes::Png => Kind::png,
             SupportedFileTypes::WebP => Kind::webp,
             SupportedFileTypes::Avif => Kind::avif,
+            SupportedFileTypes::Gif => Kind::gif,
             SupportedFileTypes::Unknown => Kind::unknown,
         }
     }

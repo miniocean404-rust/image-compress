@@ -8,6 +8,7 @@
 //! - JPEG (mozjpeg) - 需要 `native` 特性
 //! - WebP (libwebp) - 需要 `native` 特性
 //! - AVIF (ravif) - 需要 `native` 特性
+//! - GIF (gifsicle) - 需要 `native` 特性
 
 pub mod compress;
 pub mod consts;
@@ -26,6 +27,8 @@ pub mod export {
     // native 特性下的选项导出
     #[cfg(feature = "native")]
     pub use image_compress_core::codecs::avif::encoder::options::*;
+    #[cfg(feature = "native")]
+    pub use image_compress_core::codecs::gif::encoder::options::*;
     #[cfg(feature = "native")]
     pub use image_compress_core::codecs::jpeg::encoder::options::*;
     #[cfg(feature = "native")]

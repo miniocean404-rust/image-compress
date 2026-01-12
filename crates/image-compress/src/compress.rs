@@ -6,8 +6,8 @@ use image_compress_core::codecs::png::encoder::{
 
 #[cfg(feature = "native")]
 use image_compress_core::codecs::{
-    avif::encoder::ravif::AvifEncoder, jpeg::encoder::mozjpeg::MozJpegEncoder,
-    webp::encoder::webp::WebPEncoder,
+    avif::encoder::ravif::AvifEncoder, gif::encoder::gifsicle::GifEncoder,
+    jpeg::encoder::mozjpeg::MozJpegEncoder, webp::encoder::webp::WebPEncoder,
 };
 use image_compress_core::error::CompressError;
 use utils::file::mime::get_mime_for_memory;
@@ -156,6 +156,10 @@ impl ImageCompress {
             #[cfg(feature = "native")]
             Options::Avif(options) => {
                 AvifEncoder::new_with_options(*options).encode_mem(&self.image)
+            }
+            #[cfg(feature = "native")]
+            Options::Gif(options) => {
+                GifEncoder::new_with_options(*options).encode_mem(&self.image)
             }
             Options::Unknown => Err(CompressError::InvalidParameter(
                 "没有设置 options 或 不能压缩的类型".to_string(),

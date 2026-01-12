@@ -46,7 +46,7 @@ anyhow = "1.0.79"
 
 # 用于在 Rust 程序运行时获取堆栈跟踪（回溯）的库
 backtrace = "0.3.69"
-once_cell = "1.19.0"
+once_cell = "1.21.3"
 
 # 处理日志及栈追踪
 tracing = { version = "0.1.40", features = ["release_max_level_info"] }
@@ -64,9 +64,9 @@ chrono = "0.4.31"
 # 它能够将如 DOM 操作、console.log 和 performance 等 JS 相关 API 暴露给 Rust 使用
 # 它能够将 Rust 功能导出到 JS 中，如类、函数等
 # wasm-pack cli 依赖这个包进行打包
-wasm-bindgen = { version = "0.2.92", features = ["enable-interning"] }
+wasm-bindgen = { version = "0.2.106", features = ["enable-interning"] }
 # web-sys 的 Crate，它为 Rust 进一步提供了控制 DOM 的能力
-web-sys = { version = "0.3.69", features = [
+web-sys = { version = "0.3.83", features = [
     'Document',
     'Element',
     'HtmlElement',
@@ -80,11 +80,11 @@ js-sys = "0.3.67"
 serde-wasm-bindgen = "0.6.3"
 wee_alloc = "0.4.5"
 
-napi = { version = "3.0.0-alpha.8", features = [
+napi = { version = "3.8.2", features = [
     "napi9",
     "async",
     "serde-json",
     "chrono_date"
 ] }
 napi-derive = { git = "https://github.com/napi-rs/napi-rs.git", features = ["type-def"], branch = "main" }
-napi-build = "2.1.3"
+napi-build = "2.3.1"

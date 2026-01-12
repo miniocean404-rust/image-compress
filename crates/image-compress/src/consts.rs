@@ -3,8 +3,8 @@ use image_compress_core::codecs::png::encoder::{
 };
 #[cfg(feature = "native")]
 use image_compress_core::codecs::{
-    avif::encoder::options::AvifOptions, jpeg::encoder::options::MozJpegOptions,
-    webp::encoder::options::WebPOptions,
+    avif::encoder::options::AvifOptions, gif::encoder::options::GifOptions,
+    jpeg::encoder::options::MozJpegOptions, webp::encoder::options::WebPOptions,
 };
 
 #[derive(Clone, Debug, Default)]
@@ -33,6 +33,9 @@ pub enum Options {
     /// AVIF 格式压缩选项 (使用 ravif)
     #[cfg(feature = "native")]
     Avif(AvifOptions),
+    /// GIF 格式压缩选项 (使用 gifsicle)
+    #[cfg(feature = "native")]
+    Gif(GifOptions),
     /// 未知/未设置选项
     Unknown,
 }
@@ -43,6 +46,7 @@ pub enum SupportedFileTypes {
     Png,
     WebP,
     Avif,
+    Gif,
 
     // 为 Default 宏设置默认值
     #[default]
@@ -56,7 +60,7 @@ impl From<&str> for SupportedFileTypes {
             "image/png" => SupportedFileTypes::Png,
             "image/webp" => SupportedFileTypes::WebP,
             "image/avif" => SupportedFileTypes::Avif,
-            // "image/gif" => SupportedFileTypes::Gif,
+            "image/gif" => SupportedFileTypes::Gif,
             _ => SupportedFileTypes::Unknown,
         }
     }

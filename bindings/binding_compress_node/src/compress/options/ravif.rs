@@ -47,17 +47,17 @@ impl From<NapiAvifOptions> for export::AvifOptions {
 impl From<Object> for NapiAvifOptions {
     fn from(value: Object) -> Self {
         Self {
-            quality: value.get_named_property::<f64>("quality").unwrap(),
+            quality: value.get_named_property::<f64>("quality").unwrap_or(80.0),
             alpha_quality: value
                 .get_named_property::<Option<f64>>("alphaQuality")
-                .unwrap(),
-            speed: value.get_named_property::<u8>("speed").unwrap(),
+                .unwrap_or(None),
+            speed: value.get_named_property::<u8>("speed").unwrap_or(4),
             color_space: value
                 .get_named_property::<ColorSpace>("colorSpace")
-                .unwrap(),
+                .unwrap_or(ColorSpace::YCbCr),
             alpha_color_mode: value
                 .get_named_property::<AlphaColorMode>("alphaColorMode")
-                .unwrap(),
+                .unwrap_or(AlphaColorMode::UnassociatedClean),
         }
     }
 }

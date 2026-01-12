@@ -50,15 +50,15 @@ impl From<ImageQuantOptions> for export::ImageQuantOptions {
 impl From<Object> for ImageQuantOptions {
     fn from(value: Object) -> Self {
         Self {
-            min_quality: value.get_named_property::<u8>("minQuality").unwrap(),
-            max_quality: value.get_named_property::<u8>("maxQuality").unwrap(),
-            speed: value.get_named_property::<i32>("speed").unwrap(),
-            min_posterization: value.get_named_property::<u8>("minPosterization").unwrap(),
-            dithering: value.get_named_property::<f64>("dithering").unwrap(),
-            gamma: value.get_named_property::<f64>("gamma").unwrap(),
+            min_quality: value.get_named_property::<u8>("minQuality").unwrap_or(0),
+            max_quality: value.get_named_property::<u8>("maxQuality").unwrap_or(100),
+            speed: value.get_named_property::<i32>("speed").unwrap_or(4),
+            min_posterization: value.get_named_property::<u8>("minPosterization").unwrap_or(0),
+            dithering: value.get_named_property::<f64>("dithering").unwrap_or(1.0),
+            gamma: value.get_named_property::<f64>("gamma").unwrap_or(0.0),
             last_index_transparent: value
                 .get_named_property::<bool>("lastIndexTransparent")
-                .unwrap(),
+                .unwrap_or(false),
         }
     }
 }

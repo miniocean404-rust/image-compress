@@ -916,7 +916,6 @@ dependencies = [
  "napi-build",
  "napi-derive",
  "once_cell",
- "tokio",
  "tracing",
  "tracing-appender",
  "tracing-chrome",

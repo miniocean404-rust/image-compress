@@ -204,35 +204,39 @@ impl From<NapiOxiPngOptions> for export::OxiPngOptions {
 impl From<Object> for NapiOxiPngOptions {
     fn from(value: Object) -> Self {
         Self {
-            fix_errors: value.get_named_property::<bool>("fixErrors").unwrap(),
-            force: value.get_named_property::<bool>("force").unwrap(),
+            fix_errors: value.get_named_property::<bool>("fixErrors").unwrap_or(false),
+            force: value.get_named_property::<bool>("force").unwrap_or(false),
             filters: value
                 .get_named_property::<FilterStrategy>("filters")
-                .unwrap(),
+                .unwrap_or(FilterStrategy::Entropy),
             interlace: value
                 .get_named_property::<Option<bool>>("interlace")
-                .unwrap(),
-            optimize_alpha: value.get_named_property::<bool>("optimizeAlpha").unwrap(),
+                .unwrap_or(Some(false)),
+            optimize_alpha: value.get_named_property::<bool>("optimizeAlpha").unwrap_or(false),
             bit_depth_reduction: value
                 .get_named_property::<bool>("bitDepthReduction")
-                .unwrap(),
+                .unwrap_or(true),
             color_type_reduction: value
                 .get_named_property::<bool>("colorTypeReduction")
-                .unwrap(),
+                .unwrap_or(true),
             palette_reduction: value
                 .get_named_property::<bool>("paletteReduction")
-                .unwrap(),
+                .unwrap_or(true),
             grayscale_reduction: value
                 .get_named_property::<bool>("grayscaleReduction")
-                .unwrap(),
-            idat_recoding: value.get_named_property::<bool>("idatRecoding").unwrap(),
-            scale_16: value.get_named_property::<bool>("scale16").unwrap(),
-            strip: value.get_named_property::<StripChunks>("strip").unwrap(),
-            deflater: value.get_named_property::<Deflater>("deflater").unwrap(),
-            fast_evaluation: value.get_named_property::<bool>("fastEvaluation").unwrap(),
+                .unwrap_or(true),
+            idat_recoding: value.get_named_property::<bool>("idatRecoding").unwrap_or(true),
+            scale_16: value.get_named_property::<bool>("scale16").unwrap_or(false),
+            strip: value
+                .get_named_property::<StripChunks>("strip")
+                .unwrap_or(StripChunks::None),
+            deflater: value
+                .get_named_property::<Deflater>("deflater")
+                .unwrap_or(Deflater::Libdeflater { compression: 12 }),
+            fast_evaluation: value.get_named_property::<bool>("fastEvaluation").unwrap_or(true),
             timeout: value
                 .get_named_property::<Option<BigInt>>("timeout")
-                .unwrap(),
+                .unwrap_or(None),
         }
     }
 }

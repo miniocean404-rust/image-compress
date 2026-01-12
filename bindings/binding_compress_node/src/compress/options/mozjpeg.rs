@@ -37,24 +37,24 @@ pub struct NapiMozJpegOptions {
 impl From<Object> for NapiMozJpegOptions {
     fn from(value: Object) -> Self {
         Self {
-            quality: value.get_named_property::<f64>("quality").unwrap(),
-            progressive: value.get_named_property::<bool>("progressive").unwrap(),
-            optimize_coding: value.get_named_property::<bool>("optimizeCoding").unwrap(),
-            smoothing: value.get_named_property::<u8>("smoothing").unwrap(),
+            quality: value.get_named_property::<f64>("quality").unwrap_or(80.0),
+            progressive: value.get_named_property::<bool>("progressive").unwrap_or(true),
+            optimize_coding: value.get_named_property::<bool>("optimizeCoding").unwrap_or(true),
+            smoothing: value.get_named_property::<u8>("smoothing").unwrap_or(0),
             color_space: value
                 .get_named_property::<ColorSpace>("colorSpace")
-                .unwrap(),
+                .unwrap_or(ColorSpace::JCS_YCbCr),
             trellis_multipass: value
                 .get_named_property::<bool>("trellisMultipass")
-                .unwrap(),
+                .unwrap_or(false),
             chroma_subsample: value
                 .get_named_property::<Option<u8>>("chromaSubsample")
-                .unwrap(),
-            luma: value.get_named_property::<bool>("luma").unwrap(),
-            chroma: value.get_named_property::<bool>("chroma").unwrap(),
+                .unwrap_or(None),
+            luma: value.get_named_property::<bool>("luma").unwrap_or(false),
+            chroma: value.get_named_property::<bool>("chroma").unwrap_or(false),
             qtable: value
                 .get_named_property::<Option<QtableOptimize>>("qtable")
-                .unwrap(),
+                .unwrap_or(None),
         }
     }
 }

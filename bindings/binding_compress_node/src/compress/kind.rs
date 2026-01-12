@@ -1,4 +1,4 @@
-use image_compress::support::SupportedFileTypes;
+use image_compress::SupportedFileTypes;
 use napi_derive::napi;
 
 // string_enum 转化为字符串枚举

@@ -5,15 +5,14 @@ edition.workspace = true
 repository.workspace = true
 
 [features]
-default = ['wasm']
-native = []
-wasm = []
+default = ['native']
+native = ["image_compress_core/native"]
+wasm = ["image_compress_core/wasm"]
 
 
 [dependencies]
-image_compress_core = { workspace = true, features = ["native"] }
+image_compress_core = { workspace = true }
 utils = { workspace = true, features = ["file"] }
 
-tokio.workspace = true
 anyhow.workspace = true
 infer.workspace = true

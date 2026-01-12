@@ -921,7 +921,6 @@ dependencies = [
  "anyhow",
  "image_compress_core",
  "infer",
- "tokio",
  "utils",
 ]
 

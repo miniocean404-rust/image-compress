@@ -1,10 +1,7 @@
 use image_compress::{compress::ImageCompress, consts::Options, ImageQuantOptions, OxiPngOptions};
 
 #[cfg(feature = "native")]
-use image_compress::{
-    avif::encoder::options::AvifOptions, jpeg::encoder::options::MozJpegOptions,
-    webp::encoder::options::WebPOptions,
-};
+use image_compress::{AvifOptions, MozJpegOptions, WebPOptions};
 
 use std::fs;
 

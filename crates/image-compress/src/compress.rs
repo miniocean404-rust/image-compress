@@ -138,24 +138,24 @@ impl ImageCompress {
     pub fn compress(&mut self) -> anyhow::Result<Vec<u8>> {
         self.state = CompressState::Compressing;
 
-        self.compressed_image = match self.options.clone() {
+        self.compressed_image = match &self.options {
             Options::OxiPng(options) => {
-                OxiPngEncoder::new_with_options(options).encode_mem(&self.image)
+                OxiPngEncoder::new_with_options(options.clone()).encode_mem(&self.image)
             }
             Options::ImageQuant(options) => {
-                ImageQuantEncoder::new_with_options(options).encode_mem(&self.image)
+                ImageQuantEncoder::new_with_options(options.clone()).encode_mem(&self.image)
             }
             #[cfg(feature = "native")]
             Options::MozJpeg(options) => {
-                MozJpegEncoder::new_with_options(options).encode_mem(&self.image)
+                MozJpegEncoder::new_with_options(options.clone()).encode_mem(&self.image)
             }
             #[cfg(feature = "native")]
             Options::WebP(options) => {
-                WebPEncoder::new_with_options(options).encode_mem(&self.image)
+                WebPEncoder::new_with_options(options.clone()).encode_mem(&self.image)
             }
             #[cfg(feature = "native")]
             Options::Avif(options) => {
-                AvifEncoder::new_with_options(options).encode_mem(&self.image)
+                AvifEncoder::new_with_options(options.clone()).encode_mem(&self.image)
             }
             Options::Unknown => Err(CompressError::InvalidParameter(
                 "没有设置 options 或 不能压缩的类型".to_string(),
@@ -172,6 +172,6 @@ impl ImageCompress {
 
         self.state = CompressState::Done;
 
-        Ok(self.compressed_image.clone().to_vec())
+        Ok(self.compressed_image.clone())
     }
 }

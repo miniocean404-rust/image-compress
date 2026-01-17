@@ -1,8 +1,15 @@
 **/node_modules
 **/.DS_Store
+.idea
 
-yarn.lock
-package-lock.json
 *.log
-.idea/
-wasm/
+wasm
+
+__test__
+artifacts
+bak
+benchmark
+build
+npm
+RECORD.md
+pnpm-lock.yaml

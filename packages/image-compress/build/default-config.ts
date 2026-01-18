@@ -27,7 +27,7 @@ export const defaultBuildOptions = {
   platform: true,
 
   // 生成的 JS 绑定文件中的包名，仅在使用 `--platform` 标志时有效
-  jsPackageName: "@api/explore",
+  jsPackageName: "@giegie/image-compress",
 
   // 是否为 TypeScript 绑定生成 const enum
   constEnum: true,
@@ -43,8 +43,8 @@ export const defaultBuildOptions = {
 
   // 生成的类型定义文件的自定义文件头，仅在启用 `typedef` 功能时有效
   dtsHeader: dedent`
-    // Type definitions for explore
-    // Project: https://github.com/giegie/explore
+    // Type definitions for image-compress
+    // Project: https://github.com/giegie/image-compress
     // Definitions by: Giegie <https://github.com/giegie>
     // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped\n\n
   `,
@@ -65,13 +65,13 @@ export const defaultBuildOptions = {
   release: false,
 
   // 详细输出构建命令跟踪信息
-  verbose: true,
+  verbose: false,
 
   // 仅构建指定的二进制文件
   bin: undefined,
 
   // 构建指定的库或当前工作目录中的库
-  package: "binding_explore",
+  package: "image_compress_node",
 
   // 使用指定的配置文件构建产物
   // profile: undefined,

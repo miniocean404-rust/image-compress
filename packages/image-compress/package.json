@@ -43,11 +43,12 @@
     "node": ">= 10.16.0 < 11 || >= 11.8.0 < 12 || >= 12.0.0"
   },
   "scripts": {
-    "build:napi-dev": "tsx build/index.ts",
-    "build:napi": "tsx build/index.ts --release",
+    "build:dev": "tsx build/index.ts",
+    "build": "tsx build/index.ts --release",
     "napi:help": "napi --help",
     "test": "ava",
-    "bench": "tsx benchmark/bench.ts"
+    "bench": "tsx benchmark/bench.ts",
+    "test:node": "tsx __tests__/index.ts"
   },
   "files": [
     "index.js",

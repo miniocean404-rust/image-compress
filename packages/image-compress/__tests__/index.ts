@@ -1,6 +1,7 @@
-const { compress } = require("../index")
-const path = require("path")
-const fs = require("fs")
+import { compress } from "../index.js"
+import path from "node:path"
+import fs from "node:fs"
+import { fileURLToPath } from "node:url"
 
 init()
 
@@ -9,7 +10,7 @@ async function init() {
 }
 
 function compress_jpeg() {
-  const image = path.join(process.cwd(), "../../assets/image/jpeg/eye.jpg")
+  const image = path.join(process.cwd(), "../../assets/image/jpeg/测试.jpg")
 
   const res = compress(image, {
     /** 质量, 推荐 60-80. 范围：`1..=100` */
@@ -24,7 +25,7 @@ function compress_jpeg() {
     colorSpace: "JCS_YCbCr",
     /** 指定在网格量化期间是否应考虑多次扫描。 */
     trellisMultipass: false,
-    /** 设置色度子采样，保留为“None”以使用自动子采样 */
+    /** 设置色度子采样，保留为"None"以使用自动子采样 */
     chromaSubsample: null,
     /** 是否使用特定的量化表。替代质量（quality）设置。 */
     luma: false,
@@ -37,7 +38,7 @@ function compress_jpeg() {
 }
 
 function compress_png() {
-  const image = path.join(process.cwd(), "../../assets/image/png/time-icon.png")
+  const image = path.join(process.cwd(), "../../assets/image/png/测试.png")
   const res = compress(image)
   fs.writeFileSync("./test.jpg", res.compressedImage)
 }

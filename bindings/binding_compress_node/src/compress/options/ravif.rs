@@ -19,7 +19,7 @@ pub struct NapiAvifOptions {
     /// 更改图像中颜色通道的存储方式。
     ///
     /// 请注意，这只是AVIF文件的内部细节，不会改变编码函数输入的颜色空间。
-    pub color_space: ColorSpace,
+    pub color_space: AvifColorSpace,
 
     /// 配置透明图像中颜色通道的处理
     pub alpha_color_mode: AlphaColorMode,
@@ -32,8 +32,8 @@ impl From<NapiAvifOptions> for export::AvifOptions {
             alpha_quality: value.alpha_quality.map(|e| e as f32),
             speed: value.speed,
             color_space: match value.color_space {
-                ColorSpace::YCbCr => export::AvifColorSpace::YCbCr,
-                ColorSpace::RGB => export::AvifColorSpace::RGB,
+                AvifColorSpace::YCbCr => export::AvifColorSpace::YCbCr,
+                AvifColorSpace::RGB => export::AvifColorSpace::RGB,
             },
             alpha_color_mode: match value.alpha_color_mode {
                 AlphaColorMode::UnassociatedDirty => export::AlphaColorMode::UnassociatedDirty,
@@ -53,8 +53,8 @@ impl From<Object<'_>> for NapiAvifOptions {
                 .unwrap_or(None),
             speed: value.get_named_property::<u8>("speed").unwrap_or(4),
             color_space: value
-                .get_named_property::<ColorSpace>("colorSpace")
-                .unwrap_or(ColorSpace::YCbCr),
+                .get_named_property::<AvifColorSpace>("colorSpace")
+                .unwrap_or(AvifColorSpace::YCbCr),
             alpha_color_mode: value
                 .get_named_property::<AlphaColorMode>("alphaColorMode")
                 .unwrap_or(AlphaColorMode::UnassociatedClean),
@@ -62,8 +62,8 @@ impl From<Object<'_>> for NapiAvifOptions {
     }
 }
 
-#[napi(string_enum)]
-pub enum ColorSpace {
+#[napi(string_enum, js_name = "AvifColorSpace")]
+pub enum AvifColorSpace {
     /// Standard color space for photographic content. Usually the best choice.
     /// This library always uses full-resolution color (4:4:4).
     /// This library will automatically choose between BT.601 or BT.709.

@@ -41,7 +41,16 @@
       "Bash(powershell:*)",
       "Bash(where:*)",
       "Bash(cargo update:*)",
-      "WebFetch(domain:napi.rs)"
+      "WebFetch(domain:napi.rs)",
+      "Bash(Select-String -Pattern \"warning|error\" -Context 0,2)",
+      "Bash(agent-browser:*)",
+      "Skill(rust-skills:create-skills-via-llms)",
+      "Bash(claude-code config:*)",
+      "Bash(pnpm run build:node-dev)",
+      "Bash(pnpm run build:node)",
+      "Bash(pnpm run build:dev)",
+      "Bash(pnpm run test:node)",
+      "Bash(node:*)"
     ],
     "deny": []
   },

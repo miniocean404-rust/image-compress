@@ -5,12 +5,20 @@ import type { BuildOptions } from "./types"
 import { defaultBuildOptions } from "./default-config"
 import { npmDir, packageJsonPath } from "./consts"
 import pkg from "../package.json"
+import { rmSync, globSync } from "node:fs"
 
 const buildCommand = createBuildCommand(process.argv.slice(2))
 export const buildOptions = buildCommand.getOptions()
 const cli = new NapiCli()
 
+function clean() {
+  const files = globSync(["*.node", "index.d.ts", "index.js", "./npm"])
+  files.forEach((dir) => rmSync(dir, { recursive: true, force: true }))
+}
+
 async function main() {
+  clean()
+
   // 编译 Rust 代码为 Node.js 原生模块，支持交叉编译、类型定义生成等。
   const { task, abort } = await cli.build(
     merge<Partial<BuildOptions>, BuildOptions>(defaultBuildOptions, buildOptions),
@@ -53,7 +61,7 @@ async function main() {
     ghReleaseName: pkg.version,
 
     // 已存在的 GitHub Release ID
-    ghReleaseId: undefined as string | undefined,
+    ghReleaseId: "",
 
     // 跳过 optionalDependencies 包发布
     skipOptionalPublish: false,

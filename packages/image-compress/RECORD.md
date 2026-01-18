@@ -87,3 +87,19 @@ napi build --release --platform --js-package-name @napi-rs/snappy
 ```
 
 这会将生成的 require 语句从 `require('snappy-darwin-x64')` 改为 `require('@napi-rs/snappy-darwin-x64')`。
+
+# 原 package.json 指令
+
+```json
+"build:node-dev": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p image_compress_node --js ./index.js --dts ./index.d.ts --target-dir ../../target -o ./",
+"build:demo-dev": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p binding_demo_node --js ./index.js --dts ./index.d.ts --target-dir ../../target -o ./",
+"build:node": "napi build --manifest-path ../../bindings/Cargo.toml --platform -p image_compress_node --release -o ./",
+"prepack": "napi prepublish -p ./npm --tag-style npm --no-gh-release",
+"artifacts": "napi artifacts -d ../artifacts --npm-dir ./npm",
+"version": "napi version --npm-dir ./npm",
+"new": "napi new",
+"build:wasm-dev": "pnpm run wasm-pack build ../../bindings/binding_compress_wasm  --dev --out-name image-compress --out-dir ./pkg --target=web --scope giegie",
+"build:wasm": "npm-run-all \"wasm-pack -- build ../../bindings/binding_compress_wasm --release --out-dir ./pkg --target=web --scope giegie\" --",
+"wasm-pack": "wasm-pack",
+"test:node": "node ./__tests__/index"
+```

@@ -17,7 +17,7 @@ pub struct NapiMozJpegOptions {
     pub smoothing: u8,
 
     /// 设置正在写入的 JPEG 的颜色空间，不同于输入的颜色空间
-    pub color_space: ColorSpace,
+    pub color_space: MozjpegColorSpace,
 
     /// 指定在网格量化期间是否应考虑多次扫描。
     pub trellis_multipass: bool,
@@ -38,12 +38,16 @@ impl From<Object<'_>> for NapiMozJpegOptions {
     fn from(value: Object) -> Self {
         Self {
             quality: value.get_named_property::<f64>("quality").unwrap_or(80.0),
-            progressive: value.get_named_property::<bool>("progressive").unwrap_or(true),
-            optimize_coding: value.get_named_property::<bool>("optimizeCoding").unwrap_or(true),
+            progressive: value
+                .get_named_property::<bool>("progressive")
+                .unwrap_or(true),
+            optimize_coding: value
+                .get_named_property::<bool>("optimizeCoding")
+                .unwrap_or(true),
             smoothing: value.get_named_property::<u8>("smoothing").unwrap_or(0),
             color_space: value
-                .get_named_property::<ColorSpace>("colorSpace")
-                .unwrap_or(ColorSpace::JCS_YCbCr),
+                .get_named_property::<MozjpegColorSpace>("colorSpace")
+                .unwrap_or(MozjpegColorSpace::JCS_YCbCr),
             trellis_multipass: value
                 .get_named_property::<bool>("trellisMultipass")
                 .unwrap_or(false),
@@ -81,8 +85,8 @@ impl From<NapiMozJpegOptions> for export::MozJpegOptions {
 }
 
 #[allow(non_camel_case_types)]
-#[napi(string_enum)]
-pub enum ColorSpace {
+#[napi(string_enum, js_name = "MozJpegColorSpace")]
+pub enum MozjpegColorSpace {
     /// error/unspecified
     JCS_UNKNOWN,
     /// monochrome
@@ -127,26 +131,26 @@ pub enum ColorSpace {
     JCS_RGB565,
 }
 
-impl From<ColorSpace> for export::MozJpegColorSpace {
-    fn from(value: ColorSpace) -> Self {
+impl From<MozjpegColorSpace> for export::MozJpegColorSpace {
+    fn from(value: MozjpegColorSpace) -> Self {
         match value {
-            ColorSpace::JCS_UNKNOWN => export::MozJpegColorSpace::JCS_UNKNOWN,
-            ColorSpace::JCS_GRAYSCALE => export::MozJpegColorSpace::JCS_GRAYSCALE,
-            ColorSpace::JCS_RGB => export::MozJpegColorSpace::JCS_RGB,
-            ColorSpace::JCS_YCbCr => export::MozJpegColorSpace::JCS_YCbCr,
-            ColorSpace::JCS_CMYK => export::MozJpegColorSpace::JCS_CMYK,
-            ColorSpace::JCS_YCCK => export::MozJpegColorSpace::JCS_YCCK,
-            ColorSpace::JCS_EXT_RGB => export::MozJpegColorSpace::JCS_EXT_RGB,
-            ColorSpace::JCS_EXT_RGBX => export::MozJpegColorSpace::JCS_EXT_RGBX,
-            ColorSpace::JCS_EXT_BGR => export::MozJpegColorSpace::JCS_EXT_BGR,
-            ColorSpace::JCS_EXT_BGRX => export::MozJpegColorSpace::JCS_EXT_BGRX,
-            ColorSpace::JCS_EXT_XBGR => export::MozJpegColorSpace::JCS_EXT_XBGR,
-            ColorSpace::JCS_EXT_XRGB => export::MozJpegColorSpace::JCS_EXT_XRGB,
-            ColorSpace::JCS_EXT_RGBA => export::MozJpegColorSpace::JCS_EXT_RGBA,
-            ColorSpace::JCS_EXT_BGRA => export::MozJpegColorSpace::JCS_EXT_BGRA,
-            ColorSpace::JCS_EXT_ABGR => export::MozJpegColorSpace::JCS_EXT_ABGR,
-            ColorSpace::JCS_EXT_ARGB => export::MozJpegColorSpace::JCS_EXT_ARGB,
-            ColorSpace::JCS_RGB565 => export::MozJpegColorSpace::JCS_RGB565,
+            MozjpegColorSpace::JCS_UNKNOWN => export::MozJpegColorSpace::JCS_UNKNOWN,
+            MozjpegColorSpace::JCS_GRAYSCALE => export::MozJpegColorSpace::JCS_GRAYSCALE,
+            MozjpegColorSpace::JCS_RGB => export::MozJpegColorSpace::JCS_RGB,
+            MozjpegColorSpace::JCS_YCbCr => export::MozJpegColorSpace::JCS_YCbCr,
+            MozjpegColorSpace::JCS_CMYK => export::MozJpegColorSpace::JCS_CMYK,
+            MozjpegColorSpace::JCS_YCCK => export::MozJpegColorSpace::JCS_YCCK,
+            MozjpegColorSpace::JCS_EXT_RGB => export::MozJpegColorSpace::JCS_EXT_RGB,
+            MozjpegColorSpace::JCS_EXT_RGBX => export::MozJpegColorSpace::JCS_EXT_RGBX,
+            MozjpegColorSpace::JCS_EXT_BGR => export::MozJpegColorSpace::JCS_EXT_BGR,
+            MozjpegColorSpace::JCS_EXT_BGRX => export::MozJpegColorSpace::JCS_EXT_BGRX,
+            MozjpegColorSpace::JCS_EXT_XBGR => export::MozJpegColorSpace::JCS_EXT_XBGR,
+            MozjpegColorSpace::JCS_EXT_XRGB => export::MozJpegColorSpace::JCS_EXT_XRGB,
+            MozjpegColorSpace::JCS_EXT_RGBA => export::MozJpegColorSpace::JCS_EXT_RGBA,
+            MozjpegColorSpace::JCS_EXT_BGRA => export::MozJpegColorSpace::JCS_EXT_BGRA,
+            MozjpegColorSpace::JCS_EXT_ABGR => export::MozJpegColorSpace::JCS_EXT_ABGR,
+            MozjpegColorSpace::JCS_EXT_ARGB => export::MozJpegColorSpace::JCS_EXT_ARGB,
+            MozjpegColorSpace::JCS_RGB565 => export::MozJpegColorSpace::JCS_RGB565,
         }
     }
 }

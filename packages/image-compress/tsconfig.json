@@ -6,7 +6,7 @@
     "outDir": "dist", //  tsc 编译产物输出目录
 
     "target": "ESNext", // 编译目标 js 的版本
-    "module": "commonjs", // 指定模块代码生成
+    "module": "esnext", // 指定模块代码生成
     "moduleResolution": "node", // 模块解析策略
     "allowJs": true, // 允许编译 JS 文件
     "resolveJsonModule": true, // 允许引入 .json 模块
@@ -46,5 +46,5 @@
     "strictBindCallApply": true,
     "strictPropertyInitialization": true
   },
-  "include": ["build", "benchmark", "__test__"]
+  "include": ["build", "benchmark", "__tests__"]
 }

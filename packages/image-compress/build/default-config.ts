@@ -71,7 +71,7 @@ export const defaultBuildOptions = {
   bin: undefined,
 
   // 构建指定的库或当前工作目录中的库
-  package: "image_compress_node",
+  package: "binding_node",
 
   // 使用指定的配置文件构建产物
   // profile: undefined,

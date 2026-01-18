@@ -88,7 +88,7 @@ pnpm run publish          # 发布 NPM 包
 | Binding                 | 说明                            |
 | ----------------------- | ------------------------------- |
 | `binding_compress_node` | Node.js 绑定 (napi-rs)          |
-| `binding_compress_wasm` | WebAssembly 绑定 (wasm-bindgen) |
+| `binding_wasm`          | WebAssembly 绑定 (wasm-bindgen) |
 | `binding_explore_node`  | explore Node.js 绑定            |
 | `binding_demo_node`     | 演示/示例绑定                   |
 

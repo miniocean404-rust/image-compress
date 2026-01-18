@@ -1,5 +1,5 @@
 [package]
-name = "image_compress_node"
+name = "binding_node"
 build = "build.rs"
 version.workspace = true
 edition.workspace = true

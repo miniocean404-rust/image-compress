@@ -50,7 +50,8 @@
       "Bash(pnpm run build:node)",
       "Bash(pnpm run build:dev)",
       "Bash(pnpm run test:node)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(cargo run:*)"
     ],
     "deny": []
   },

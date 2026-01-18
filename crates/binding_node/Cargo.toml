@@ -9,6 +9,7 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 utils = { path = "../utils", features = ["hook"] }
+image_compress.workspace = true
 
 tracing.workspace = true
 tracing-appender.workspace = true

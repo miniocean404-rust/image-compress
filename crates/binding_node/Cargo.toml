@@ -8,8 +8,7 @@ edition.workspace = true
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-image_compress = { path = "../../crates/image-compress", features = ["native"] }
-utils = { path = "../../crates/utils", features = ["hook"] }
+utils = { path = "../utils", features = ["hook"] }
 
 tracing.workspace = true
 tracing-appender.workspace = true

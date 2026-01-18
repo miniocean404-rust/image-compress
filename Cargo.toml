@@ -51,6 +51,9 @@ image_compress_core = { path = "./crates/core" }
 image_compress = { path = "./crates/image-compress" }
 utils = { path = "./crates/utils" }
 
+# 单例
+once_cell = "1.21.3"
+
 # CLI
 clap = { version = "4.5.54" }
 indoc = { version = "2.0.7" }
@@ -99,6 +102,8 @@ tracing-chrome = "0.7.2"
 
 # 堆栈跟踪
 backtrace = "0.3.76"
+
+# ------------------------------------------------------ 图像处理 ------------------------------------------------------
 
 # 图像处理
 image = "0.25.9"
@@ -166,8 +171,7 @@ windows = { version = "0.62.2", features = [
 ] }
 # windows-sys = { version = "0.52.0", features = ["Win32_UI_WindowsAndMessaging"] }
 
-# 单例
-once_cell = "1.21.3"
+# ---------------------------------------------------- Napi、Wasm 绑定 ---------------------------------------------------
 
 # wasm-pack，一个构建、测试和发布 WASM 的 Rust CLI 工具，我们将使用 wasm-pack 相关的命令来构建 WASM 二进制内容。
 # https://rustwasm.github.io/wasm-pack/installer/
@@ -177,6 +181,7 @@ once_cell = "1.21.3"
 # 它能够将 Rust 功能导出到 JS 中，如类、函数等
 # wasm-pack cli 依赖这个包进行打包
 wasm-bindgen = { version = "0.2.108", features = ["enable-interning"] }
+wasm-bindgen-futures = "0.4.42"
 # web-sys 的 Crate，它为 Rust 进一步提供了控制 DOM 的能力
 web-sys = { version = "0.3.83", features = [
     'Document',

@@ -1,5 +1,5 @@
 use image_compress::export;
-use napi::bindgen_prelude::Object;
+use napi::bindgen_prelude::{JsObjectValue, Object};
 use napi_derive::napi;
 
 #[napi(object)]
@@ -47,7 +47,7 @@ impl From<ImageQuantOptions> for export::ImageQuantOptions {
     }
 }
 
-impl From<Object> for ImageQuantOptions {
+impl From<Object<'_>> for ImageQuantOptions {
     fn from(value: Object) -> Self {
         Self {
             min_quality: value.get_named_property::<u8>("minQuality").unwrap_or(0),

@@ -1,5 +1,5 @@
 use image_compress::export;
-use napi::bindgen_prelude::Object;
+use napi::bindgen_prelude::{JsObjectValue, Object};
 use napi_derive::napi;
 
 #[napi(object, js_name = "MozJpegOptions")]
@@ -34,7 +34,7 @@ pub struct NapiMozJpegOptions {
     pub qtable: Option<QtableOptimize>,
 }
 
-impl From<Object> for NapiMozJpegOptions {
+impl From<Object<'_>> for NapiMozJpegOptions {
     fn from(value: Object) -> Self {
         Self {
             quality: value.get_named_property::<f64>("quality").unwrap_or(80.0),

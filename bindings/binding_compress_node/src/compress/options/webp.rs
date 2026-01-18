@@ -1,5 +1,5 @@
 use image_compress::export;
-use napi::bindgen_prelude::Object;
+use napi::bindgen_prelude::{JsObjectValue, Object};
 use napi_derive::napi;
 
 #[allow(non_snake_case)]
@@ -36,7 +36,7 @@ pub struct NapiWebPOptions {
     pub qmax: i32,
 }
 
-impl From<Object> for NapiWebPOptions {
+impl From<Object<'_>> for NapiWebPOptions {
     fn from(value: Object) -> Self {
         Self {
             lossless: value.get_named_property::<i32>("lossless").unwrap_or(0),

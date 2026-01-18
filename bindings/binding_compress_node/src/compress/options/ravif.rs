@@ -1,5 +1,5 @@
 use image_compress::export;
-use napi::bindgen_prelude::Object;
+use napi::bindgen_prelude::{JsObjectValue, Object};
 use napi_derive::napi;
 
 #[napi(object, js_name = "AvifOptions")]
@@ -44,7 +44,7 @@ impl From<NapiAvifOptions> for export::AvifOptions {
     }
 }
 
-impl From<Object> for NapiAvifOptions {
+impl From<Object<'_>> for NapiAvifOptions {
     fn from(value: Object) -> Self {
         Self {
             quality: value.get_named_property::<f64>("quality").unwrap_or(80.0),

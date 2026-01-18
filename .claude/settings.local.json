@@ -39,7 +39,9 @@
       "mcp__github__get_release_by_tag",
       "WebFetch(domain:docs.rs)",
       "Bash(powershell:*)",
-      "Bash(where:*)"
+      "Bash(where:*)",
+      "Bash(cargo update:*)",
+      "WebFetch(domain:napi.rs)"
     ],
     "deny": []
   },

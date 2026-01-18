@@ -1,4 +1,4 @@
-use napi::{bindgen_prelude::AsyncTask, Env, JsNumber, Result, Task};
+use napi::{bindgen_prelude::AsyncTask, Env, Result, Task};
 use napi_derive::napi;
 
 pub struct AsyncFib {
@@ -12,14 +12,14 @@ pub struct AsyncFib {
 // 这个类型会被 napi-rs 自动转换成 JavaScript 中的 Promise 类型。
 impl Task for AsyncFib {
     type Output = u32;
-    type JsValue = JsNumber;
+    type JsValue = u32;
 
     fn compute(&mut self) -> Result<Self::Output> {
         Ok(fib(self.input))
     }
 
-    fn resolve(&mut self, env: Env, output: u32) -> Result<Self::JsValue> {
-        env.create_uint32(output)
+    fn resolve(&mut self, _env: Env, output: u32) -> Result<Self::JsValue> {
+        Ok(output)
     }
 }
 

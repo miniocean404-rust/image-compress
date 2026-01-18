@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use image_compress::export::{self, IndexSet};
-use napi::bindgen_prelude::{Array, BigInt, Object};
+use napi::bindgen_prelude::{Array, BigInt, JsObjectValue, Object};
 use napi_derive::napi;
 
 #[napi(object, js_name = "OxiPngOptions")]
@@ -144,11 +144,11 @@ pub enum StripChunks {
     /// 无
     None,
     /// 删除特定块, 长度为 4 的字符串数组，如 ["tEXt", "iTXt"]
-    Strip(Array),
+    Strip(Array<'static>),
     /// 删除所有不会影响图像显示的数据块
     Safe,
     /// 删除除这些之外的所有非关键块, 长度为 4 的字符串数组
-    Keep(Array),
+    Keep(Array<'static>),
     /// 所有非关键块
     All,
 }
@@ -201,7 +201,7 @@ impl From<NapiOxiPngOptions> for export::OxiPngOptions {
     }
 }
 
-impl From<Object> for NapiOxiPngOptions {
+impl From<Object<'_>> for NapiOxiPngOptions {
     fn from(value: Object) -> Self {
         Self {
             fix_errors: value.get_named_property::<bool>("fixErrors").unwrap_or(false),

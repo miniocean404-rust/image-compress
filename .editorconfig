@@ -1,0 +1,21 @@
+# http://editorconfig.org
+root = true
+
+[*]
+# 使用Unix/Linux风格的换行符(\n)
+end_of_line = lf
+# 文件末尾自动插入换行符
+insert_final_newline = true
+# 使用空格缩进
+indent_style = space
+# 缩进大小为 2 个空格
+indent_size = 2
+# 使用UTF-8编码
+charset = utf-8
+# 设置为 true 可删除换行符之前的任何空格字符
+trim_trailing_whitespace = true
+
+
+[*.{md,mdx,txt}]
+# 使用Tab键缩进（不指定具体大小）
+indent_style = tab

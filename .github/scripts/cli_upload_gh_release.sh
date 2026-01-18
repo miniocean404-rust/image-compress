@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd ./packages/
+cd ./packages/ || exit
 
 for filename in artifacts_rename/*
 do
@@ -18,14 +18,14 @@ do
 
 
   if [ -f "$CLI_BINARY_PATH" ]; then
-      chmod +x $CLI_BINARY_PATH
-      gh release upload $RELEASE_VERSION $CLI_BINARY_PATH
+      chmod +x "$CLI_BINARY_PATH"
+      gh release upload "$RELEASE_VERSION" "$CLI_BINARY_PATH"
   elif [ -f "$CLI_BINARY_PATH.exe" ]; then
-      gh release upload $RELEASE_VERSION $CLI_BINARY_PATH.exe
+      gh release upload "$RELEASE_VERSION" "$CLI_BINARY_PATH".exe
   fi
 
   if [ -f "$filename" ]; then
-      gh release upload $RELEASE_VERSION $filename
+      gh release upload "$RELEASE_VERSION" "$filename"
   fi
 
 done

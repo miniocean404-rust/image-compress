@@ -4,25 +4,58 @@ version.workspace = true
 edition.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[dependencies]
-tokio = { version = "1.33.0", features = ["full"] }
-# 处理错误
-anyhow = "1.0.79"
+[[bin]]
+name = "utils"
+path = "./src/main.rs"
+required-features = ["build-binary"]
 
-# 处理时间
-chrono = "0.4.31"
+[features]
+default = ["log", "env"]
+
+build-binary = ["dep:tracing", "dep:tracing-appender", "dep:tracing-subscriber"]
+
+log = [
+  "dep:tracing",
+  "dep:tracing-appender",
+  "dep:tracing-subscriber",
+  "dep:tracing-futures",
+  "dep:tracing-serde",
+  "dep:chrono",
+]
+fs = ["dep:globset", "dep:walkdir"]
+hook = ["dep:backtrace"]
+file = ["dep:infer"]
+env = []
+sleep = ["dep:tokio"]
+
+[dependencies]
+# 错误处理
+anyhow.workspace = true
+
+# 时间处理
+chrono = { workspace = true, optional = true }
+
+# 异步运行时
+tokio = { workspace = true, optional = true }
 
 # 用于在 Rust 程序运行时获取堆栈跟踪的库
-backtrace = "0.3.69"
+backtrace = { workspace = true, optional = true }
 
 # 获取 mime 信息
-infer = "0.16.0"
+infer = { workspace = true, optional = true }
 
 # 跨平台单一 glob 和 glob 集匹配。 Glob 集匹配是同时将一个或多个 glob 模式与单个候选路径进行匹配并返回所有匹配的 glob 的过程
-globset = "0.4.14"
+globset = { workspace = true, optional = true }
 # 递归遍历目录
-walkdir = "2.5.0"
+walkdir = { workspace = true, optional = true }
 
-tracing = { version = "0.1.40", features = ["release_max_level_info"] }
-tracing-appender = "0.2.3"
-tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+# 日志
+tracing = { workspace = true, optional = true }
+tracing-appender = { workspace = true, optional = true }
+tracing-subscriber = { workspace = true, optional = true }
+# 用于检测基于 future 的代码的实用程序
+tracing-futures = { workspace = true, optional = true }
+tracing-serde = { workspace = true, optional = true }
+
+[dev-dependencies]
+tokio.workspace = true

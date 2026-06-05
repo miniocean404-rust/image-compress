@@ -1,44 +1,109 @@
 [package]
-name = "image-compress"
-version = "0.1.0"
-edition = "2021"
+name = "image_compress_core"
+version.workspace = true
+edition.workspace = true
+
+[features]
+default = ["wasm", "operations", "native"]
+
+wasm = ["mem", "png"]
+native = ["jpeg", "webp", "gif", "tiff", "avif"]
+operations = ["transform", "resize", "icc", "quantize"]
+
+mem = []
+
+transform = ["dep:webp"]
+resize = ["dep:fast_image_resize"]
+icc = []
+quantize = []
+
+png = ["dep:oxipng", "dep:imagequant", "dep:lodepng", "dep:png"]
+webp = ["dep:webp"]
+jpeg = ["dep:mozjpeg", "dep:mozjpeg-sys"]
+gif = ["dep:gifsicle", "dep:gif"]
+avif = ["dep:libavif", "dep:ravif"]
+tiff = ["dep:tiff"]
+
+
+metadata = []
+
 
 [dependencies]
-utils = { path = "../utils" }
+# utils = { path = "../utils" }
+# tokio = { workspace = true, default-features = false, features = [
+#     "rt-multi-thread",
+#     "rt",
+# ] }
 
-tokio.workspace = true
+# 序列化
 serde.workspace = true
 serde_json.workspace = true
+
+# 时间处理
 chrono.workspace = true
+
+# 错误处理
 anyhow.workspace = true
 thiserror.workspace = true
+
+# 日志
 tracing.workspace = true
 tracing-appender.workspace = true
 tracing-subscriber.workspace = true
+
+# 文件类型推断
 infer.workspace = true
+
+# 文件系统
 globset.workspace = true
 walkdir.workspace = true
+
+# 系统信息
 num_cpus.workspace = true
 
-rgb = "0.8.37"
-image = { version = "=0.25.2", features = ["rayon", "webp"] }
+# 图像处理
+image.workspace = true
+zune-core.workspace = true
+zune-image.workspace = true
+rgb.workspace = true
+resize.workspace = true
+# 使用 SIMD 指令快速调整图像大小的库
+fast_image_resize = { workspace = true, optional = true }
+# ICC 颜色配置文件处理。 rust 包装 little cms
+lcms2.workspace = true
 
-# 无损压缩 png (optipng、oxipng)
-oxipng = { version = "9.0.0" }
+# PNG # 无损压缩 png (optipng、oxipng) 编译 wasm 需要安装 clang 环境
+oxipng = { workspace = true, optional = true }
 # 有损压缩 png 把 png24 压缩成 png8 的库 是 pngquant 的包装
-imagequant = { version = "4.2.2", default-features = true }
-lodepng = "3.10.0"
-png = "0.17.11"
+imagequant = { workspace = true, optional = true }
+# wasm 需要禁止 ffi
+lodepng = { workspace = true, optional = true }
+png = { workspace = true, optional = true }
 
-mozjpeg = "= 0.10.9"
-mozjpeg-sys = { version = "2.2.1", features = ["default"] }
+# JPEG
+mozjpeg = { workspace = true, optional = true }
+mozjpeg-sys = { workspace = true, optional = true }
 
+# gif 编码解码器
+gif = { workspace = true, optional = true }
 # gifsicle 是读取以及 有损及无损压缩 gif 的库
-gifsicle = "1.94.0"
-libc = "0.2.152"
+gifsicle = { workspace = true, optional = true }
+libc.workspace = true
 
-# webp 无损压缩及有损压缩
-webp = "0.3.0" # 底层使用的是 rust libwebp-sys
+# WebP, 底层使用的是 rust libwebp-sys# webp 无损压缩及有损压缩
+webp = { workspace = true, optional = true }
+libwebp-sys.workspace = true
 
-# 处理 svg
-svgtypes = "0.15.1"
+# AVIF
+ravif = { workspace = true, optional = true }
+libavif = { workspace = true, optional = true }
+
+# TIFF
+tiff = { workspace = true, optional = true }
+
+# SVG
+svgtypes.workspace = true
+
+[dev-dependencies]
+zune-core = { workspace = true, features = ["std"] }
+cargo_metadata.workspace = true

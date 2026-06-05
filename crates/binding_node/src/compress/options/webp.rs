@@ -1,0 +1,131 @@
+use image_compress::export;
+use napi::bindgen_prelude::{JsObjectValue, Object};
+use napi_derive::napi;
+
+#[allow(non_snake_case)]
+#[napi(object, js_name = "WebPOptions")]
+pub struct NapiWebPOptions {
+    pub lossless: i32,
+    pub quality: f64,
+    pub method: i32,
+    pub image_hint: WebPImageHint,
+    pub target_size: i32,
+    pub target_psnr: f64,
+    pub segments: i32,
+    pub sns_strength: i32,
+    pub filter_strength: i32,
+    pub filter_sharpness: i32,
+    pub filter_type: i32,
+    pub autofilter: i32,
+    pub alpha_compression: i32,
+    pub alpha_filtering: i32,
+    pub alpha_quality: i32,
+    pub pass: i32,
+    pub show_compressed: i32,
+    pub preprocessing: i32,
+    pub partitions: i32,
+    pub partition_limit: i32,
+    pub emulate_jpeg_size: i32,
+    pub thread_level: i32,
+    pub low_memory: i32,
+    pub near_lossless: i32,
+    pub exact: i32,
+    pub use_delta_palette: i32,
+    pub use_sharp_yuv: i32,
+    pub qmin: i32,
+    pub qmax: i32,
+}
+
+impl From<Object<'_>> for NapiWebPOptions {
+    fn from(value: Object) -> Self {
+        Self {
+            lossless: value.get_named_property::<i32>("lossless").unwrap_or(0),
+            quality: value.get_named_property::<f64>("quality").unwrap_or(75.0),
+            method: value.get_named_property::<i32>("method").unwrap_or(4),
+            image_hint: value
+                .get_named_property::<WebPImageHint>("imageHint")
+                .unwrap_or(WebPImageHint::Default),
+            target_size: value.get_named_property::<i32>("targetSize").unwrap_or(0),
+            target_psnr: value.get_named_property::<f64>("targetPSNR").unwrap_or(0.0),
+            segments: value.get_named_property::<i32>("segments").unwrap_or(4),
+            sns_strength: value.get_named_property::<i32>("snsStrength").unwrap_or(50),
+            filter_strength: value.get_named_property::<i32>("filterStrength").unwrap_or(60),
+            filter_sharpness: value.get_named_property::<i32>("filterSharpness").unwrap_or(0),
+            filter_type: value.get_named_property::<i32>("filterType").unwrap_or(1),
+            autofilter: value.get_named_property::<i32>("autofilter").unwrap_or(0),
+            alpha_compression: value.get_named_property::<i32>("alphaCompression").unwrap_or(1),
+            alpha_filtering: value.get_named_property::<i32>("alphaFiltering").unwrap_or(1),
+            alpha_quality: value.get_named_property::<i32>("alphaQuality").unwrap_or(100),
+            pass: value.get_named_property::<i32>("pass").unwrap_or(1),
+            show_compressed: value.get_named_property::<i32>("showCompressed").unwrap_or(0),
+            preprocessing: value.get_named_property::<i32>("preprocessing").unwrap_or(0),
+            partitions: value.get_named_property::<i32>("partitions").unwrap_or(0),
+            partition_limit: value.get_named_property::<i32>("partitionLimit").unwrap_or(0),
+            emulate_jpeg_size: value.get_named_property::<i32>("emulateJpegSize").unwrap_or(0),
+            thread_level: value.get_named_property::<i32>("threadLevel").unwrap_or(0),
+            low_memory: value.get_named_property::<i32>("lowMemory").unwrap_or(0),
+            near_lossless: value.get_named_property::<i32>("nearLossless").unwrap_or(100),
+            exact: value.get_named_property::<i32>("exact").unwrap_or(0),
+            use_delta_palette: value.get_named_property::<i32>("useDeltaPalette").unwrap_or(0),
+            use_sharp_yuv: value.get_named_property::<i32>("useSharpYUV").unwrap_or(0),
+            qmin: value.get_named_property::<i32>("qmin").unwrap_or(0),
+            qmax: value.get_named_property::<i32>("qmax").unwrap_or(100),
+        }
+    }
+}
+
+impl From<NapiWebPOptions> for export::WebPOptions {
+    fn from(value: NapiWebPOptions) -> Self {
+        export::WebPOptions {
+            lossless: value.lossless,
+            quality: value.quality as f32,
+            method: value.method,
+            image_hint: value.image_hint.into(),
+            target_size: value.target_size,
+            target_PSNR: value.target_psnr as f32,
+            segments: value.segments,
+            sns_strength: value.sns_strength,
+            filter_strength: value.filter_strength,
+            filter_sharpness: value.filter_sharpness,
+            filter_type: value.filter_type,
+            autofilter: value.autofilter,
+            alpha_compression: value.alpha_compression,
+            alpha_filtering: value.alpha_filtering,
+            alpha_quality: value.alpha_quality,
+            pass: value.pass,
+            show_compressed: value.show_compressed,
+            preprocessing: value.preprocessing,
+            partitions: value.partitions,
+            partition_limit: value.partition_limit,
+            emulate_jpeg_size: value.emulate_jpeg_size,
+            thread_level: value.thread_level,
+            low_memory: value.low_memory,
+            near_lossless: value.near_lossless,
+            exact: value.exact,
+            use_delta_palette: value.use_delta_palette,
+            use_sharp_yuv: value.use_sharp_yuv,
+            qmin: value.qmin,
+            qmax: value.qmax,
+        }
+    }
+}
+
+#[allow(non_camel_case_types)]
+#[napi]
+pub enum WebPImageHint {
+    Default = 0,
+    Picture = 1,
+    Photo = 2,
+    Graph = 3,
+}
+
+impl From<WebPImageHint> for export::WebPImageHint {
+    fn from(value: WebPImageHint) -> Self {
+        match value {
+            WebPImageHint::Default => export::WebPImageHint::Default,
+            WebPImageHint::Picture => export::WebPImageHint::Picture,
+            WebPImageHint::Photo => export::WebPImageHint::Photo,
+            WebPImageHint::Graph => export::WebPImageHint::Graph,
+        }
+    }
+}

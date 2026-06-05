@@ -1,0 +1,189 @@
+use std::io::Cursor;
+
+use zune_core::{
+    bit_depth::BitDepth,
+    bytestream::{ZByteWriterTrait, ZWriter},
+    colorspace::ColorSpace,
+    options::DecoderOptions,
+};
+use zune_image::{
+    codecs::ImageFormat,
+    errors::{ImageErrors, ImgEncodeErrors},
+    image::Image,
+    traits::EncoderTrait,
+};
+
+use crate::codecs::png::encoder::oxipng_options::{create_optimized_oxipng_options, OxiPngOptions};
+use crate::error::{CompressError, Result};
+
+/// OxiPNG 无损压缩编码器
+///
+/// OxiPNG 是一个多线程无损 PNG 压缩优化器，通过尝试不同的
+/// 过滤器和压缩参数来找到最小的文件大小，同时保持图像完全无损。
+#[derive(Debug)]
+pub struct OxiPngEncoder {
+    options: OxiPngOptions,
+}
+
+impl Default for OxiPngEncoder {
+    fn default() -> Self {
+        Self {
+            // 使用优化的默认配置
+            options: create_optimized_oxipng_options(),
+        }
+    }
+}
+
+impl OxiPngEncoder {
+    /// Create a new encoder
+    pub fn new() -> OxiPngEncoder {
+        OxiPngEncoder::default()
+    }
+    /// Create a new encoder with specified options
+    pub fn new_with_options(options: OxiPngOptions) -> OxiPngEncoder {
+        OxiPngEncoder { options }
+    }
+
+    pub fn encode_mem(&mut self, buf: &Vec<u8>) -> Result<Vec<u8>> {
+        let cursor = Cursor::new(buf);
+
+        let image =
+            Image::read(cursor, DecoderOptions::default()).map_err(CompressError::png_decode)?;
+
+        let mut compress_buf = Cursor::new(vec![]);
+        self.encode(&image, &mut compress_buf)
+            .map_err(CompressError::png_encode)?;
+
+        Ok(compress_buf.into_inner())
+    }
+}
+
+impl EncoderTrait for OxiPngEncoder {
+    fn name(&self) -> &'static str {
+        "oxipng"
+    }
+
+    fn encode_inner<T: ZByteWriterTrait>(
+        &mut self,
+        image: &Image,
+        sink: T,
+    ) -> std::result::Result<usize, ImageErrors> {
+        // 获取图片宽高
+        let (width, height) = image.dimensions();
+
+        // inlined `to_u8` method because its private
+        let colorspace = image.colorspace();
+
+        let data = if image.depth() == BitDepth::Eight {
+            // 如果是 8 个字节就拍平
+            image.flatten_frames::<u8>()
+        } else if image.depth() == BitDepth::Sixteen {
+            // 如果是 16 个字节就转为 本机字节序
+            image
+                .frames_ref()
+                .iter()
+                .map(|frame| frame.u16_to_native_endian(colorspace))
+                .collect()
+        } else {
+            return Err(ImageErrors::EncodeErrors(
+                ImgEncodeErrors::ImageEncodeErrors(format!("不支持的位深度: {:?}", image.depth())),
+            ));
+        }
+        .into_iter()
+        .next()
+        .ok_or_else(|| {
+            ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(
+                "图像帧数据为空".to_string(),
+            ))
+        })?;
+
+        #[allow(unused_mut)]
+        let mut img = oxipng::RawImage::new(
+            width as u32,
+            height as u32,
+            match image.colorspace() {
+                ColorSpace::Luma => oxipng::ColorType::Grayscale {
+                    transparent_shade: None,
+                },
+                ColorSpace::RGB => oxipng::ColorType::RGB {
+                    transparent_color: None,
+                },
+                ColorSpace::LumaA => oxipng::ColorType::GrayscaleAlpha,
+                ColorSpace::RGBA => oxipng::ColorType::RGBA,
+                cs => {
+                    return Err(ImageErrors::EncodeErrors(
+                        ImgEncodeErrors::UnsupportedColorspace(cs, self.supported_colorspaces()),
+                    ))
+                }
+            },
+            match image.depth() {
+                BitDepth::Eight => oxipng::BitDepth::Eight,
+                BitDepth::Sixteen => oxipng::BitDepth::Sixteen,
+                d => {
+                    return Err(ImageErrors::EncodeErrors(ImgEncodeErrors::Generic(
+                        format!("{d:?} 字节深度不支持"),
+                    )))
+                }
+            },
+            data,
+        )
+        .map_err(|e| ImgEncodeErrors::ImageEncodeErrors(e.to_string()))?;
+
+        // #[cfg(feature = "metadata")]
+        // {
+        //     use exif::experimental::Writer;
+        //
+        //     let mut buf = std::io::Cursor::new(vec![]);
+        //
+        //     if let Some(fields) = &image.metadata().exif() {
+        //         let mut writer = Writer::new();
+        //
+        //         for metadatum in *fields {
+        //             writer.push_field(metadatum);
+        //         }
+        //         let result = writer.write(&mut buf, false);
+        //         if result.is_ok() {
+        //             img.add_png_chunk(*b"eXIf", buf.into_inner());
+        //         } else {
+        //             log::warn!("Writing exif failed {:?}", result);
+        //         }
+        //     }
+        // }
+
+        let mut writer = ZWriter::new(sink);
+
+        let result = img
+            .create_optimized_png(&self.options)
+            .map_err(|e| ImgEncodeErrors::ImageEncodeErrors(e.to_string()))?;
+
+        writer.write(&result).map_err(|e| {
+            ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!("{e:?}")))
+        })?;
+
+        Ok(writer.bytes_written())
+    }
+
+    fn supported_colorspaces(&self) -> &'static [ColorSpace] {
+        &[
+            ColorSpace::Luma,
+            ColorSpace::LumaA,
+            ColorSpace::RGB,
+            ColorSpace::RGBA,
+        ]
+    }
+
+    fn format(&self) -> ImageFormat {
+        ImageFormat::PNG
+    }
+
+    fn supported_bit_depth(&self) -> &'static [BitDepth] {
+        &[BitDepth::Eight, BitDepth::Sixteen]
+    }
+
+    fn default_depth(&self, depth: BitDepth) -> BitDepth {
+        match depth {
+            BitDepth::Sixteen | BitDepth::Float32 => BitDepth::Sixteen,
+            _ => BitDepth::Eight,
+        }
+    }
+}

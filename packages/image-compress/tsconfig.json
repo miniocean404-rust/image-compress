@@ -1,59 +1,50 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
-    /* Basic Options */
-    "target": "es2015" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */,
-    "module": "commonjs" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */,
-    // "lib": [],                             /* Specify library files to be included in the compilation. */
-    "allowJs": false /* Allow javascript files to be compiled. */,
-    // "checkJs": true,                       /* Report errors in .js files. */
-    // "jsx": "preserve",                     /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
-    "declaration": true /* Generates corresponding '.d.ts' file. */,
-    // "declarationMap": true,                /* Generates a sourcemap for each corresponding '.d.ts' file. */
-    "sourceMap": false /* Generates corresponding '.map' file. */,
-    // "outFile": "./",                       /* Concatenate and emit output to single file. */
-    "outDir": "./" /* Redirect output structure to the directory. */,
-    "rootDir": "./src/" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
-    // "composite": true,                     /* Enable project compilation */
-    "removeComments": false /* Do not emit comments to output. */,
-    // "noEmit": true,                        /* Do not emit outputs. */
-    // "importHelpers": true,                 /* Import emit helpers from 'tslib'. */
-    // "downlevelIteration": true,            /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */
-    // "isolatedModules": true,               /* Transpile each file as a separate module (similar to 'ts.transpileModule'). */
-    /* Strict Type-Checking Options */
-    "strict": true /* Enable all strict type-checking options. */,
-    // "noImplicitAny": true,                 /* Raise error on expressions and declarations with an implied 'any' type. */
-    // "strictNullChecks": true,              /* Enable strict null checks. */
-    // "strictFunctionTypes": true,           /* Enable strict checking of function types. */
-    // "strictBindCallApply": true,           /* Enable strict 'bind', 'call', and 'apply' methods on functions. */
-    // "strictPropertyInitialization": true,  /* Enable strict checking of property initialization in classes. */
-    // "noImplicitThis": true,                /* Raise error on 'this' expressions with an implied 'any' type. */
-    // "alwaysStrict": true,                  /* Parse in strict mode and emit "use strict" for each source file. */
-    /* Additional Checks */
-    // "noUnusedLocals": true,                /* Report errors on unused locals. */
-    // "noUnusedParameters": true,            /* Report errors on unused parameters. */
-    // "noImplicitReturns": true,             /* Report error when not all code paths in function return a value. */
-    // "noFallthroughCasesInSwitch": true,    /* Report errors for fallthrough cases in switch statement. */
-    /* Module Resolution Options */
-    // "moduleResolution": "node",            /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
-    // "baseUrl": "./",                       /* Base directory to resolve non-absolute module names. */
-    // "paths": {},                           /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
-    // "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
-    // "typeRoots": [],                       /* List of folders to include type definitions from. */
-    // "types": [],                           /* Type declaration files to be included in compilation. */
-    // "allowSyntheticDefaultImports": true,  /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
-    "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
-    // "preserveSymlinks": true,              /* Do not resolve the real path of symlinks. */
-    /* Source Map Options */
-    // "sourceRoot": "",                      /* Specify the location where debugger should locate TypeScript files instead of source locations. */
-    // "mapRoot": "",                         /* Specify the location where debugger should locate map files instead of generated locations. */
-    // "inlineSourceMap": true,               /* Emit a single file with source maps instead of having a separate file. */
-    // "inlineSources": true,                 /* Emit the source alongside the sourcemaps within a single file; requires '--inlineSourceMap' or '--sourceMap' to be set. */
-    /* Experimental Options */
-    // "experimentalDecorators": true,        /* Enables experimental support for ES7 decorators. */
-    // "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
-    "incremental": true /* Save .tsbuildinfo files to allow for incremental compilation of projects. */,
-    "tsBuildInfoFile": ".tsbuildinfo"
+    "rootDir": ".", // 项目的根目录
+    // "baseUrl": ".", // 项目基础目录, ts-go 移除了这个属性
+    "outDir": "dist", //  tsc 编译产物输出目录
+
+    "target": "ESNext", // 编译目标 js 的版本
+    "module": "esnext", // 指定模块代码生成
+    "moduleResolution": "node", // 模块解析策略
+    "allowJs": true, // 允许编译 JS 文件
+    "resolveJsonModule": true, // 允许引入 .json 模块
+    "esModuleInterop": true, // 发出额外的 JavaScript 来简化对导入 CommonJS 模块的支持（import * as React from 'react' 这种写法）
+    "allowSyntheticDefaultImports": true, // 允许从没有设置默认导出的模块中默认导入, 与 esModuleInterop: true 配合允许从 commonjs 的依赖中直接按 import XX from 'xxx' 的方式导出 default 模块。
+    "allowImportingTsExtensions": true, // 允许导入带有 .ts 扩展名的文件
+    "sourceMap": true, // 生成 sourceMap 文件
+    "removeComments": false, // 保留注释
+    "preserveConstEnums": true, // 保留 const 和 enum 声明
+    "forceConsistentCasingInFileNames": true, // 用于强制检查文件路径的大小写一致性, 防止 Mac 和 Windows 之间大小写不一致导致的问题
+    "useDefineForClassFields": true, // 使用 defineProperty 来定义类字段, 开启需要 es2022 的支持，关闭可以兼容旧浏览器
+    "moduleDetection": "force", // 可选值有："auto"、"legacy"、"force", force 强制 TypeScript 把所有 .ts/.tsx/.mts/.cts 文件当成“模块”（module），而不管它们有没有 import 或 export 语句, 默认行为：只有文件里出现 import/export 时，TypeScript 才会把它当“模块”；否则把它当“脚本”（script），脚本里的代码会被放进全局作用域
+
+    // "lib": [], // 引入 ES 的功能库
+    // "types": [], // 默认引入的模块类型声明
+    "declaration": true, // 生成声明文件
+    "emitDeclarationOnly": true, // 只生成声明文件
+    "skipLibCheck": true, // 检查类型时是否跳过类型声明文件，可以提升编译速度
+    "verbatimModuleSyntax": false, // 使用 import type 和 export type 必须明确用于类型导入，false 时，可以省略 type 关键字并且 TypeScript 会自动将只用于类型的导入转换为 import type
+
+    "incremental": false, // 是否启用增量编译，大型项目开启可能会因 .tsbuildinfo 导致编译失败
+
+    "experimentalDecorators": true, // 启用装饰器
+    "emitDecoratorMetadata": true, // 启用装饰器元数据
+
+    "strict": true,
+    "strictNullChecks": true, // 启用严格的 null 检查
+    "noImplicitAny": false, // 禁用隐式 any 类型检查
+    "noUnusedLocals": false, // 不允许有未使用的变量
+    "noUnusedParameters": false, // 关闭未使用的参数错误
+    "noImplicitReturns": false, // 函数不是所有代码路径都有返回值时的错误
+    "noUncheckedSideEffectImports": false, // false 时（默认值），允许导入可能带有副作用（Side Effects）的模块而不需要显式标记。如果设置为 true，TypeScript 会要求所有导入的模块必须显式声明是否有副作用（例如通过 "sideEffects": false 在 package.json 中标记）。
+    "noFallthroughCasesInSwitch": true, // 检查 switch 语句中的 case 是否“贯穿”（即没有显式使用 break 或 return 等终止语句）。如果发现未处理的贯穿，会抛出编译错误
+    "alwaysStrict": true,
+    "noImplicitThis": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true
   },
-  "include": ["*.ts"],
-  "exclude": ["*.js", "src/binding.d.ts"]
+  "include": ["build", "benchmark", "__tests__"]
 }

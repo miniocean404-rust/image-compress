@@ -2,6 +2,7 @@ use chrono::{FixedOffset, Utc};
 use tracing_subscriber::fmt::{format::Writer, time::FormatTime};
 
 // 用来格式化日志的输出时间格式
+#[derive(Debug, Clone, Copy)]
 pub struct LocalTimer;
 
 // 常量函数

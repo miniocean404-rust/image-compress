@@ -1,8 +1,6 @@
 use std::thread;
 use std::time::Duration;
 
-use tracing::warn;
-
 pub enum SecsTime {
     MAX,
     Time(u64),
@@ -20,6 +18,8 @@ pub fn set_sleep(secs: SecsTime) {
 }
 
 pub async fn exit_guard() -> anyhow::Result<()> {
+    use tracing::warn;
+
     loop {
         tokio::select! {
            // 如果取消biased，挑选的任务顺序将随机，可能会导致分支中的断言失败

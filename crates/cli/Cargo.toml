@@ -1,0 +1,16 @@
+[package]
+name = "cli"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+
+[lib]
+bench = false
+name = "image_compress_cli"
+
+[dependencies]
+image_compress = { workspace = true }
+
+clap = { workspace = true, features = ["cargo", "derive"] }
+indoc = { workspace = true }
+anyhow = { workspace = true }

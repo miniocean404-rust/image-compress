@@ -1,3 +1,7 @@
+pub fn is_test() -> bool {
+    cfg!(test)
+}
+
 pub fn is_debug() -> bool {
     cfg!(debug_assertions)
 }

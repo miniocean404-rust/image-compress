@@ -1,0 +1,18 @@
+[package]
+name = "image_compress"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+
+[features]
+default = ['native']
+native = ["image_compress_core/native"]
+wasm = ["image_compress_core/wasm"]
+
+
+[dependencies]
+image_compress_core = { workspace = true }
+utils = { workspace = true, features = ["file"] }
+
+anyhow.workspace = true
+infer.workspace = true

@@ -1,3 +1,6 @@
+edition = "2021"
+style_edition = "2024"
+
 max_width = 100
 tab_spaces = 4
 hard_tabs = false
@@ -13,5 +16,3 @@ group_imports = "StdExternalCrate"
 # swc
 reorder_impl_items = true
 hex_literal_case = "Lower"
-
-edition = "2021"

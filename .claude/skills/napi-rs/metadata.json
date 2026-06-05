@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0",
+  "organization": "NAPI-RS Community",
+  "date": "January 2026",
+  "abstract": "Comprehensive guide for building high-performance Node.js native addons using Rust and NAPI-RS. Covers project initialization, export mechanisms (#[napi] macro), class definitions, async functions with Tokio integration, ThreadsafeFunction for multi-threading, Object data passing, and cross-platform build strategies. Includes 5 common patterns, best practices for error handling, type safety, lifecycle management, and performance optimization. Designed for AI agents to assist developers in creating production-ready Rust-Node.js bindings.",
+  "references": [
+    "https://napi.rs",
+    "https://napi.rs/docs",
+    "https://github.com/napi-rs/napi-rs",
+    "https://docs.rs/napi/latest/napi/",
+    "https://nodejs.org/api/n-api.html"
+  ]
+}

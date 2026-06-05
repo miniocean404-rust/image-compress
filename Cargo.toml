@@ -2,10 +2,10 @@
 
 resolver = "2"
 # 设置默认执行的 workspace
-default-members = ["crates/core"]
+default-members = ["crates/image-compress"]
 members = [
     "crates/*",
-    # "crates/core",
+    # "crates/xxx",
 ]
 exclude = []
 
@@ -20,8 +20,11 @@ repository = "https://github.com/miniocean404-rust/image-compress"
 
 [profile.dev]
 opt-level = 0
+# 将每个 crate 分成称为代码生成单元 (codegen units) 的块进行编译, 也可以写为 rustflags = ["-C", "codegen-units=16"]
+# 等于你就在告诉 Rust 将编译任务拆分成 16 个并行线程
 codegen-units = 16 # debug build will cause runtime panic if codegen-unints is default
 debug = true
+# 增量构建
 incremental = true
 
 # https://doc.rust-lang.org/cargo/reference/profiles.html
@@ -43,26 +46,162 @@ panic = "abort"
 debug-assertions = false
 
 [workspace.dependencies]
-tokio = { version = "1.33.0", features = ["full"] }
-serde = { version = "1.0.196", features = ["derive"] }
-serde_json = "1.0"
-# 处理时间
-chrono = "0.4.31"
-# 处理错误
-anyhow = "1.0.79"
-# 处理错误 enum 参数
-thiserror = "1.0.50"
-# 推断文件类型
-infer = "0.16.0"
-globset = "0.4.14"
-walkdir = "2.4.0"
-num_cpus = "1.16.0"
+# 内部 crate
+image_compress_core = { path = "./crates/core" }
+image_compress = { path = "./crates/image-compress" }
+utils = { path = "./crates/utils" }
+
+# 单例
+once_cell = "1.21.3"
+
+# CLI
+clap = { version = "4.5.54" }
+indoc = { version = "2.0.7" }
+
+# 异步运行时
+tokio = { version = "1.49.0", features = ["full"] }
+
+# 序列化
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.149"
+
+# 时间处理
+chrono = "0.4.43"
+
+# 错误处理
+anyhow = "1.0.100"
+thiserror = "2.0.17"
+
+# 文件类型推断
+infer = "0.19.0"
+
+# 文件系统
+globset = "0.4.18"
+walkdir = "2.5.0"
+
+# 系统信息
+num_cpus = "1.17.0"
+
+# URL 编码
 urlencoding = "2.1.3"
 
-strum = "0.26.3"
-strum_macros = "0.26.4"
+# Cargo 元数据
+cargo_metadata = "0.23.1"
 
-# 处理日志及栈追踪
+# 枚举工具
+strum = "0.27.2"
+strum_macros = "0.27.2"
+
+# 日志及栈追踪
 tracing = { version = "0.1.40", features = ["release_max_level_info"] }
-tracing-appender = "0.2.3"
-tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+tracing-appender = "0.2.4"
+tracing-subscriber = { version = "0.3.22", features = ["env-filter", "json"] }
+tracing-futures = "0.2.5"
+tracing-serde = "0.2.0"
+tracing-chrome = "0.7.2"
+
+# 堆栈跟踪
+backtrace = "0.3.76"
+
+# ------------------------------------------------------ 图像处理 ------------------------------------------------------
+
+# 图像处理
+image = "0.25.9"
+zune-core = "0.5.0"
+zune-image = "0.5.0-rc0"
+rgb = "0.8.52"
+resize = "0.8.8"
+fast_image_resize = { version = "5.5.0", features = ["image"] }
+lcms2 = "6.1.1"
+
+# PNG
+oxipng = { version = "10.0.0", default-features = false, features = [
+    "freestanding",
+    "filetime",
+    "parallel",
+    "zopfli",
+] }
+imagequant = { version = "4.4.1", default-features = true }
+lodepng = { version = "3.12.1", default-features = false, features = [
+    "rust_backend",
+] }
+png = "0.18.0"
+
+# JPEG
+mozjpeg = { version = "0.10.13", default-features = false, features = ["with_simd"] }
+mozjpeg-sys = { version = "2.2.3", features = ["default"] }
+
+# GIF
+gif = "0.14.1"
+gifsicle = "1.95.0"
+libc = "0.2.179"
+
+# WebP
+webp = { version = "0.3.1", default-features = true }
+libwebp-sys = "0.14.1"
+
+# AVIF
+ravif = "0.12.0"
+libavif = { version = "0.14.0", default-features = false, features = ["codec-aom"] }
+
+# TIFF
+tiff = { version = "0.10.3", default-features = false }
+
+# SVG
+svgtypes = "0.16.0"
+
+# macOS
+cocoa = "0.26.1"
+objc = "0.2.7"
+objc2 = "0.6.3"
+
+# Windows
+windows = { version = "0.62.2", features = [
+    "Win32",
+    "Win32_Foundation",
+    "Win32_System_Com",
+    "Win32_System_Ole",
+    "Win32_System_Variant",
+    "Win32_UI_Shell",
+    "Win32_UI_Shell_Common",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_System_Threading",
+    "Win32_System_ProcessStatus",
+    "Foundation",
+] }
+# windows-sys = { version = "0.52.0", features = ["Win32_UI_WindowsAndMessaging"] }
+
+# ---------------------------------------------------- Napi、Wasm 绑定 ---------------------------------------------------
+
+# wasm-pack，一个构建、测试和发布 WASM 的 Rust CLI 工具，我们将使用 wasm-pack 相关的命令来构建 WASM 二进制内容。
+# https://rustwasm.github.io/wasm-pack/installer/
+
+# 是一个简化 Rust WASM 与 JS 之间交互的库。
+# 它能够将如 DOM 操作、console.log 和 performance 等 JS 相关 API 暴露给 Rust 使用
+# 它能够将 Rust 功能导出到 JS 中，如类、函数等
+# wasm-pack cli 依赖这个包进行打包
+wasm-bindgen = { version = "0.2.108", features = ["enable-interning"] }
+wasm-bindgen-futures = "0.4.42"
+# web-sys 的 Crate，它为 Rust 进一步提供了控制 DOM 的能力
+web-sys = { version = "0.3.83", features = [
+    'Document',
+    'Element',
+    'HtmlElement',
+    'Node',
+    'Window',
+    'HtmlInputElement',
+    'Performance',
+    'console',
+] }
+js-sys = "0.3.85"
+serde-wasm-bindgen = "0.6.3"
+wee_alloc = "0.4.5"
+
+napi = { version = "3.8.2", features = [
+    "napi9",
+    "async",
+    "serde-json",
+    "chrono_date"
+] }
+napi-derive = { git = "https://github.com/napi-rs/napi-rs.git", features = ["type-def"], branch = "main" }
+napi-build = "2.3.1"

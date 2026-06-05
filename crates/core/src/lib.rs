@@ -1,4 +1,5 @@
-pub mod compress;
-pub mod shared;
-pub mod transform;
-pub mod utils;
+pub mod codecs;
+pub mod error;
+pub mod operations;
+
+pub use error::{CompressError, Result, ResultExt};

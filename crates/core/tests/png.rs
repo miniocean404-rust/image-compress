@@ -31,17 +31,17 @@ use image_compress_core::codecs::png::encoder::imagequant_options::ImageQuantOpt
 fn image_quant_compress_lossy() -> Result<(), Box<dyn std::error::Error>> {
     let input_path = get_workspace_file_path("assets/image/png/测试.png");
     let output_path = get_workspace_file_path("assets/compress/png/测试-已压缩.png");
-    fs::create_dir_all(output_path.parent().unwrap())?;
+    fs::create_dir_all(output_path.parent().expect("output path should have parent directory"))?;
 
     let read_buf = fs::read(input_path)?;
 
     let mut encoder = ImageQuantEncoder::new();
 
     let encode_buf = encoder.encode_mem(&read_buf)?;
-    println!("原始字节数: {} 压缩后字节数: {}", read_buf.len(), encode_buf.len());
+    // println!("原始字节数: {} 压缩后字节数: {}", read_buf.len(), encode_buf.len());
 
     fs::write(&output_path, &encode_buf)?;
-    println!("输出路径: {:?}", output_path);
+    // println!("输出路径: {:?}", output_path);
 
     Ok(())
 }
@@ -51,16 +51,19 @@ fn image_quant_compress_lossy() -> Result<(), Box<dyn std::error::Error>> {
 /// 使用 OxiPng 编码器对 PNG 图像进行无损压缩，采用最大压缩级别。
 /// 无损压缩不会损失任何图像质量，但压缩率相对有损压缩较低。
 #[test]
-fn oxipng_compress_lossless() {
-    let buf = fs::read(get_workspace_file_path("assets/image/png/测试.png")).unwrap();
+fn oxipng_compress_lossless() -> Result<(), Box<dyn std::error::Error>> {
+    let buf = fs::read(get_workspace_file_path("assets/image/png/测试.png"))?;
 
     // let img = image::open(path).unwrap();
 
     let mut encoder = OxiPngEncoder::new_with_options(oxipng::Options::max_compression());
-    let lossless_vec = encoder.encode_mem(&buf).unwrap();
+    let lossless_vec = encoder.encode_mem(&buf)?;
 
-    println!("原始字节数: {} 压缩后字节数: {}", buf.len(), lossless_vec.len());
+    assert!(!lossless_vec.is_empty());
+    // println!("原始字节数: {} 压缩后字节数: {}", buf.len(), lossless_vec.len());
     // fs::write(Path::new(&workspace_root).join("assets/compress/test.png"), buf.into_inner()).unwrap();
+
+    Ok(())
 }
 
 /// 测试双重压缩策略
@@ -69,22 +72,25 @@ fn oxipng_compress_lossless() {
 /// 这种组合策略可以在保持较好图像质量的同时获得更高的压缩率。
 /// ImageQuant 使用 max_quality=70 的配置进行颜色量化。
 #[test]
-fn double_compress() {
-    let buf = fs::read(get_workspace_file_path("assets/image/png/测试.png")).unwrap();
+fn double_compress() -> Result<(), Box<dyn std::error::Error>> {
+    let buf = fs::read(get_workspace_file_path("assets/image/png/测试.png"))?;
 
     // 无损压缩
     // let img = image::open(path).unwrap();
     let mut encoder = OxiPngEncoder::new_with_options(oxipng::Options::max_compression());
-    let lossless_vec = encoder.encode_mem(&buf).unwrap();
+    let lossless_vec = encoder.encode_mem(&buf)?;
 
     // 有损压缩
     let mut encoder = ImageQuantEncoder::new_with_options(ImageQuantOptions {
         max_quality: 70,
         ..ImageQuantOptions::default()
     });
-    let lossy_vec = encoder.encode_mem(&lossless_vec).unwrap();
+    let lossy_vec = encoder.encode_mem(&lossless_vec)?;
 
-    println!("原始字节数: {} 压缩后字节数: {}", buf.len(), lossy_vec.len());
+    assert!(!lossy_vec.is_empty());
+    // println!("原始字节数: {} 压缩后字节数: {}", buf.len(), lossy_vec.len());
+
+    Ok(())
 }
 
 /// 测试 u8 位深度图像的压缩效果
@@ -92,18 +98,22 @@ fn double_compress() {
 /// 创建 100x100 的 RGB u8 测试图像，先使用标准 PNG 编码，
 /// 再使用 OxiPng 最大压缩进行优化，比较压缩前后的字节数差异。
 #[test]
-fn compress_u8() {
+fn compress_u8() -> Result<(), Box<dyn std::error::Error>> {
     // 246 字节
     let image = create_test_image_u8(100, 100, ColorSpace::RGB);
     let mut buf = Cursor::new(vec![]);
-    let write_len = image.encode(ImageFormat::PNG, &mut buf).unwrap();
-    println!("压缩前字节数: {}", write_len);
+    let write_len = image.encode(ImageFormat::PNG, &mut buf)?;
+    // println!("压缩前字节数: {}", write_len);
 
     let encoder = OxiPngEncoder::new_with_options(oxipng::Options::max_compression());
     let mut buf = Cursor::new(vec![]);
-    let byte_len = image.write_with_encoder(encoder, &mut buf).unwrap();
+    let byte_len = image.write_with_encoder(encoder, &mut buf)?;
 
-    println!("原始字节数: {} 压缩后字节数: {}", write_len, byte_len);
+    assert!(write_len > 0);
+    assert!(byte_len > 0);
+    // println!("原始字节数: {} 压缩后字节数: {}", write_len, byte_len);
+
+    Ok(())
 }
 
 /// 测试 u8 位深度下所有支持的色彩空间编码
@@ -129,18 +139,21 @@ fn encode_colorspaces_u8() {
 
                 let result = encoder.encode(&image, buf);
 
-                if result.is_err() {
-                    dbg!(&result);
-                }
+                // if result.is_err() {
+                //     dbg!(&result);
+                // }
 
                 assert!(result.is_ok());
             })
-            .unwrap();
+            .expect("spawn colorspace encoder test thread");
 
         results.push(handler.join())
     }
 
-    results.into_iter().collect::<Result<Vec<()>, _>>().unwrap();
+    results
+        .into_iter()
+        .collect::<Result<Vec<()>, _>>()
+        .expect("colorspace encoder test thread should not panic");
 }
 
 /// 测试 u16 位深度下所有支持的色彩空间编码
@@ -166,18 +179,21 @@ fn encode_colorspaces_u16() {
 
                 let result = encoder.encode(&image, buf);
 
-                if result.is_err() {
-                    dbg!(&result);
-                }
+                // if result.is_err() {
+                //     dbg!(&result);
+                // }
 
                 assert!(result.is_ok());
             })
-            .unwrap();
+            .expect("spawn colorspace encoder test thread");
 
         results.push(handler.join())
     }
 
-    results.into_iter().collect::<Result<Vec<()>, _>>().unwrap();
+    results
+        .into_iter()
+        .collect::<Result<Vec<()>, _>>()
+        .expect("colorspace encoder test thread should not panic");
 }
 
 /// 测试 f32 位深度下所有支持的色彩空间编码
@@ -203,18 +219,21 @@ fn encode_colorspaces_f32() {
 
                 let result = encoder.encode(&image, buf);
 
-                if result.is_err() {
-                    dbg!(&result);
-                }
+                // if result.is_err() {
+                //     dbg!(&result);
+                // }
 
                 assert!(result.is_ok());
             })
-            .unwrap();
+            .expect("spawn colorspace encoder test thread");
 
         results.push(handler.join())
     }
 
-    results.into_iter().collect::<Result<Vec<()>, _>>().unwrap();
+    results
+        .into_iter()
+        .collect::<Result<Vec<()>, _>>()
+        .expect("colorspace encoder test thread should not panic");
 }
 
 /// 测试 u8 位深度 RGB 色彩空间的基本编码
@@ -228,7 +247,7 @@ fn encode_u8() {
     let buf = Cursor::new(vec![]);
 
     let result = encoder.encode(&image, buf);
-    dbg!(&result);
+    // dbg!(&result);
 
     assert!(result.is_ok());
 }
@@ -244,7 +263,7 @@ fn encode_u16() {
     let buf = Cursor::new(vec![]);
 
     let result = encoder.encode(&image, buf);
-    dbg!(&result);
+    // dbg!(&result);
 
     assert!(result.is_ok());
 }
@@ -260,7 +279,7 @@ fn encode_f32() {
     let buf = Cursor::new(vec![]);
 
     let result = encoder.encode(&image, buf);
-    dbg!(&result);
+    // dbg!(&result);
 
     assert!(result.is_ok());
 }
@@ -276,7 +295,7 @@ fn encode_animated() {
     let buf = Cursor::new(vec![]);
 
     let result = encoder.encode(&image, buf);
-    dbg!(&result);
+    // dbg!(&result);
 
     assert!(result.is_ok());
 }

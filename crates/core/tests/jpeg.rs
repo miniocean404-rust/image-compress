@@ -30,17 +30,17 @@ use zune_image::traits::EncoderTrait;
 fn encode_mem_jpeg() -> Result<(), Box<dyn std::error::Error>> {
     let input_path = get_workspace_file_path("assets/image/jpeg/测试.jpg");
     let output_path = get_workspace_file_path("assets/compress/jpeg/测试-已压缩.jpg");
-    fs::create_dir_all(output_path.parent().unwrap())?;
+    fs::create_dir_all(output_path.parent().expect("output path should have parent directory"))?;
 
     let read_buf = fs::read(input_path)?;
 
     let mut encoder = MozJpegEncoder::new();
 
     let encode_buf = encoder.encode_mem(&read_buf)?;
-    println!("原始字节数: {} 压缩后字节数: {}", read_buf.len(), encode_buf.len());
+    // println!("原始字节数: {} 压缩后字节数: {}", read_buf.len(), encode_buf.len());
 
     fs::write(&output_path, &encode_buf)?;
-    println!("输出路径: {:?}", output_path);
+    // println!("输出路径: {:?}", output_path);
 
     Ok(())
 }
@@ -68,18 +68,21 @@ fn encode_colorspaces_u8() {
 
                 let result = encoder.encode(&image, buf);
 
-                if result.is_err() {
-                    dbg!(&result);
-                }
+                // if result.is_err() {
+                //     dbg!(&result);
+                // }
 
                 assert!(result.is_ok());
             })
-            .unwrap();
+            .expect("spawn colorspace encoder test thread");
 
         results.push(handler.join())
     }
 
-    results.into_iter().collect::<Result<Vec<()>, _>>().unwrap();
+    results
+        .into_iter()
+        .collect::<Result<Vec<()>, _>>()
+        .expect("colorspace encoder test thread should not panic");
 }
 
 /// 测试 u16 位深度下所有支持的色彩空间编码
@@ -105,18 +108,21 @@ fn encode_colorspaces_u16() {
 
                 let result = encoder.encode(&image, buf);
 
-                if result.is_err() {
-                    dbg!(&result);
-                }
+                // if result.is_err() {
+                //     dbg!(&result);
+                // }
 
                 assert!(result.is_ok());
             })
-            .unwrap();
+            .expect("spawn colorspace encoder test thread");
 
         results.push(handler.join())
     }
 
-    results.into_iter().collect::<Result<Vec<()>, _>>().unwrap();
+    results
+        .into_iter()
+        .collect::<Result<Vec<()>, _>>()
+        .expect("colorspace encoder test thread should not panic");
 }
 
 /// 测试 f32 位深度下所有支持的色彩空间编码
@@ -142,18 +148,21 @@ fn encode_colorspaces_f32() {
 
                 let result = encoder.encode(&image, buf);
 
-                if result.is_err() {
-                    dbg!(&result);
-                }
+                // if result.is_err() {
+                //     dbg!(&result);
+                // }
 
                 assert!(result.is_ok());
             })
-            .unwrap();
+            .expect("spawn colorspace encoder test thread");
 
         results.push(handler.join())
     }
 
-    results.into_iter().collect::<Result<Vec<()>, _>>().unwrap();
+    results
+        .into_iter()
+        .collect::<Result<Vec<()>, _>>()
+        .expect("colorspace encoder test thread should not panic");
 }
 
 /// 测试 u8 位深度 RGB 色彩空间的基本编码
@@ -167,7 +176,7 @@ fn encode_u8() {
     let buf = Cursor::new(vec![]);
 
     let result = encoder.encode(&image, buf);
-    dbg!(&result);
+    // dbg!(&result);
 
     assert!(result.is_ok());
 }
@@ -183,7 +192,7 @@ fn encode_u16() {
     let buf = Cursor::new(vec![]);
 
     let result = encoder.encode(&image, buf);
-    dbg!(&result);
+    // dbg!(&result);
 
     assert!(result.is_ok());
 }
@@ -199,7 +208,7 @@ fn encode_f32() {
     let buf = Cursor::new(vec![]);
 
     let result = encoder.encode(&image, buf);
-    dbg!(&result);
+    // dbg!(&result);
 
     assert!(result.is_ok());
 }
@@ -216,7 +225,7 @@ fn encode_animated() {
     let buf = Cursor::new(vec![]);
 
     let result = encoder.encode(&image, buf);
-    dbg!(&result);
+    // dbg!(&result);
 
     assert!(result.is_ok());
 }

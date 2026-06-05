@@ -87,8 +87,8 @@ impl EncoderTrait for OxiPngEncoder {
         .next()
         .ok_or_else(|| ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors("图像帧数据为空".to_string())))?;
 
-        #[allow(unused_mut)]
-        let mut img = oxipng::RawImage::new(
+        // #[allow(unused_mut)]
+        let img = oxipng::RawImage::new(
             width as u32,
             height as u32,
             match image.colorspace() {

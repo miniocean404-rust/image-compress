@@ -35,17 +35,17 @@ use zune_image::traits::EncoderTrait;
 fn encode_mem_gif() -> Result<(), Box<dyn std::error::Error>> {
     let input_path = get_workspace_file_path("assets/image/gif/测试.gif");
     let output_path = get_workspace_file_path("assets/compress/gif/测试-已压缩.gif");
-    fs::create_dir_all(output_path.parent().unwrap())?;
+    fs::create_dir_all(output_path.parent().expect("output path should have parent directory"))?;
 
     let read_buf = fs::read(input_path)?;
 
     let mut encoder = GifEncoder::new();
 
     let encode_buf = encoder.encode_mem(&read_buf)?;
-    println!("原始字节数: {} 压缩后字节数: {}", read_buf.len(), encode_buf.len());
+    // println!("原始字节数: {} 压缩后字节数: {}", read_buf.len(), encode_buf.len());
 
     fs::write(&output_path, &encode_buf)?;
-    println!("输出路径: {:?}", output_path);
+    // println!("输出路径: {:?}", output_path);
 
     Ok(())
 }
@@ -62,9 +62,9 @@ fn encode_gif_lossless_100_100() {
     let buf = Cursor::new(vec![]);
 
     let result = encoder.encode(&image, buf);
-    if result.is_err() {
-        dbg!(&result);
-    }
+    // if result.is_err() {
+    //     dbg!(&result);
+    // }
 
     assert!(result.is_ok());
 }
@@ -81,9 +81,9 @@ fn encode_gif_lossy_100_100() {
     let buf = Cursor::new(vec![]);
 
     let result = encoder.encode(&image, buf);
-    if result.is_err() {
-        dbg!(&result);
-    }
+    // if result.is_err() {
+    //     dbg!(&result);
+    // }
 
     assert!(result.is_ok());
 }
@@ -100,9 +100,9 @@ fn encode_gif_rgb() {
     let buf = Cursor::new(vec![]);
 
     let result = encoder.encode(&image, buf);
-    if result.is_err() {
-        dbg!(&result);
-    }
+    // if result.is_err() {
+    //     dbg!(&result);
+    // }
 
     assert!(result.is_ok());
 }
@@ -118,9 +118,9 @@ fn encode_gif_animated() {
     let buf = Cursor::new(vec![]);
 
     let result = encoder.encode(&image, buf);
-    if result.is_err() {
-        dbg!(&result);
-    }
+    // if result.is_err() {
+    //     dbg!(&result);
+    // }
 
     assert!(result.is_ok());
 }
@@ -211,9 +211,9 @@ fn decode_gif() -> Result<(), Box<dyn std::error::Error>> {
 
     let img = Image::from_decoder(decoder)?;
 
-    println!("GIF 尺寸: {:?}", img.dimensions());
-    println!("GIF 色彩空间: {:?}", img.colorspace());
-    println!("GIF 帧数: {}", img.frames_ref().len());
+    // println!("GIF 尺寸: {:?}", img.dimensions());
+    // println!("GIF 色彩空间: {:?}", img.colorspace());
+    // println!("GIF 帧数: {}", img.frames_ref().len());
 
     assert_eq!(img.colorspace(), ColorSpace::RGBA);
 

@@ -1,10 +1,8 @@
-use image_compress_core::codecs::png::encoder::{
-    imagequant_options::ImageQuantOptions, oxipng_options::OxiPngOptions,
-};
+use image_compress_core::codecs::png::encoder::{imagequant_options::ImageQuantOptions, oxipng_options::OxiPngOptions};
 #[cfg(feature = "native")]
 use image_compress_core::codecs::{
-    avif::encoder::options::AvifOptions, gif::encoder::options::GifOptions,
-    jpeg::encoder::options::MozJpegOptions, webp::encoder::options::WebPOptions,
+    avif::encoder::options::AvifOptions, gif::encoder::options::GifOptions, jpeg::encoder::options::MozJpegOptions,
+    webp::encoder::options::WebPOptions,
 };
 
 #[derive(Clone, Debug, Default)]

@@ -12,6 +12,8 @@
     "build:node": "pnpm --filter=@giegie/* build:node",
     "build:wasm": "pnpm --filter=@giegie/* build:wasm",
     "publish": "pnpm --filter=@giegie/explore --filter=@giegie/image-compress publish --no-git-checks",
+    "codegraph:rebuild": "bunx @colbymchenry/codegraph index --force",
+    "codegraph:incremental": "bunx @colbymchenry/codegraph sync",
     "skills:check": "pnpm dlx skills check",
     "skills:install": "pnpm dlx skills experimental_install"
   },

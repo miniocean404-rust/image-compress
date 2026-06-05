@@ -1,3 +1,4 @@
 {
-  "rust-analyzer.linkedProjects": ["./Cargo.toml", "./bindings/Cargo.toml"]
+  // VS Code 里告诉 rust-analyzer：“你要把哪些 Rust 项目当成工作区入口来加载”的配置。
+  "rust-analyzer.linkedProjects": ["./Cargo.toml"]
 }

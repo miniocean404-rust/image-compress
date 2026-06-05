@@ -19,11 +19,19 @@ tracing-chrome.workspace = true
 
 chrono.workspace = true
 
-napi.workspace = true
-napi-derive.workspace = true
 backtrace.workspace = true
 once_cell.workspace = true
 
+napi = { version = "3.8.2", features = [
+  "napi9",
+  "async",
+  "serde-json",
+  "chrono_date",
+] }
+napi-derive = { git = "https://github.com/napi-rs/napi-rs.git", features = [
+  "type-def",
+], branch = "main" }
+
 
 [build-dependencies]
-napi-build.workspace = true
+napi-build = "2.3.1"

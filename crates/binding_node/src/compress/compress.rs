@@ -1,10 +1,9 @@
-use image_compress::{compress::ImageCompress, Options};
+use image_compress::{Options, compress::ImageCompress};
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 
 use super::options::{
-    mozjpeg::NapiMozJpegOptions, oxipng::NapiOxiPngOptions, ravif::NapiAvifOptions,
-    webp::NapiWebPOptions,
+    mozjpeg::NapiMozJpegOptions, oxipng::NapiOxiPngOptions, ravif::NapiAvifOptions, webp::NapiWebPOptions,
 };
 
 #[napi(object)]
@@ -33,12 +32,9 @@ pub struct CompressResult {
 pub fn compress(image: Either<String, Buffer>, options: Option<Object>) -> Result<CompressResult> {
     // 读取图片数据
     let image_data = match image {
-        Either::A(path) => std::fs::read(&path).map_err(|e| {
-            Error::new(
-                Status::GenericFailure,
-                format!("读取图片文件失败: {}", e),
-            )
-        })?,
+        Either::A(path) => {
+            std::fs::read(&path).map_err(|e| Error::new(Status::GenericFailure, format!("读取图片文件失败: {}", e)))?
+        }
         Either::B(buffer) => buffer.to_vec(),
     };
 
@@ -49,25 +45,12 @@ pub fn compress(image: Either<String, Buffer>, options: Option<Object>) -> Resul
     if let Some(opts) = options {
         // 根据图片类型选择对应的选项类型
         let compress_options = match compressor.ext {
-            image_compress::SupportedFileTypes::Png => {
-                Options::OxiPng(NapiOxiPngOptions::from(opts).into())
-            }
-            image_compress::SupportedFileTypes::Jpeg => {
-                Options::MozJpeg(NapiMozJpegOptions::from(opts).into())
-            }
-            image_compress::SupportedFileTypes::WebP => {
-                Options::WebP(NapiWebPOptions::from(opts).into())
-            }
-            image_compress::SupportedFileTypes::Avif => {
-                Options::Avif(NapiAvifOptions::from(opts).into())
-            }
+            image_compress::SupportedFileTypes::Png => Options::OxiPng(NapiOxiPngOptions::from(opts).into()),
+            image_compress::SupportedFileTypes::Jpeg => Options::MozJpeg(NapiMozJpegOptions::from(opts).into()),
+            image_compress::SupportedFileTypes::WebP => Options::WebP(NapiWebPOptions::from(opts).into()),
+            image_compress::SupportedFileTypes::Avif => Options::Avif(NapiAvifOptions::from(opts).into()),
             image_compress::SupportedFileTypes::Gif => Options::Gif(Default::default()),
-            _ => {
-                return Err(Error::new(
-                    Status::InvalidArg,
-                    "不支持的图片格式或无法识别图片类型",
-                ))
-            }
+            _ => return Err(Error::new(Status::InvalidArg, "不支持的图片格式或无法识别图片类型")),
         };
 
         compressor = compressor.with_options(compress_options);
@@ -79,24 +62,16 @@ pub fn compress(image: Either<String, Buffer>, options: Option<Object>) -> Resul
             image_compress::SupportedFileTypes::WebP => Options::WebP(Default::default()),
             image_compress::SupportedFileTypes::Avif => Options::Avif(Default::default()),
             image_compress::SupportedFileTypes::Gif => Options::Gif(Default::default()),
-            _ => {
-                return Err(Error::new(
-                    Status::InvalidArg,
-                    "不支持的图片格式或无法识别图片类型",
-                ))
-            }
+            _ => return Err(Error::new(Status::InvalidArg, "不支持的图片格式或无法识别图片类型")),
         };
 
         compressor = compressor.with_options(default_options);
     }
 
     // 执行压缩
-    compressor.compress().map_err(|e| {
-        Error::new(
-            Status::GenericFailure,
-            format!("图片压缩失败: {}", e),
-        )
-    })?;
+    compressor
+        .compress()
+        .map_err(|e| Error::new(Status::GenericFailure, format!("图片压缩失败: {}", e)))?;
 
     Ok(CompressResult {
         compressed_image: compressor.compressed_image.into(),
@@ -105,4 +80,3 @@ pub fn compress(image: Either<String, Buffer>, options: Option<Object>) -> Resul
         rate: compressor.rate,
     })
 }
-

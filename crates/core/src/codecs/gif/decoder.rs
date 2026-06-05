@@ -73,8 +73,7 @@ impl<R: BufRead> DecoderTrait for GifDecoder<R> {
                     if dst_x < width && dst_y < height {
                         let dst_idx = (dst_y * width + dst_x) * 4;
                         if src_idx + 4 <= frame.buffer.len() && dst_idx + 4 <= full_buffer.len() {
-                            full_buffer[dst_idx..dst_idx + 4]
-                                .copy_from_slice(&frame.buffer[src_idx..src_idx + 4]);
+                            full_buffer[dst_idx..dst_idx + 4].copy_from_slice(&frame.buffer[src_idx..src_idx + 4]);
                         }
                     }
                 }
@@ -86,18 +85,10 @@ impl<R: BufRead> DecoderTrait for GifDecoder<R> {
         }
 
         if frames.is_empty() {
-            return Err(ImageErrors::ImageDecodeErrors(
-                "GIF 文件中没有帧".to_string(),
-            ));
+            return Err(ImageErrors::ImageDecodeErrors("GIF 文件中没有帧".to_string()));
         }
 
-        Ok(Image::new_frames(
-            frames,
-            BitDepth::Eight,
-            width,
-            height,
-            colorspace,
-        ))
+        Ok(Image::new_frames(frames, BitDepth::Eight, width, height, colorspace))
     }
 
     fn dimensions(&self) -> Option<(usize, usize)> {

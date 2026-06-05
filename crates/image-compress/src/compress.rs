@@ -1,13 +1,11 @@
 use std::fmt::{self};
 
-use image_compress_core::codecs::png::encoder::{
-    imagequant::ImageQuantEncoder, oxipng::OxiPngEncoder,
-};
+use image_compress_core::codecs::png::encoder::{imagequant::ImageQuantEncoder, oxipng::OxiPngEncoder};
 
 #[cfg(feature = "native")]
 use image_compress_core::codecs::{
-    avif::encoder::ravif::AvifEncoder, gif::encoder::gifsicle::GifEncoder,
-    jpeg::encoder::mozjpeg::MozJpegEncoder, webp::encoder::webp::WebPEncoder,
+    avif::encoder::ravif::AvifEncoder, gif::encoder::gifsicle::GifEncoder, jpeg::encoder::mozjpeg::MozJpegEncoder,
+    webp::encoder::webp::WebPEncoder,
 };
 use image_compress_core::error::CompressError;
 use utils::file::mime::get_mime_for_memory;
@@ -136,31 +134,23 @@ impl ImageCompress {
     /// * 未设置压缩选项时返回 `InvalidParameter` 错误
     /// * 编码器内部错误
     pub fn compress(&mut self) -> anyhow::Result<Vec<u8>> {
+        if self.image.is_empty() {
+            return Err(CompressError::InvalidParameter("图片数据不能为空".to_string()).into());
+        }
+
         self.state = CompressState::Compressing;
 
         self.compressed_image = match &self.options {
-            Options::OxiPng(options) => {
-                OxiPngEncoder::new_with_options(options.clone()).encode_mem(&self.image)
-            }
-            Options::ImageQuant(options) => {
-                ImageQuantEncoder::new_with_options(*options).encode_mem(&self.image)
-            }
+            Options::OxiPng(options) => OxiPngEncoder::new_with_options(options.clone()).encode_mem(&self.image),
+            Options::ImageQuant(options) => ImageQuantEncoder::new_with_options(*options).encode_mem(&self.image),
             #[cfg(feature = "native")]
-            Options::MozJpeg(options) => {
-                MozJpegEncoder::new_with_options(*options).encode_mem(&self.image)
-            }
+            Options::MozJpeg(options) => MozJpegEncoder::new_with_options(*options).encode_mem(&self.image),
             #[cfg(feature = "native")]
-            Options::WebP(options) => {
-                WebPEncoder::new_with_options(*options).encode_mem(&self.image)
-            }
+            Options::WebP(options) => WebPEncoder::new_with_options(*options).encode_mem(&self.image),
             #[cfg(feature = "native")]
-            Options::Avif(options) => {
-                AvifEncoder::new_with_options(*options).encode_mem(&self.image)
-            }
+            Options::Avif(options) => AvifEncoder::new_with_options(*options).encode_mem(&self.image),
             #[cfg(feature = "native")]
-            Options::Gif(options) => {
-                GifEncoder::new_with_options(*options).encode_mem(&self.image)
-            }
+            Options::Gif(options) => GifEncoder::new_with_options(*options).encode_mem(&self.image),
             Options::Unknown => Err(CompressError::InvalidParameter(
                 "没有设置 options 或 不能压缩的类型".to_string(),
             )),
@@ -168,11 +158,8 @@ impl ImageCompress {
 
         self.after_size = self.compressed_image.len();
 
-        self.rate = (((self.before_size as f64 - self.after_size as f64)
-            / self.before_size as f64)
-            * 10000.0)
-            .round()
-            / 100.0;
+        self.rate =
+            (((self.before_size as f64 - self.after_size as f64) / self.before_size as f64) * 10000.0).round() / 100.0;
 
         self.state = CompressState::Done;
 

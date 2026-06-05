@@ -54,11 +54,7 @@ impl EncoderTrait for WebPEncoder {
         "webp"
     }
 
-    fn encode_inner<T: ZByteWriterTrait>(
-        &mut self,
-        image: &Image,
-        sink: T,
-    ) -> std::result::Result<usize, ImageErrors> {
+    fn encode_inner<T: ZByteWriterTrait>(&mut self, image: &Image, sink: T) -> std::result::Result<usize, ImageErrors> {
         let options = webp::WebPConfig::from(self.options);
         let (width, height) = image.dimensions();
 
@@ -76,19 +72,13 @@ impl EncoderTrait for WebPEncoder {
                 // TODO: add frame timestamp
 
                 let frame = match image.colorspace() {
-                    ColorSpace::RGB => {
-                        webp::AnimFrame::from_rgb(frame, width as u32, height as u32, 500)
-                    }
-                    ColorSpace::RGBA => {
-                        webp::AnimFrame::from_rgba(frame, width as u32, height as u32, 500)
-                    }
+                    ColorSpace::RGB => webp::AnimFrame::from_rgb(frame, width as u32, height as u32, 500),
+                    ColorSpace::RGBA => webp::AnimFrame::from_rgba(frame, width as u32, height as u32, 500),
                     cs => {
-                        return Err(ImageErrors::EncodeErrors(
-                            ImgEncodeErrors::UnsupportedColorspace(
-                                cs,
-                                self.supported_colorspaces(),
-                            ),
-                        ))
+                        return Err(ImageErrors::EncodeErrors(ImgEncodeErrors::UnsupportedColorspace(
+                            cs,
+                            self.supported_colorspaces(),
+                        )));
                     }
                 };
 
@@ -99,9 +89,9 @@ impl EncoderTrait for WebPEncoder {
 
             let res = encoder.encode();
 
-            writer.write(&res).map_err(|e| {
-                ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!("{e:?}")))
-            })?;
+            writer
+                .write(&res)
+                .map_err(|e| ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!("{e:?}"))))?;
 
             Ok(writer.bytes_written())
         } else {
@@ -111,19 +101,20 @@ impl EncoderTrait for WebPEncoder {
                 ColorSpace::RGB => webp::Encoder::from_rgb(data, width as u32, height as u32),
                 ColorSpace::RGBA => webp::Encoder::from_rgba(data, width as u32, height as u32),
                 cs => {
-                    return Err(ImageErrors::EncodeErrors(
-                        ImgEncodeErrors::UnsupportedColorspace(cs, self.supported_colorspaces()),
-                    ))
+                    return Err(ImageErrors::EncodeErrors(ImgEncodeErrors::UnsupportedColorspace(
+                        cs,
+                        self.supported_colorspaces(),
+                    )));
                 }
             };
 
-            let res = encoder.encode_advanced(&options).map_err(|e| {
-                ImgEncodeErrors::ImageEncodeErrors(format!("webp encoding failed: {e:?}"))
-            })?;
+            let res = encoder
+                .encode_advanced(&options)
+                .map_err(|e| ImgEncodeErrors::ImageEncodeErrors(format!("webp encoding failed: {e:?}")))?;
 
-            writer.write(&res).map_err(|e| {
-                ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!("{e:?}")))
-            })?;
+            writer
+                .write(&res)
+                .map_err(|e| ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!("{e:?}"))))?;
 
             Ok(writer.bytes_written())
         }

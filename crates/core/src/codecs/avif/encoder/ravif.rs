@@ -76,11 +76,7 @@ impl EncoderTrait for AvifEncoder {
         "avif"
     }
 
-    fn encode_inner<T: ZByteWriterTrait>(
-        &mut self,
-        image: &Image,
-        sink: T,
-    ) -> std::result::Result<usize, ImageErrors> {
+    fn encode_inner<T: ZByteWriterTrait>(&mut self, image: &Image, sink: T) -> std::result::Result<usize, ImageErrors> {
         let (width, height) = image.dimensions();
         let data = &image.flatten_to_u8()[0];
 
@@ -100,9 +96,9 @@ impl EncoderTrait for AvifEncoder {
                     .encode_rgb(img)
                     .map_err(|e| ImgEncodeErrors::ImageEncodeErrors(e.to_string()))?;
 
-                writer.write(&result.avif_file).map_err(|e| {
-                    ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!("{e:?}")))
-                })?;
+                writer
+                    .write(&result.avif_file)
+                    .map_err(|e| ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!("{e:?}"))))?;
 
                 Ok(writer.bytes_written())
             }
@@ -112,15 +108,16 @@ impl EncoderTrait for AvifEncoder {
                     .encode_rgba(img)
                     .map_err(|e| ImgEncodeErrors::ImageEncodeErrors(e.to_string()))?;
 
-                writer.write(&result.avif_file).map_err(|e| {
-                    ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!("{e:?}")))
-                })?;
+                writer
+                    .write(&result.avif_file)
+                    .map_err(|e| ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!("{e:?}"))))?;
 
                 Ok(writer.bytes_written())
             }
-            cs => Err(ImageErrors::EncodeErrors(
-                ImgEncodeErrors::UnsupportedColorspace(cs, self.supported_colorspaces()),
-            )),
+            cs => Err(ImageErrors::EncodeErrors(ImgEncodeErrors::UnsupportedColorspace(
+                cs,
+                self.supported_colorspaces(),
+            ))),
         }
     }
 

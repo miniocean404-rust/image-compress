@@ -2,15 +2,12 @@ use napi::bindgen_prelude::*;
 use napi_derive::napi;
 use once_cell::sync::OnceCell;
 use tracing_chrome::ChromeLayerBuilder;
-use tracing_subscriber::{filter, layer::SubscriberExt, util::SubscriberInitExt, Layer};
+use tracing_subscriber::{Layer, filter, layer::SubscriberExt, util::SubscriberInitExt};
 
 static CHROME_LAYER_ONCE: OnceCell<bool> = OnceCell::new();
 
 #[napi]
-pub fn init_custom_trace_subscriber(
-    env: Env,
-    trace_out_file_path: Option<String>,
-) -> Result<()> {
+pub fn init_custom_trace_subscriber(env: Env, trace_out_file_path: Option<String>) -> Result<()> {
     CHROME_LAYER_ONCE.get_or_init(|| {
         let mut layer = ChromeLayerBuilder::new().include_args(true);
         if let Some(trace_out_file) = trace_out_file_path {

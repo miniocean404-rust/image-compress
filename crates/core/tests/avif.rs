@@ -36,11 +36,7 @@ fn encode_mem_avif() -> Result<(), Box<dyn std::error::Error>> {
 
     let encode_buf = encoder.encode_mem(&read_buf)?;
     // 默认参数结果: 原始字节数: 317 压缩后字节数: 306
-    println!(
-        "原始字节数: {} 压缩后字节数: {}",
-        read_buf.len(),
-        encode_buf.len()
-    );
+    println!("原始字节数: {} 压缩后字节数: {}", read_buf.len(), encode_buf.len());
 
     fs::write(&output_path, &encode_buf)?;
     println!("输出路径: {:?}", output_path);

@@ -38,11 +38,7 @@ fn image_quant_compress_lossy() -> Result<(), Box<dyn std::error::Error>> {
     let mut encoder = ImageQuantEncoder::new();
 
     let encode_buf = encoder.encode_mem(&read_buf)?;
-    println!(
-        "原始字节数: {} 压缩后字节数: {}",
-        read_buf.len(),
-        encode_buf.len()
-    );
+    println!("原始字节数: {} 压缩后字节数: {}", read_buf.len(), encode_buf.len());
 
     fs::write(&output_path, &encode_buf)?;
     println!("输出路径: {:?}", output_path);
@@ -63,11 +59,7 @@ fn oxipng_compress_lossless() {
     let mut encoder = OxiPngEncoder::new_with_options(oxipng::Options::max_compression());
     let lossless_vec = encoder.encode_mem(&buf).unwrap();
 
-    println!(
-        "原始字节数: {} 压缩后字节数: {}",
-        buf.len(),
-        lossless_vec.len()
-    );
+    println!("原始字节数: {} 压缩后字节数: {}", buf.len(), lossless_vec.len());
     // fs::write(Path::new(&workspace_root).join("assets/compress/test.png"), buf.into_inner()).unwrap();
 }
 
@@ -92,11 +84,7 @@ fn double_compress() {
     });
     let lossy_vec = encoder.encode_mem(&lossless_vec).unwrap();
 
-    println!(
-        "原始字节数: {} 压缩后字节数: {}",
-        buf.len(),
-        lossy_vec.len()
-    );
+    println!("原始字节数: {} 压缩后字节数: {}", buf.len(), lossy_vec.len());
 }
 
 /// 测试 u8 位深度图像的压缩效果

@@ -8,8 +8,7 @@ use crate::codecs::jpeg::encoder::options::{MozJpegOptions, QtableOptimize, Qtab
 use crate::error::{CompressError, Result};
 use mozjpeg::qtable::*;
 use zune_core::{
-    bit_depth::BitDepth, bytestream::ZByteWriterTrait, colorspace::ColorSpace, log,
-    options::DecoderOptions,
+    bit_depth::BitDepth, bytestream::ZByteWriterTrait, colorspace::ColorSpace, log, options::DecoderOptions,
 };
 use zune_image::{codecs::ImageFormat, errors::ImageErrors, image::Image, traits::EncoderTrait};
 
@@ -51,9 +50,7 @@ impl<T: ZByteWriterTrait> io::Write for WriteAdapter<T> {
 
     /// 写入全部数据并跟踪字节数
     fn write_all(&mut self, buf: &[u8]) -> io::Result<()> {
-        self.inner
-            .write_all_bytes(buf)
-            .map_err(Self::convert_error)?;
+        self.inner.write_all_bytes(buf).map_err(Self::convert_error)?;
         self.bytes_written += buf.len();
         Ok(())
     }
@@ -83,10 +80,7 @@ fn map_colorspace(cs: ColorSpace) -> mozjpeg::ColorSpace {
 ///
 /// 某些色彩空间（灰度、CMYK、YCCK）必须保持原样输出，
 /// 其他情况使用用户配置的色彩空间。
-fn determine_output_colorspace(
-    input: mozjpeg::ColorSpace,
-    configured: mozjpeg::ColorSpace,
-) -> mozjpeg::ColorSpace {
+fn determine_output_colorspace(input: mozjpeg::ColorSpace, configured: mozjpeg::ColorSpace) -> mozjpeg::ColorSpace {
     match input {
         mozjpeg::ColorSpace::JCS_GRAYSCALE => {
             log::warn!("Input colorspace is GRAYSCALE, using GRAYSCALE as output");
@@ -108,10 +102,7 @@ fn determine_output_colorspace(
 ///
 /// 量化表影响 JPEG 压缩的质量和文件大小，不同的量化表算法
 /// 针对不同的视觉质量指标进行了优化。
-fn build_qtable(
-    qtable_type: Option<&QtableOptimize>,
-    quality: f32,
-) -> Option<mozjpeg::qtable::QTable> {
+fn build_qtable(qtable_type: Option<&QtableOptimize>, quality: f32) -> Option<mozjpeg::qtable::QTable> {
     qtable_type.map(|qt| match qt {
         QtableOptimize::AhumadaWatsonPeterson => AhumadaWatsonPeterson.scaled(quality, quality),
         QtableOptimize::AnnexK_Luma => AnnexK_Luma.scaled(quality, quality),
@@ -126,10 +117,7 @@ fn build_qtable(
 }
 
 /// 根据色度量化表类型和质量生成缩放后的色度量化表
-fn build_chroma_qtable(
-    qtable_type: Option<&QtableOptimizeChroma>,
-    quality: f32,
-) -> Option<mozjpeg::qtable::QTable> {
+fn build_chroma_qtable(qtable_type: Option<&QtableOptimizeChroma>, quality: f32) -> Option<mozjpeg::qtable::QTable> {
     qtable_type.map(|qt| match qt {
         QtableOptimizeChroma::AnnexK_Chroma => AnnexK_Chroma.scaled(quality, quality),
         QtableOptimizeChroma::MSSSIM_Chroma => MSSSIM_Chroma.scaled(quality, quality),
@@ -193,8 +181,7 @@ impl MozJpegEncoder {
     /// 压缩后的 JPEG 数据
     pub fn encode_mem(&mut self, buf: &[u8]) -> Result<Vec<u8>> {
         let cursor = Cursor::new(buf);
-        let image =
-            Image::read(cursor, DecoderOptions::default()).map_err(CompressError::jpeg_decode)?;
+        let image = Image::read(cursor, DecoderOptions::default()).map_err(CompressError::jpeg_decode)?;
 
         let mut compress_buf = Cursor::new(vec![]);
         // 使用 MozJpegEncoder 进行编码
@@ -226,10 +213,7 @@ impl MozJpegEncoder {
         // 平滑因子：减少块效应
         comp.set_smoothing_factor(self.options.smoothing);
         // 设置输出色彩空间
-        comp.set_color_space(determine_output_colorspace(
-            input_colorspace,
-            self.options.color_space,
-        ));
+        comp.set_color_space(determine_output_colorspace(input_colorspace, self.options.color_space));
 
         // Trellis 量化配置
         // Trellis 多遍优化：在多次扫描中优化量化
@@ -285,12 +269,8 @@ impl MozJpegEncoder {
         } else if self.options.auto_qtable && self.options.quality >= 80.0 {
             // 自动量化表选择：高质量模式使用 MSSSIM 优化量化表
             // MSSSIM 量化表针对人眼感知优化，在高质量场景下能获得更好的视觉效果
-            let luma_qtable =
-                build_qtable(Some(&QtableOptimize::MSSSIM_Luma), self.options.quality);
-            let chroma_qtable = build_chroma_qtable(
-                Some(&QtableOptimizeChroma::MSSSIM_Chroma),
-                self.options.quality,
-            );
+            let luma_qtable = build_qtable(Some(&QtableOptimize::MSSSIM_Luma), self.options.quality);
+            let chroma_qtable = build_chroma_qtable(Some(&QtableOptimizeChroma::MSSSIM_Chroma), self.options.quality);
 
             if let Some(qtable) = luma_qtable {
                 comp.set_luma_qtable(&qtable);
@@ -303,10 +283,7 @@ impl MozJpegEncoder {
 
     /// 写入 EXIF 元数据（如果启用 metadata 特性）
     #[cfg(feature = "metadata")]
-    fn write_exif_metadata(
-        image: &Image,
-        comp: &mut mozjpeg::compress::Started<WriteAdapter<impl ZByteWriterTrait>>,
-    ) {
+    fn write_exif_metadata(image: &Image, comp: &mut mozjpeg::compress::Started<WriteAdapter<impl ZByteWriterTrait>>) {
         use exif::experimental::Writer;
 
         if let Some(metadata) = &image.metadata().exif() {
@@ -334,40 +311,34 @@ impl EncoderTrait for MozJpegEncoder {
         "mozjpeg-encoder"
     }
 
-    fn encode_inner<T: ZByteWriterTrait>(
-        &mut self,
-        image: &Image,
-        sink: T,
-    ) -> std::result::Result<usize, ImageErrors> {
+    fn encode_inner<T: ZByteWriterTrait>(&mut self, image: &Image, sink: T) -> std::result::Result<usize, ImageErrors> {
         let (width, height) = image.dimensions();
         let data = &image.flatten_to_u8()[0];
 
         // 使用 catch_unwind 捕获 MozJpeg 可能的 panic
-        std::panic::catch_unwind(AssertUnwindSafe(
-            || -> std::result::Result<usize, ImageErrors> {
-                let input_colorspace = map_colorspace(image.colorspace());
+        std::panic::catch_unwind(AssertUnwindSafe(|| -> std::result::Result<usize, ImageErrors> {
+            let input_colorspace = map_colorspace(image.colorspace());
 
-                // 创建并配置压缩器
-                let mut comp = mozjpeg::Compress::new(input_colorspace);
-                self.configure_compressor(&mut comp, width, height, input_colorspace);
-                self.apply_qtable(&mut comp);
+            // 创建并配置压缩器
+            let mut comp = mozjpeg::Compress::new(input_colorspace);
+            self.configure_compressor(&mut comp, width, height, input_colorspace);
+            self.apply_qtable(&mut comp);
 
-                // 创建写入适配器并开始压缩
-                let writer = WriteAdapter {
-                    inner: sink,
-                    bytes_written: 0,
-                };
-                let mut comp = comp.start_compress(writer)?;
+            // 创建写入适配器并开始压缩
+            let writer = WriteAdapter {
+                inner: sink,
+                bytes_written: 0,
+            };
+            let mut comp = comp.start_compress(writer)?;
 
-                // 写入 EXIF 元数据（如果启用）
-                #[cfg(feature = "metadata")]
-                Self::write_exif_metadata(image, &mut comp);
+            // 写入 EXIF 元数据（如果启用）
+            #[cfg(feature = "metadata")]
+            Self::write_exif_metadata(image, &mut comp);
 
-                // 写入图像扫描线并完成压缩
-                comp.write_scanlines(data)?;
-                Ok(comp.finish()?.bytes_written)
-            },
-        ))
+            // 写入图像扫描线并完成压缩
+            comp.write_scanlines(data)?;
+            Ok(comp.finish()?.bytes_written)
+        }))
         .map_err(|err| {
             // 将 panic 转换为 ImageErrors
             let msg = if let Ok(mut err) = err.downcast::<String>() {

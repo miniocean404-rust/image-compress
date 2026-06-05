@@ -1,5 +1,5 @@
 #![allow(unused_imports)]
-use tracing::{event, info, instrument, trace, Instrument, Level};
+use tracing::{Instrument, Level, event, info, instrument, trace};
 use tracing_futures::WithSubscriber;
 use tracing_serde::AsSerde;
 use utils::log::{self, tracing::LogUtil};

@@ -23,8 +23,6 @@ fn quantize_u8() {
 
     let result = quantize.execute(&mut image);
 
-    dbg!(&result);
-
     assert!(result.is_ok());
 }
 
@@ -39,8 +37,6 @@ fn dither_u8() {
     let mut image = create_test_image_u8(200, 200, ColorSpace::RGBA);
 
     let result = quantize.execute(&mut image);
-
-    dbg!(&result);
 
     assert!(result.is_ok());
 }

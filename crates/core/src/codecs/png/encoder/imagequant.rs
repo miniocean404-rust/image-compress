@@ -1,9 +1,7 @@
 use std::io::Cursor;
 
 use imagequant::RGBA;
-use zune_core::{
-    bit_depth::BitDepth, bytestream::ZWriter, colorspace::ColorSpace, options::DecoderOptions,
-};
+use zune_core::{bit_depth::BitDepth, bytestream::ZWriter, colorspace::ColorSpace, options::DecoderOptions};
 use zune_image::{
     codecs::ImageFormat,
     errors::{ImageErrors, ImgEncodeErrors},
@@ -37,8 +35,7 @@ impl ImageQuantEncoder {
     pub fn encode_mem(&mut self, buf: &Vec<u8>) -> Result<Vec<u8>> {
         let cursor = Cursor::new(buf);
 
-        let image =
-            Image::read(cursor, DecoderOptions::default()).map_err(CompressError::png_decode)?;
+        let image = Image::read(cursor, DecoderOptions::default()).map_err(CompressError::png_decode)?;
 
         let mut compress_buf = Cursor::new(vec![]);
 
@@ -48,12 +45,7 @@ impl ImageQuantEncoder {
         Ok(compress_buf.into_inner())
     }
 
-    fn image_quant_encode<VecRGBA>(
-        &self,
-        data: VecRGBA,
-        width: usize,
-        height: usize,
-    ) -> Result<Vec<u8>>
+    fn image_quant_encode<VecRGBA>(&self, data: VecRGBA, width: usize, height: usize) -> Result<Vec<u8>>
     where
         VecRGBA: Into<Box<[RGBA]>>,
     {
@@ -152,43 +144,38 @@ impl EncoderTrait for ImageQuantEncoder {
                 .map(|frame| frame.u16_to_native_endian())
                 .collect()
         } else {
-            return Err(ImageErrors::EncodeErrors(
-                ImgEncodeErrors::ImageEncodeErrors(format!("不支持的位深度: {:?}", image.depth())),
-            ));
+            return Err(ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!(
+                "不支持的位深度: {:?}",
+                image.depth()
+            ))));
         }
         .into_iter()
         .next()
-        .ok_or_else(|| {
-            ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(
-                "图像帧数据为空".to_string(),
-            ))
-        })?;
+        .ok_or_else(|| ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors("图像帧数据为空".to_string())))?;
 
         let mut writer = ZWriter::new(sink);
 
         // 验证数据长度是否正确（width * height * 4 字节 = RGBA）
         let expected_len = width * height * 4;
         if vec_data.len() != expected_len {
-            return Err(ImageErrors::EncodeErrors(
-                ImgEncodeErrors::ImageEncodeErrors(format!(
-                    "像素数据长度不匹配: 期望 {} 字节 ({}x{}x4), 实际 {} 字节",
-                    expected_len,
-                    width,
-                    height,
-                    vec_data.len()
-                )),
-            ));
+            return Err(ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!(
+                "像素数据长度不匹配: 期望 {} 字节 ({}x{}x4), 实际 {} 字节",
+                expected_len,
+                width,
+                height,
+                vec_data.len()
+            ))));
         }
 
         let data = self.convert_to_rgba(vec_data)?;
 
-        let result = self.image_quant_encode(data, width, height).map_err(|e| {
-            ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(e.to_string()))
-        })?;
+        let result = self
+            .image_quant_encode(data, width, height)
+            .map_err(|e| ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(e.to_string())))?;
 
-        writer.write(&result).map_err(|e| {
-            ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!("{e:?}")))
-        })?;
+        writer
+            .write(&result)
+            .map_err(|e| ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!("{e:?}"))))?;
 
         Ok(writer.bytes_written())
     }
@@ -205,10 +192,7 @@ impl EncoderTrait for ImageQuantEncoder {
         &[BitDepth::Eight, BitDepth::Sixteen]
     }
 
-    fn default_depth(
-        &self,
-        depth: zune_core::bit_depth::BitDepth,
-    ) -> zune_core::bit_depth::BitDepth {
+    fn default_depth(&self, depth: zune_core::bit_depth::BitDepth) -> zune_core::bit_depth::BitDepth {
         match depth {
             BitDepth::Sixteen | BitDepth::Float32 => BitDepth::Sixteen,
             _ => BitDepth::Eight,

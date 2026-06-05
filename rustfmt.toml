@@ -4,7 +4,7 @@ edition = "2024"
 style_edition = "2024"
 
 # 每行最大宽度，100 是 Rust 社区常用的可读性折中值。
-max_width = 100
+max_width = 120
 # 使用 4 个空格缩进，符合 Rust 官方默认风格。
 tab_spaces = 4
 # 禁止使用制表符缩进，避免不同编辑器显示不一致。

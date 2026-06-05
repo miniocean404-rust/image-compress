@@ -13,7 +13,7 @@ use zune_image::{
     traits::EncoderTrait,
 };
 
-use crate::codecs::png::encoder::oxipng_options::{create_optimized_oxipng_options, OxiPngOptions};
+use crate::codecs::png::encoder::oxipng_options::{OxiPngOptions, create_optimized_oxipng_options};
 use crate::error::{CompressError, Result};
 
 /// OxiPNG 无损压缩编码器
@@ -47,8 +47,7 @@ impl OxiPngEncoder {
     pub fn encode_mem(&mut self, buf: &Vec<u8>) -> Result<Vec<u8>> {
         let cursor = Cursor::new(buf);
 
-        let image =
-            Image::read(cursor, DecoderOptions::default()).map_err(CompressError::png_decode)?;
+        let image = Image::read(cursor, DecoderOptions::default()).map_err(CompressError::png_decode)?;
 
         let mut compress_buf = Cursor::new(vec![]);
         self.encode(&image, &mut compress_buf)
@@ -63,11 +62,7 @@ impl EncoderTrait for OxiPngEncoder {
         "oxipng"
     }
 
-    fn encode_inner<T: ZByteWriterTrait>(
-        &mut self,
-        image: &Image,
-        sink: T,
-    ) -> std::result::Result<usize, ImageErrors> {
+    fn encode_inner<T: ZByteWriterTrait>(&mut self, image: &Image, sink: T) -> std::result::Result<usize, ImageErrors> {
         // 获取图片宽高
         let (width, height) = image.dimensions();
 
@@ -83,17 +78,14 @@ impl EncoderTrait for OxiPngEncoder {
                 .map(|frame| frame.u16_to_native_endian())
                 .collect()
         } else {
-            return Err(ImageErrors::EncodeErrors(
-                ImgEncodeErrors::ImageEncodeErrors(format!("不支持的位深度: {:?}", image.depth())),
-            ));
+            return Err(ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!(
+                "不支持的位深度: {:?}",
+                image.depth()
+            ))));
         }
         .into_iter()
         .next()
-        .ok_or_else(|| {
-            ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(
-                "图像帧数据为空".to_string(),
-            ))
-        })?;
+        .ok_or_else(|| ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors("图像帧数据为空".to_string())))?;
 
         #[allow(unused_mut)]
         let mut img = oxipng::RawImage::new(
@@ -109,18 +101,19 @@ impl EncoderTrait for OxiPngEncoder {
                 ColorSpace::LumaA => oxipng::ColorType::GrayscaleAlpha,
                 ColorSpace::RGBA => oxipng::ColorType::RGBA,
                 cs => {
-                    return Err(ImageErrors::EncodeErrors(
-                        ImgEncodeErrors::UnsupportedColorspace(cs, self.supported_colorspaces()),
-                    ))
+                    return Err(ImageErrors::EncodeErrors(ImgEncodeErrors::UnsupportedColorspace(
+                        cs,
+                        self.supported_colorspaces(),
+                    )));
                 }
             },
             match image.depth() {
                 BitDepth::Eight => oxipng::BitDepth::Eight,
                 BitDepth::Sixteen => oxipng::BitDepth::Sixteen,
                 d => {
-                    return Err(ImageErrors::EncodeErrors(ImgEncodeErrors::Generic(
-                        format!("{d:?} 字节深度不支持"),
-                    )))
+                    return Err(ImageErrors::EncodeErrors(ImgEncodeErrors::Generic(format!(
+                        "{d:?} 字节深度不支持"
+                    ))));
                 }
             },
             data,
@@ -154,20 +147,15 @@ impl EncoderTrait for OxiPngEncoder {
             .create_optimized_png(&self.options)
             .map_err(|e| ImgEncodeErrors::ImageEncodeErrors(e.to_string()))?;
 
-        writer.write(&result).map_err(|e| {
-            ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!("{e:?}")))
-        })?;
+        writer
+            .write(&result)
+            .map_err(|e| ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!("{e:?}"))))?;
 
         Ok(writer.bytes_written())
     }
 
     fn supported_colorspaces(&self) -> &'static [ColorSpace] {
-        &[
-            ColorSpace::Luma,
-            ColorSpace::LumaA,
-            ColorSpace::RGB,
-            ColorSpace::RGBA,
-        ]
+        &[ColorSpace::Luma, ColorSpace::LumaA, ColorSpace::RGB, ColorSpace::RGBA]
     }
 
     fn format(&self) -> ImageFormat {

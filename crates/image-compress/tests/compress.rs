@@ -1,9 +1,25 @@
-use image_compress::{compress::ImageCompress, consts::Options, ImageQuantOptions, OxiPngOptions};
+use image_compress::{
+    ImageQuantOptions, OxiPngOptions,
+    compress::ImageCompress,
+    consts::{CompressState, Options},
+};
 
 #[cfg(feature = "native")]
 use image_compress::{AvifOptions, MozJpegOptions, WebPOptions};
 
 use std::fs;
+
+#[test]
+fn empty_buffer_compress_returns_error_without_done_state() {
+    let mut ins = ImageCompress::new()
+        .with_buffer(Vec::new())
+        .with_options(Options::OxiPng(OxiPngOptions::default()));
+
+    let result = ins.compress();
+
+    assert!(result.is_err());
+    assert_ne!(ins.state, CompressState::Done);
+}
 
 #[test]
 fn oxipng_compress() -> anyhow::Result<()> {

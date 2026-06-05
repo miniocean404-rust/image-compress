@@ -24,8 +24,7 @@ fn resize_u8() {
     let mut image = create_test_image_u8(200, 200, ColorSpace::RGB);
 
     let result = resize.execute(&mut image);
-    dbg!(&result);
-
+    // dbg!(&result);
     assert!(result.is_ok());
     assert_eq!(image.dimensions(), (100, 100));
 }
@@ -40,8 +39,6 @@ fn resize_u16() {
     let mut image = create_test_image_u16(200, 200, ColorSpace::RGB);
 
     let result = resize.execute(&mut image);
-    dbg!(&result);
-
     assert!(result.is_ok());
     assert_eq!(image.dimensions(), (100, 100));
 }
@@ -56,8 +53,6 @@ fn resize_f32() {
     let mut image = create_test_image_f32(200, 200, ColorSpace::RGB);
 
     let result = resize.execute(&mut image);
-    dbg!(&result);
-
     assert!(result.is_ok());
     assert_eq!(image.dimensions(), (100, 100));
 }
@@ -72,8 +67,6 @@ fn resize_animated() {
     let mut image = create_test_image_animated(200, 200, ColorSpace::RGB);
 
     let result = resize.execute(&mut image);
-    dbg!(&result);
-
     assert!(result.is_ok());
     assert_eq!(image.dimensions(), (100, 100));
 }

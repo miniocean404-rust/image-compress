@@ -2,8 +2,8 @@
 use std::io::Cursor;
 
 use rgb::{
-    alt::{Gray, GrayAlpha},
     AsPixels, FromSlice, RGB8, RGBA8,
+    alt::{Gray, GrayAlpha},
 };
 
 use crate::error::{CompressError, Result};
@@ -58,9 +58,7 @@ pub fn decode(data: &[u8]) -> Result<Vec<u8>> {
         png::ColorType::GrayscaleAlpha => expand_pixels(&mut buf, Gray::<u8>::into),
         png::ColorType::Grayscale => expand_pixels(&mut buf, |gray: GrayAlpha<u8>| gray.into()),
         png::ColorType::Indexed => {
-            return Err(CompressError::png_decode(
-                "找到已索引的颜色类型，但期望它已经展开",
-            ));
+            return Err(CompressError::png_decode("找到已索引的颜色类型，但期望它已经展开"));
         }
     }
 

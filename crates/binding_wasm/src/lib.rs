@@ -2,8 +2,8 @@
 
 use demo::dom::init_demo;
 // 用于加载 Prelude（预导入）模块
-use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
+use wasm_bindgen::prelude::*;
 
 pub mod compress;
 pub mod demo;

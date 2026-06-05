@@ -48,8 +48,7 @@ pub fn init_demo() -> Result<(), JsValue> {
             let val = input.value();
             let num = val.parse::<u32>().unwrap();
             let res = num;
-            out.borrow_mut()
-                .set_text_content(Some(res.to_string().as_str())); // 在这里使用 borrow_mut 把 out 当做可变变量获取出来，并设置 textContent
+            out.borrow_mut().set_text_content(Some(res.to_string().as_str())); // 在这里使用 borrow_mut 把 out 当做可变变量获取出来，并设置 textContent
         });
 
         btn.add_event_listener_with_callback("click", closure.as_ref().unchecked_ref())?; // 挂载事件监听器，将闭包函数先转换为 JS 值，再跳过类型判断，再作为回调函数传给 btn

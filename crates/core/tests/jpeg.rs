@@ -37,11 +37,7 @@ fn encode_mem_jpeg() -> Result<(), Box<dyn std::error::Error>> {
     let mut encoder = MozJpegEncoder::new();
 
     let encode_buf = encoder.encode_mem(&read_buf)?;
-    println!(
-        "原始字节数: {} 压缩后字节数: {}",
-        read_buf.len(),
-        encode_buf.len()
-    );
+    println!("原始字节数: {} 压缩后字节数: {}", read_buf.len(), encode_buf.len());
 
     fs::write(&output_path, &encode_buf)?;
     println!("输出路径: {:?}", output_path);

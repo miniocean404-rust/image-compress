@@ -40,14 +40,21 @@ impl OperationsTrait for Resize {
         let (src_width, src_height) = image.dimensions();
         let (dst_width, dst_height) = self.new_dimensions;
         if (dst_height == 0) || (dst_width == 0) {
-            return Err(ImageErrors::OperationsError(
-                ImageOperationsErrors::Generic("Width or Height cannot be 0"),
-            ));
+            return Err(ImageErrors::OperationsError(ImageOperationsErrors::Generic(
+                "Width or Height cannot be 0",
+            )));
         }
 
         let depth = image.depth().bit_type();
 
-        let new_length = dst_width * dst_height * image.depth().size_of();
+        let new_length = dst_width
+            .checked_mul(dst_height)
+            .and_then(|length| length.checked_mul(image.depth().size_of()))
+            .ok_or_else(|| {
+                ImageErrors::OperationsError(ImageOperationsErrors::GenericString(
+                    "resize target dimensions overflow".to_string(),
+                ))
+            })?;
 
         #[cfg(feature = "native")]
         std::thread::scope(|f| {
@@ -66,18 +73,13 @@ impl OperationsTrait for Resize {
                             BitType::U16 => fr::PixelType::U16,
                             BitType::F32 => fr::PixelType::F32,
 
-                            d => {
-                                return Err(ImageErrors::ImageOperationNotImplemented("resize", d))
-                            }
+                            d => return Err(ImageErrors::ImageOperationNotImplemented("resize", d)),
                         },
                     )
                     .map_err(|e| ImageOperationsErrors::GenericString(e.to_string()))?;
 
-                    let mut dst_image = fr::images::Image::new(
-                        dst_width as u32,
-                        dst_height as u32,
-                        src_image.pixel_type(),
-                    );
+                    let mut dst_image =
+                        fr::images::Image::new(dst_width as u32, dst_height as u32, src_image.pixel_type());
 
                     let mut resizer = fr::Resizer::new();
                     let options = ResizeOptions::new();
@@ -101,9 +103,7 @@ impl OperationsTrait for Resize {
                 .into_iter()
                 .map(|x| {
                     x.join().map_err(|_| {
-                        ImageErrors::OperationsError(ImageOperationsErrors::GenericString(
-                            "线程执行失败".to_string(),
-                        ))
+                        ImageErrors::OperationsError(ImageOperationsErrors::GenericString("线程执行失败".to_string()))
                     })?
                 })
                 .collect::<Result<Vec<()>, ImageErrors>>()
@@ -127,8 +127,7 @@ impl OperationsTrait for Resize {
             )
             .map_err(|e| ImageOperationsErrors::GenericString(e.to_string()))?;
 
-            let mut dst_image =
-                fr::images::Image::new(dst_width as u32, dst_height as u32, src_image.pixel_type());
+            let mut dst_image = fr::images::Image::new(dst_width as u32, dst_height as u32, src_image.pixel_type());
 
             let mut resizer = fr::Resizer::new();
             let options = ResizeOptions::new();

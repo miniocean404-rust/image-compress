@@ -8,8 +8,5 @@ pub fn change_file_ext(path: &str, ext: &str) -> String {
 
 pub fn filename_no_ext(path: &str) -> String {
     let path = Path::new(path);
-    path.file_stem()
-        .unwrap_or(OsStr::new(""))
-        .to_string_lossy()
-        .to_string()
+    path.file_stem().unwrap_or(OsStr::new("")).to_string_lossy().to_string()
 }

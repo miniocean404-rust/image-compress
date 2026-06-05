@@ -15,7 +15,7 @@ impl FormatTime for LocalTimer {
         // 使用chrono::Local::now()的效率相对会差一些，因为每次获取时间都要探测本机的时区。因此可改进为使用Offset的方式，明确指定时区，无需探测
         // write!(w, "{}", Local::now().format("%Y-%m-%d %H:%M:%S.%3f"));
 
-        let now = Utc::now().with_timezone(&east8().unwrap());
+        let now = Utc::now().with_timezone(&east8().expect("UTC+8 offset is valid"));
         write!(w, "{}", now.format("%Y-%m-%d %H:%M:%S.%3f"))
     }
 }

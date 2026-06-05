@@ -41,17 +41,19 @@ pub struct ImagequantOptions {
 
 impl CommandRunner for ImagequantOptions {
     fn execute(&self, _compress_options: &CompressOptions) -> anyhow::Result<()> {
-        let file = &_compress_options.entry_file;
+        anyhow::bail!("imagequant CLI command is not implemented")
 
-        if let Some(_file) = file {
-            // let image = image::open(file)?;
+        // let file = &_compress_options.entry_file;
 
-            // let encoder = ImageQuantEncoder::new();
-            // let lossy_vec = encoder.encode(&image).unwrap();
+        // if let Some(_file) = file {
+        //     // let image = image::open(file)?;
 
-            // println!("压缩后字节数: {}", lossy_vec.len());
-        }
+        //     // let encoder = ImageQuantEncoder::new();
+        //     // let lossy_vec = encoder.encode(&image).unwrap();
 
-        Ok(())
+        //     // println!("压缩后字节数: {}", lossy_vec.len());
+        // }
+
+        // Ok(())
     }
 }

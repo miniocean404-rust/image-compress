@@ -309,9 +309,12 @@ impl From<WebPOptions> for webp::WebPConfig {
         config.lossless = value.lossless;
         config.quality = value.quality;
         config.method = value.method;
-        // 使用 transmute 转换自定义枚举到 libwebp_sys 的枚举
-        // 两者的内存布局相同 (都是 i32)
-        config.image_hint = unsafe { std::mem::transmute(value.image_hint as i32) };
+        // 使用 transmute 转换自定义枚举到 webp crate 的 image hint 枚举。两者的内存布局相同 (都是 i32)
+        #[allow(clippy::missing_transmute_annotations)]
+        // SAFETY: WebPImageHint 使用与 webp crate 私有图像提示枚举相同的 i32 判别项。
+        unsafe {
+            config.image_hint = std::mem::transmute::<i32, _>(value.image_hint as i32);
+        }
         config.target_size = value.target_size;
         config.target_PSNR = value.target_PSNR;
         config.segments = value.segments;

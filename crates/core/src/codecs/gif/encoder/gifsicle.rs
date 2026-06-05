@@ -107,16 +107,8 @@ impl GifEncoder {
         // 创建临时文件
         let temp_dir = std::env::temp_dir();
         let unique_id = GIF_TEMP_FILE_COUNTER.fetch_add(1, Ordering::Relaxed);
-        let input_path = temp_dir.join(format!(
-            "gifsicle_input_{}_{}.gif",
-            std::process::id(),
-            unique_id
-        ));
-        let output_path = temp_dir.join(format!(
-            "gifsicle_output_{}_{}.gif",
-            std::process::id(),
-            unique_id
-        ));
+        let input_path = temp_dir.join(format!("gifsicle_input_{}_{}.gif", std::process::id(), unique_id));
+        let output_path = temp_dir.join(format!("gifsicle_output_{}_{}.gif", std::process::id(), unique_id));
 
         // 写入输入文件
         let mut input_file = std::fs::File::create(&input_path)?;
@@ -159,21 +151,19 @@ impl GifEncoder {
         let read_mode = CString::new("rb")?;
         let write_mode = CString::new("wb")?;
 
-        let input_file = CFile::open(&input_cstr, &read_mode).ok_or_else(|| {
-            CompressError::gif_encode(format!("无法打开输入文件: {}", input_path))
-        })?;
+        let input_file = CFile::open(&input_cstr, &read_mode)
+            .ok_or_else(|| CompressError::gif_encode(format!("无法打开输入文件: {}", input_path)))?;
 
         // SAFETY: input_file 持有有效的 FILE*，且 gifsicle 只在调用期间读取该句柄。
         // 读取 GIF 流
         let input_stream = unsafe { gifsicle::Gif_ReadFile(input_file.as_ptr()) };
         drop(input_file);
 
-        let input_stream = GifStream::new(input_stream)
-            .ok_or_else(|| CompressError::gif_decode("无法读取 GIF 文件"))?;
+        let input_stream =
+            GifStream::new(input_stream).ok_or_else(|| CompressError::gif_decode("无法读取 GIF 文件"))?;
 
-        let output_file = CFile::open(&output_cstr, &write_mode).ok_or_else(|| {
-            CompressError::gif_encode(format!("无法创建输出文件: {}", output_path))
-        })?;
+        let output_file = CFile::open(&output_cstr, &write_mode)
+            .ok_or_else(|| CompressError::gif_encode(format!("无法创建输出文件: {}", output_path)))?;
 
         // 设置压缩参数
         let padding: [*mut c_void; 7] = [ptr::null_mut(); 7];
@@ -190,17 +180,12 @@ impl GifEncoder {
             _ => GIF_WRITE_OPTIMIZE | GIF_WRITE_SHRINK | GIF_WRITE_EAGER_CLEAR,
         };
 
-        let gc_info = gifsicle::Gif_CompressInfo {
-            flags,
-            loss,
-            padding,
-        };
+        let gc_info = gifsicle::Gif_CompressInfo { flags, loss, padding };
 
         // 写入压缩后的 GIF
         // SAFETY: input_stream 与 output_file 分别持有有效的 gifsicle 流和 FILE*，gc_info 在调用期间有效。
-        let write_result = unsafe {
-            gifsicle::Gif_FullWriteFile(input_stream.as_ptr(), &gc_info, output_file.as_ptr())
-        };
+        let write_result =
+            unsafe { gifsicle::Gif_FullWriteFile(input_stream.as_ptr(), &gc_info, output_file.as_ptr()) };
 
         match write_result {
             1 => Ok(()),
@@ -214,11 +199,7 @@ impl EncoderTrait for GifEncoder {
         "gif-encoder"
     }
 
-    fn encode_inner<T: ZByteWriterTrait>(
-        &mut self,
-        image: &Image,
-        sink: T,
-    ) -> std::result::Result<usize, ImageErrors> {
+    fn encode_inner<T: ZByteWriterTrait>(&mut self, image: &Image, sink: T) -> std::result::Result<usize, ImageErrors> {
         let (width, height) = image.dimensions();
         let mut writer = ZWriter::new(sink);
 
@@ -230,9 +211,9 @@ impl EncoderTrait for GifEncoder {
             .compress_with_gifsicle(&gif_data)
             .map_err(|e| ImgEncodeErrors::ImageEncodeErrors(e.to_string()))?;
 
-        writer.write(&compressed_data).map_err(|e| {
-            ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!("{e:?}")))
-        })?;
+        writer
+            .write(&compressed_data)
+            .map_err(|e| ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(format!("{e:?}"))))?;
 
         Ok(writer.bytes_written())
     }
@@ -261,31 +242,24 @@ impl EncoderTrait for GifEncoder {
 
 impl GifEncoder {
     /// 将图像编码为标准 GIF 格式
-    fn encode_to_gif(
-        &self,
-        image: &Image,
-        width: usize,
-        height: usize,
-    ) -> std::result::Result<Vec<u8>, ImageErrors> {
+    fn encode_to_gif(&self, image: &Image, width: usize, height: usize) -> std::result::Result<Vec<u8>, ImageErrors> {
         let mut buffer = Vec::new();
 
         {
             let mut encoder = gif::Encoder::new(&mut buffer, width as u16, height as u16, &[])
-                .map_err(|e| {
-                    ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(e.to_string()))
-                })?;
+                .map_err(|e| ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(e.to_string())))?;
 
             // 设置重复次数 (0 表示无限循环)
-            encoder.set_repeat(gif::Repeat::Infinite).map_err(|e| {
-                ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(e.to_string()))
-            })?;
+            encoder
+                .set_repeat(gif::Repeat::Infinite)
+                .map_err(|e| ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(e.to_string())))?;
 
             let frames = image.flatten_to_u8();
             let colorspace = image.colorspace();
 
             for frame_data in frames.iter() {
                 // 转换为 RGBA 格式
-                let rgba_data = match colorspace {
+                let mut rgba_data = match colorspace {
                     ColorSpace::RGBA => frame_data.clone(),
                     ColorSpace::RGB => {
                         // RGB -> RGBA
@@ -297,12 +271,10 @@ impl GifEncoder {
                         rgba
                     }
                     _ => {
-                        return Err(ImageErrors::EncodeErrors(
-                            ImgEncodeErrors::UnsupportedColorspace(
-                                colorspace,
-                                self.supported_colorspaces(),
-                            ),
-                        ));
+                        return Err(ImageErrors::EncodeErrors(ImgEncodeErrors::UnsupportedColorspace(
+                            colorspace,
+                            self.supported_colorspaces(),
+                        )));
                     }
                 };
 
@@ -318,14 +290,14 @@ impl GifEncoder {
                 let mut frame = gif::Frame::from_rgba_speed(
                     width as u16,
                     height as u16,
-                    &mut rgba_data.clone(),
+                    &mut rgba_data,
                     10, // 速度参数 (1-30, 10 是默认值)
                 );
                 frame.delay = delay;
 
-                encoder.write_frame(&frame).map_err(|e| {
-                    ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(e.to_string()))
-                })?;
+                encoder
+                    .write_frame(&frame)
+                    .map_err(|e| ImageErrors::EncodeErrors(ImgEncodeErrors::ImageEncodeErrors(e.to_string())))?;
             }
         }
 

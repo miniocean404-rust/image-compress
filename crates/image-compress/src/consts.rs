@@ -5,7 +5,7 @@ use image_compress_core::codecs::{
     webp::encoder::options::WebPOptions,
 };
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub enum CompressState {
     #[default]
     Ready,

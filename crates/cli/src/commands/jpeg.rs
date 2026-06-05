@@ -20,7 +20,6 @@ pub enum PluginTargetType {
 
 impl super::CommandRunner for JpegCodecOptions {
     fn execute(&self, _compress_options: &CompressOptions) -> anyhow::Result<()> {
-        println!("JpegCodecOptions");
-        Ok(())
+        anyhow::bail!("jpeg CLI command is not implemented")
     }
 }

@@ -99,8 +99,6 @@ pub struct OxipngOptions {
 
 impl CommandRunner for OxipngOptions {
     fn execute(&self, _compress_options: &CompressOptions) -> anyhow::Result<()> {
-        println!("OxipngOptions");
-
-        Ok(())
+        anyhow::bail!("oxipng CLI command is not implemented")
     }
 }

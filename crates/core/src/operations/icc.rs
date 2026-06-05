@@ -10,6 +10,7 @@ use zune_image::{
 /// Apply icc profile
 pub struct ApplyICC;
 
+// 依赖升级修复前, 2026年6月6日01:21:25
 // pub struct ApplyICC {
 //     profile: Profile<ThreadContext>,
 // }

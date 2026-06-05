@@ -1,4 +1,4 @@
-# 使用项目当前 Rust edition，确保 rustfmt 按 2021 语法规则格式化。
+# 使用项目当前 Rust edition，确保 rustfmt 按 2024 语法规则格式化。
 edition = "2024"
 # 使用 2024 风格规则，保持新版 rustfmt 的格式化行为。
 style_edition = "2024"

@@ -20,7 +20,7 @@ disallowed-names = [
 ]
 # 告诉 clippy 项目的最低 Rust 版本，避免建议使用超过 MSRV 的标准库 API。
 msrv = "1.85.0"
-# 控制类型复杂度阈值，保留较高值以避免复杂泛型或绑定类型产生过多误报。
+# 控制类型复杂度阈值；当前值高于 clippy 默认值，用于有意放宽复杂泛型或绑定类型的误报。
 type-complexity-threshold = 25000
 # 控制枚举变体体积阈值，超过后提示考虑 Box 等间接存储以减少枚举整体大小。
 enum-variant-size-threshold = 200
@@ -28,5 +28,5 @@ enum-variant-size-threshold = 200
 too-many-arguments-threshold = 7
 # 控制单个函数行数阈值，超过后提示拆分为更小、更易测试的函数。
 too-many-lines-threshold = 100
-# 控制 Vec 在栈上初始化数组再转换时的元素数量阈值，超过后提示更高效的构造方式。
+# 控制 Vec<Box<T>> 相关 lint 的大小阈值，低于该大小时 clippy 可能提示避免不必要的 Box。
 vec-box-size-threshold = 4096

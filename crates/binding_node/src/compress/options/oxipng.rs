@@ -103,10 +103,7 @@ impl From<FilterStrategy> for export::IndexSet<export::FilterStrategy> {
             }
             FilterStrategy::Brute => {
                 // Brute 需要 num_lines 和 level 参数，使用默认值
-                set.insert(export::FilterStrategy::Brute {
-                    num_lines: 0,
-                    level: 6,
-                });
+                set.insert(export::FilterStrategy::Brute { num_lines: 0, level: 6 });
             }
         }
         set
@@ -213,18 +210,10 @@ impl From<Object<'_>> for NapiOxiPngOptions {
                 .get_named_property::<Option<bool>>("interlace")
                 .unwrap_or(Some(false)),
             optimize_alpha: value.get_named_property::<bool>("optimizeAlpha").unwrap_or(false),
-            bit_depth_reduction: value
-                .get_named_property::<bool>("bitDepthReduction")
-                .unwrap_or(true),
-            color_type_reduction: value
-                .get_named_property::<bool>("colorTypeReduction")
-                .unwrap_or(true),
-            palette_reduction: value
-                .get_named_property::<bool>("paletteReduction")
-                .unwrap_or(true),
-            grayscale_reduction: value
-                .get_named_property::<bool>("grayscaleReduction")
-                .unwrap_or(true),
+            bit_depth_reduction: value.get_named_property::<bool>("bitDepthReduction").unwrap_or(true),
+            color_type_reduction: value.get_named_property::<bool>("colorTypeReduction").unwrap_or(true),
+            palette_reduction: value.get_named_property::<bool>("paletteReduction").unwrap_or(true),
+            grayscale_reduction: value.get_named_property::<bool>("grayscaleReduction").unwrap_or(true),
             idat_recoding: value.get_named_property::<bool>("idatRecoding").unwrap_or(true),
             scale_16: value.get_named_property::<bool>("scale16").unwrap_or(false),
             strip: value
@@ -234,9 +223,7 @@ impl From<Object<'_>> for NapiOxiPngOptions {
                 .get_named_property::<Deflater>("deflater")
                 .unwrap_or(Deflater::Libdeflater { compression: 12 }),
             fast_evaluation: value.get_named_property::<bool>("fastEvaluation").unwrap_or(true),
-            timeout: value
-                .get_named_property::<Option<BigInt>>("timeout")
-                .unwrap_or(None),
+            timeout: value.get_named_property::<Option<BigInt>>("timeout").unwrap_or(None),
         }
     }
 }

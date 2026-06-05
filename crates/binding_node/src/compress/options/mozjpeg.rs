@@ -38,19 +38,13 @@ impl From<Object<'_>> for NapiMozJpegOptions {
     fn from(value: Object) -> Self {
         Self {
             quality: value.get_named_property::<f64>("quality").unwrap_or(80.0),
-            progressive: value
-                .get_named_property::<bool>("progressive")
-                .unwrap_or(true),
-            optimize_coding: value
-                .get_named_property::<bool>("optimizeCoding")
-                .unwrap_or(true),
+            progressive: value.get_named_property::<bool>("progressive").unwrap_or(true),
+            optimize_coding: value.get_named_property::<bool>("optimizeCoding").unwrap_or(true),
             smoothing: value.get_named_property::<u8>("smoothing").unwrap_or(0),
             color_space: value
                 .get_named_property::<MozjpegColorSpace>("colorSpace")
                 .unwrap_or(MozjpegColorSpace::JCS_YCbCr),
-            trellis_multipass: value
-                .get_named_property::<bool>("trellisMultipass")
-                .unwrap_or(false),
+            trellis_multipass: value.get_named_property::<bool>("trellisMultipass").unwrap_or(false),
             chroma_subsample: value
                 .get_named_property::<Option<u8>>("chromaSubsample")
                 .unwrap_or(None),
@@ -175,9 +169,7 @@ impl From<QtableOptimize> for export::QtableOptimize {
             QtableOptimize::AhumadaWatsonPeterson => export::QtableOptimize::AhumadaWatsonPeterson,
             QtableOptimize::AnnexK_Luma => export::QtableOptimize::AnnexK_Luma,
             QtableOptimize::Flat => export::QtableOptimize::Flat,
-            QtableOptimize::KleinSilversteinCarney => {
-                export::QtableOptimize::KleinSilversteinCarney
-            }
+            QtableOptimize::KleinSilversteinCarney => export::QtableOptimize::KleinSilversteinCarney,
             QtableOptimize::MSSSIM_Luma => export::QtableOptimize::MSSSIM_Luma,
             QtableOptimize::NRobidoux => export::QtableOptimize::NRobidoux,
             QtableOptimize::PSNRHVS_Luma => export::QtableOptimize::PSNRHVS_Luma,

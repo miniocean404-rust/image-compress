@@ -2,19 +2,19 @@
 
 use std::{env, fmt::Debug, io, vec};
 
-use tracing::{level_filters::LevelFilter, Level};
+use tracing::{Level, level_filters::LevelFilter};
 use tracing_appender::{
     non_blocking::WorkerGuard,
     rolling::{RollingFileAppender, Rotation},
 };
 use tracing_subscriber::{
+    EnvFilter, Registry,
     fmt::{
         self,
         format::{Format, Full},
     },
     layer::SubscriberExt,
     util::SubscriberInitExt,
-    EnvFilter, Registry,
 };
 
 use super::time::LocalTimer;
@@ -98,10 +98,7 @@ impl<T> LogUtil<T> {
 
     // 是否显示源代码行号
     pub fn with_line_number(self, line_number: bool) -> Self {
-        Self {
-            line_number,
-            ..self
-        }
+        Self { line_number, ..self }
     }
 
     // 否显示源代码路径、行号总开关
@@ -114,10 +111,7 @@ impl<T> LogUtil<T> {
 
     // 是否展示线程名
     pub fn with_thread_names(self, thread_names: bool) -> Self {
-        Self {
-            thread_names,
-            ..self
-        }
+        Self { thread_names, ..self }
     }
 
     // 是否展示线程 id
@@ -126,10 +120,7 @@ impl<T> LogUtil<T> {
     }
 
     pub fn with_filter_create(mut self, filter_creates: Vec<&str>) -> Self {
-        let mut filter_creates: Vec<String> = filter_creates
-            .iter()
-            .map(|create| create.to_string())
-            .collect();
+        let mut filter_creates: Vec<String> = filter_creates.iter().map(|create| create.to_string()).collect();
         self.filter_creates.append(&mut filter_creates);
         self
     }

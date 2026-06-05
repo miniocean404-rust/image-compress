@@ -48,9 +48,7 @@ impl From<Object<'_>> for NapiAvifOptions {
     fn from(value: Object) -> Self {
         Self {
             quality: value.get_named_property::<f64>("quality").unwrap_or(80.0),
-            alpha_quality: value
-                .get_named_property::<Option<f64>>("alphaQuality")
-                .unwrap_or(None),
+            alpha_quality: value.get_named_property::<Option<f64>>("alphaQuality").unwrap_or(None),
             speed: value.get_named_property::<u8>("speed").unwrap_or(4),
             color_space: value
                 .get_named_property::<AvifColorSpace>("colorSpace")

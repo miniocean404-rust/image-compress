@@ -46,12 +46,7 @@ impl OperationsTrait for Quantize {
             .iter()
             .map(|frame| {
                 let mut img = liq
-                    .new_image(
-                        frame.flatten().as_rgba(),
-                        src_width,
-                        src_height,
-                        0.0,
-                    )
+                    .new_image(frame.flatten().as_rgba(), src_width, src_height, 0.0)
                     .map_err(|e| ImageOperationsErrors::GenericString(e.to_string()))?;
 
                 histogram
@@ -71,39 +66,36 @@ impl OperationsTrait for Quantize {
                 .map_err(|e| ImageOperationsErrors::GenericString(e.to_string()))?;
         }
 
-        frames
-            .iter_mut()
-            .zip(image.frames_mut())
-            .try_for_each(|(img, frame)| {
-                let (palette, pixels) = res
-                    .remapped(img)
-                    .map_err(|e| ImageOperationsErrors::GenericString(e.to_string()))?;
+        frames.iter_mut().zip(image.frames_mut()).try_for_each(|(img, frame)| {
+            let (palette, pixels) = res
+                .remapped(img)
+                .map_err(|e| ImageOperationsErrors::GenericString(e.to_string()))?;
 
-                let channels = pixels
-                    .iter()
-                    .map(|px| {
-                        let px = palette[*px as usize];
-                        (px.r, px.g, px.b, px.a)
-                    })
-                    .enumerate()
-                    .fold(
-                        vec![Channel::new_with_bit_type(channel_len, BitType::U8); 4],
-                        |mut acc, (idx, px)| {
-                            unsafe {
-                                acc[0].alias_mut()[idx] = px.0;
-                                acc[1].alias_mut()[idx] = px.1;
-                                acc[2].alias_mut()[idx] = px.2;
-                                acc[3].alias_mut()[idx] = px.3;
-                            }
+            let channels = pixels
+                .iter()
+                .map(|px| {
+                    let px = palette[*px as usize];
+                    (px.r, px.g, px.b, px.a)
+                })
+                .enumerate()
+                .fold(
+                    vec![Channel::new_with_bit_type(channel_len, BitType::U8); 4],
+                    |mut acc, (idx, px)| {
+                        unsafe {
+                            acc[0].alias_mut()[idx] = px.0;
+                            acc[1].alias_mut()[idx] = px.1;
+                            acc[2].alias_mut()[idx] = px.2;
+                            acc[3].alias_mut()[idx] = px.3;
+                        }
 
-                            acc
-                        },
-                    );
+                        acc
+                    },
+                );
 
-                frame.set_channels(channels);
+            frame.set_channels(channels);
 
-                Ok::<(), ImageErrors>(())
-            })?;
+            Ok::<(), ImageErrors>(())
+        })?;
 
         Ok(())
     }

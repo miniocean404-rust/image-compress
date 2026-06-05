@@ -1,5 +1,5 @@
 use clap::Parser;
-use commands::{png::codec::PNGCodecSubCommand, Command, CommandRunner, CompressOptions};
+use commands::{Command, CommandRunner, CompressOptions, png::codec::PNGCodecSubCommand};
 
 mod commands;
 

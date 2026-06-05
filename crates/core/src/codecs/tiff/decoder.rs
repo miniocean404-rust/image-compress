@@ -12,9 +12,8 @@ pub struct TiffDecoder<R: BufRead + Seek> {
 
 impl<R: BufRead + Seek> TiffDecoder<R> {
     pub fn try_new(source: R) -> Result<Self, ImageErrors> {
-        let inner = tiff::decoder::Decoder::new(source).map_err(|e| {
-            ImageErrors::ImageDecodeErrors(format!("失败的创建 TIFF 解码器: {}", e))
-        })?;
+        let inner = tiff::decoder::Decoder::new(source)
+            .map_err(|e| ImageErrors::ImageDecodeErrors(format!("失败的创建 TIFF 解码器: {}", e)))?;
 
         Ok(Self {
             inner,
@@ -29,9 +28,10 @@ where
     R: BufRead + Seek,
 {
     fn decode(&mut self) -> Result<Image, ImageErrors> {
-        let (width, height) = self.inner.dimensions().map_err(|e| {
-            ImageErrors::ImageDecodeErrors(format!("Unable to read dimensions - {}", e))
-        })?;
+        let (width, height) = self
+            .inner
+            .dimensions()
+            .map_err(|e| ImageErrors::ImageDecodeErrors(format!("Unable to read dimensions - {}", e)))?;
 
         let (width, height) = (width as usize, height as usize);
         self.dimensions = Some((width, height));
@@ -48,26 +48,19 @@ where
                 tiff::ColorType::YCbCr(_) => ColorSpace::YCbCr,
                 _ => ColorSpace::Unknown,
             })
-            .map_err(|e| {
-                ImageErrors::ImageDecodeErrors(format!("Unable to read colorspace - {}", e))
-            })?;
+            .map_err(|e| ImageErrors::ImageDecodeErrors(format!("Unable to read colorspace - {}", e)))?;
 
         self.colorspace = colorspace;
 
-        let result = self.inner.read_image().map_err(|e| {
-            ImageErrors::ImageDecodeErrors(format!("Unable to decode TIFF file - {}", e))
-        })?;
+        let result = self
+            .inner
+            .read_image()
+            .map_err(|e| ImageErrors::ImageDecodeErrors(format!("Unable to decode TIFF file - {}", e)))?;
 
         match result {
-            tiff::decoder::DecodingResult::U8(data) => {
-                Ok(Image::from_u8(&data, width, height, colorspace))
-            }
-            tiff::decoder::DecodingResult::U16(data) => {
-                Ok(Image::from_u16(&data, width, height, colorspace))
-            }
-            tiff::decoder::DecodingResult::F32(data) => {
-                Ok(Image::from_f32(&data, width, height, colorspace))
-            }
+            tiff::decoder::DecodingResult::U8(data) => Ok(Image::from_u8(&data, width, height, colorspace)),
+            tiff::decoder::DecodingResult::U16(data) => Ok(Image::from_u16(&data, width, height, colorspace)),
+            tiff::decoder::DecodingResult::F32(data) => Ok(Image::from_f32(&data, width, height, colorspace)),
             _ => Err(ImageErrors::ImageDecodeErrors(
                 "Tiff Data format not supported".to_string(),
             )),

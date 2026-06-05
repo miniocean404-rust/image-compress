@@ -1,19 +1,21 @@
 {
-    "name": "@image-compress/workspace",
-    "version": "1.0.0",
-    "packageManager": "pnpm@9.6.0",
-    "private": true,
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/miniocean404-rust/image-compress"
-    },
-    "scripts": {
-        "changelog": "git cliff --output CHANGELOG.md",
-        "build:node": "pnpm --filter=@giegie/* build:node",
-        "build:wasm": "pnpm --filter=@giegie/* build:wasm",
-        "publish": "pnpm --filter=@giegie/explore --filter=@giegie/image-compress publish --no-git-checks"
-    },
-    "devDependencies": {
-        "git-cliff": "^2.4.0"
-    }
+  "name": "@image-compress/workspace",
+  "version": "1.0.0",
+  "packageManager": "pnpm@9.6.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/miniocean404-rust/image-compress"
+  },
+  "scripts": {
+    "changelog": "git cliff --output CHANGELOG.md",
+    "build:node": "pnpm --filter=@giegie/* build:node",
+    "build:wasm": "pnpm --filter=@giegie/* build:wasm",
+    "publish": "pnpm --filter=@giegie/explore --filter=@giegie/image-compress publish --no-git-checks",
+    "skills:check": "pnpm dlx skills check",
+    "skills:install": "pnpm dlx skills experimental_install"
+  },
+  "devDependencies": {
+    "git-cliff": "^2.4.0"
+  }
 }

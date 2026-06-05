@@ -12,3 +12,4 @@ pkg
 
 assets/compress
 .claude/rust-skills-cache
+.agents

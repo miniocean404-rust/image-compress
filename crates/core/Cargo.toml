@@ -45,24 +45,23 @@ fast_image_resize = { workspace = true, optional = true }
 # ICC 颜色配置文件处理。 rust 包装 little cms
 lcms2.workspace = true
 
-zune-core = "0.5.0"
-zune-image = "0.5.0-rc0"
+zune-core = "0.5.1"
+zune-image = "0.5.0"
 
 # PNG
 # PNG # 无损压缩 png (optipng、oxipng) 编译 wasm 需要安装 clang 环境
-oxipng = { version = "10.0.0", default-features = false, optional = true, features = [
+oxipng = { version = "10.1.1", default-features = false, optional = true, features = [
   "freestanding",
-  "filetime",
   "parallel",
   "zopfli",
 ] }
 # 有损压缩 png 把 png24 压缩成 png8 的库 是 pngquant 的包装
 imagequant = { version = "4.4.1", default-features = true, optional = true }
 # wasm 需要禁止 ffi
-lodepng = { version = "3.12.1", default-features = false, optional = true, features = [
+lodepng = { version = "3.12.2", default-features = false, optional = true, features = [
   "rust_backend",
 ] }
-png = { version = "0.18.0", optional = true }
+png = { version = "0.18.1", optional = true }
 
 
 # JPEG
@@ -73,28 +72,28 @@ mozjpeg-sys = { version = "2.2.3", optional = true, features = ["default"] }
 
 
 # GIF gifsicle 是读取以及 有损及无损压缩 gif 的库
-gif = { version = "0.14.1", optional = true }
+gif = { version = "0.14.2", optional = true }
 gifsicle = { version = "1.95.0", optional = true }
-libc = "0.2.179"
+libc = "0.2.186"
 
 
 # WebP, 底层使用的是 rust libwebp-sys# webp 无损压缩及有损压缩
 webp = { version = "0.3.1", default-features = true, optional = true }
-libwebp-sys = "0.14.1"
+libwebp-sys = "0.14.4"
 
 
 # AVIF
-ravif = { version = "0.12.0", optional = true }
+ravif = { version = "0.13.0", optional = true }
 libavif = { version = "0.14.0", default-features = false, optional = true, features = [
   "codec-aom",
 ] }
 
 
 # TIFF
-tiff = { version = "0.10.3", default-features = false, optional = true }
+tiff = { version = "0.11.3", default-features = false, optional = true }
 
 # SVG
-svgtypes = "0.16.0"
+svgtypes = "0.16.1"
 
 
 # 序列化

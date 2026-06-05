@@ -52,25 +52,25 @@ image_compress = { path = "./crates/image-compress" }
 utils = { path = "./crates/utils" }
 
 # 单例
-once_cell = "1.21.3"
+once_cell = "1.21.4"
 
 # CLI
-clap = { version = "4.5.54" }
+clap = { version = "4.6.1" }
 indoc = { version = "2.0.7" }
 
 # 异步运行时
-tokio = { version = "1.49.0", features = ["full"] }
+tokio = { version = "1.52.3", features = ["full"] }
 
 # 序列化
 serde = { version = "1.0.228", features = ["derive"] }
-serde_json = "1.0.149"
+serde_json = "1.0.150"
 
 # 时间处理
-chrono = "0.4.43"
+chrono = "0.4.45"
 
 # 错误处理
-anyhow = "1.0.100"
-thiserror = "2.0.17"
+anyhow = "1.0.102"
+thiserror = "2.0.18"
 
 # 文件类型推断
 infer = "0.19.0"
@@ -89,13 +89,13 @@ urlencoding = "2.1.3"
 cargo_metadata = "0.23.1"
 
 # 枚举工具
-strum = "0.27.2"
-strum_macros = "0.27.2"
+strum = "0.28.0"
+strum_macros = "0.28.0"
 
 # 日志及栈追踪
-tracing = { version = "0.1.40", features = ["release_max_level_info"] }
-tracing-appender = "0.2.4"
-tracing-subscriber = { version = "0.3.22", features = ["env-filter", "json"] }
+tracing = { version = "0.1.44", features = ["release_max_level_info"] }
+tracing-appender = "0.2.5"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter", "json"] }
 tracing-futures = "0.2.5"
 tracing-serde = "0.2.0"
 tracing-chrome = "0.7.2"
@@ -106,11 +106,11 @@ backtrace = "0.3.76"
 # ------------------------------------------------------ 图像处理 ------------------------------------------------------
 
 # 图像处理
-image = "0.25.9"
+image = "0.25.10"
 
-rgb = "0.8.52"
-resize = "0.8.8"
-fast_image_resize = { version = "5.5.0", features = ["image"] }
+rgb = "0.8.53"
+resize = "0.8.9"
+fast_image_resize = { version = "6.0.0", features = ["image"] }
 lcms2 = "6.1.1"
 
 # # macOS

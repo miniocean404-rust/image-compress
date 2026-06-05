@@ -21,12 +21,12 @@ serde.workspace = true
 # 它能够将如 DOM 操作、console.log 和 performance 等 JS 相关 API 暴露给 Rust 使用
 # 它能够将 Rust 功能导出到 JS 中，如类、函数等
 # wasm-pack cli 依赖这个包进行打包
-wasm-bindgen = { version = "0.2.108", features = ["enable-interning"] }
-wasm-bindgen-futures = "0.4.42"
-wasm-bindgen-rayon = { version = "1.2.1", optional = true }
+wasm-bindgen = { version = "0.2.122", features = ["enable-interning"] }
+wasm-bindgen-futures = "0.4.72"
+wasm-bindgen-rayon = { version = "1.3.0", optional = true }
 
 # web-sys 的 Crate，它为 Rust 进一步提供了控制 DOM 的能力
-web-sys = { version = "0.3.83", features = [
+web-sys = { version = "0.3.99", features = [
   'Document',
   'Element',
   'HtmlElement',
@@ -36,8 +36,8 @@ web-sys = { version = "0.3.83", features = [
   'Performance',
   'console',
 ] }
-js-sys = "0.3.85"
-serde-wasm-bindgen = "0.6.3"
+js-sys = "0.3.99"
+serde-wasm-bindgen = "0.6.5"
 wee_alloc = "0.4.5"
 
 [package.metadata.wasm-pack.profile.release]

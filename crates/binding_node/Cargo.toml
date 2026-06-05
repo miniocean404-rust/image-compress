@@ -22,7 +22,7 @@ chrono.workspace = true
 backtrace.workspace = true
 once_cell.workspace = true
 
-napi = { version = "3.8.2", features = [
+napi = { version = "3.9.0", features = [
   "napi9",
   "async",
   "serde-json",
@@ -34,4 +34,4 @@ napi-derive = { git = "https://github.com/napi-rs/napi-rs.git", features = [
 
 
 [build-dependencies]
-napi-build = "2.3.1"
+napi-build = "2.3.2"

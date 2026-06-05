@@ -72,8 +72,6 @@ impl EncoderTrait for OxiPngEncoder {
         let (width, height) = image.dimensions();
 
         // inlined `to_u8` method because its private
-        let colorspace = image.colorspace();
-
         let data = if image.depth() == BitDepth::Eight {
             // 如果是 8 个字节就拍平
             image.flatten_frames::<u8>()
@@ -82,7 +80,7 @@ impl EncoderTrait for OxiPngEncoder {
             image
                 .frames_ref()
                 .iter()
-                .map(|frame| frame.u16_to_native_endian(colorspace))
+                .map(|frame| frame.u16_to_native_endian())
                 .collect()
         } else {
             return Err(ImageErrors::EncodeErrors(

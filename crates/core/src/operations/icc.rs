@@ -8,20 +8,22 @@ use zune_image::{
 };
 
 /// Apply icc profile
-pub struct ApplyICC {
-    profile: Profile<ThreadContext>,
-}
+pub struct ApplyICC;
 
-impl ApplyICC {
-    /// 创建一个新的 icc 应用操作
-    ///
-    /// # 参数
-    /// - profile: ICC 配置
-    #[must_use]
-    pub fn new(profile: Profile<ThreadContext>) -> Self {
-        Self { profile }
-    }
-}
+// pub struct ApplyICC {
+//     profile: Profile<ThreadContext>,
+// }
+
+// impl ApplyICC {
+//     /// 创建一个新的 icc 应用操作
+//     ///
+//     /// # 参数
+//     /// - profile: ICC 配置
+//     #[must_use]
+//     pub fn new(profile: Profile<ThreadContext>) -> Self {
+//         Self { profile }
+//     }
+// }
 
 impl OperationsTrait for ApplyICC {
     fn name(&self) -> &'static str {
@@ -35,6 +37,7 @@ impl OperationsTrait for ApplyICC {
             None => Profile::new_srgb_context(ThreadContext::new()),
         };
 
+        let dst_profile = Profile::new_srgb_context(ThreadContext::new());
         let colorspace = image.colorspace();
 
         let format = match (colorspace, image.depth().bit_size()) {
@@ -65,7 +68,7 @@ impl OperationsTrait for ApplyICC {
             ThreadContext::new(),
             &src_profile,
             format,
-            &self.profile,
+            &dst_profile,
             format,
             Intent::Perceptual,
             Flags::NO_CACHE,
@@ -73,13 +76,13 @@ impl OperationsTrait for ApplyICC {
         .map_err(|e| ImageOperationsErrors::GenericString(e.to_string()))?;
 
         for frame in image.frames_mut() {
-            let mut buffer = frame.flatten::<u8>(colorspace);
+            let mut buffer = frame.flatten::<u8>();
             t.transform_in_place(&mut buffer);
             let _ = std::mem::replace(frame, Frame::from_u8(&buffer, colorspace, 0, 0));
         }
 
         image.metadata_mut().set_icc_chunk(
-            self.profile
+            dst_profile
                 .icc()
                 .map_err(|e| ImageOperationsErrors::GenericString(e.to_string()))?,
         );
@@ -121,7 +124,7 @@ impl OperationsTrait for ApplySRGB {
             return Ok(());
         }
 
-        ApplyICC::new(Profile::new_srgb_context(ThreadContext::new())).execute_impl(image)
+        ApplyICC.execute_impl(image)
     }
 
     fn supported_types(&self) -> &'static [BitType] {

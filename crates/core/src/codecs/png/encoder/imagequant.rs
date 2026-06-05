@@ -141,8 +141,6 @@ impl EncoderTrait for ImageQuantEncoder {
             image.clone()
         };
 
-        let colorspace = image.colorspace();
-
         let vec_data = if image.depth() == BitDepth::Eight {
             // 如果是 8 个字节就拍平
             image.flatten_frames::<u8>()
@@ -151,7 +149,7 @@ impl EncoderTrait for ImageQuantEncoder {
             image
                 .frames_ref()
                 .iter()
-                .map(|frame| frame.u16_to_native_endian(colorspace))
+                .map(|frame| frame.u16_to_native_endian())
                 .collect()
         } else {
             return Err(ImageErrors::EncodeErrors(

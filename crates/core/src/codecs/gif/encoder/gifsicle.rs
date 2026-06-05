@@ -2,6 +2,7 @@ use std::{
     ffi::CString,
     os::raw::{c_int, c_void},
     ptr,
+    sync::atomic::{AtomicU64, Ordering},
 };
 
 /// GIF 写入标志常量 (来自 gifsicle gif.h)
@@ -13,6 +14,8 @@ const GIF_WRITE_EAGER_CLEAR: c_int = 2;
 const GIF_WRITE_OPTIMIZE: c_int = 4;
 /// 启用收缩优化（更激进的压缩）
 const GIF_WRITE_SHRINK: c_int = 8;
+/// GIF 临时文件计数器，用于生成唯一的临时文件名
+static GIF_TEMP_FILE_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 use zune_core::{
     bit_depth::BitDepth,
@@ -28,6 +31,49 @@ use zune_image::{
 
 use crate::codecs::gif::encoder::options::GifOptions;
 use crate::error::{CompressError, Result};
+
+struct CFile(*mut libc::FILE);
+
+/// 包装 C 文件指针，确保在 Drop 时正确关闭文件
+impl CFile {
+    fn open(path: &CString, mode: &CString) -> Option<Self> {
+        // SAFETY: path 和 mode 是 NUL 结尾的 C 字符串，指针在 fopen 调用期间有效。
+        let file = unsafe { libc::fopen(path.as_ptr(), mode.as_ptr()) };
+
+        (!file.is_null()).then_some(Self(file))
+    }
+
+    fn as_ptr(&self) -> *mut libc::FILE {
+        self.0
+    }
+}
+
+impl Drop for CFile {
+    fn drop(&mut self) {
+        // SAFETY: CFile 只由成功的 fopen 构造，并且 Drop 只关闭一次该 FILE*。
+        unsafe { libc::fclose(self.0) };
+    }
+}
+
+struct GifStream(*mut gifsicle::Gif_Stream);
+
+/// 包装 gifsicle 流指针，确保在 Drop 时正确释放流
+impl GifStream {
+    fn new(stream: *mut gifsicle::Gif_Stream) -> Option<Self> {
+        (!stream.is_null()).then_some(Self(stream))
+    }
+
+    fn as_ptr(&self) -> *mut gifsicle::Gif_Stream {
+        self.0
+    }
+}
+
+impl Drop for GifStream {
+    fn drop(&mut self) {
+        // SAFETY: GifStream 只由成功的 Gif_ReadFile 构造，并且 Drop 只释放一次该流。
+        unsafe { gifsicle::Gif_DeleteStream(self.0) };
+    }
+}
 
 /// GIF 编码器 (基于 gifsicle)
 #[derive(Debug, Default)]
@@ -60,8 +106,17 @@ impl GifEncoder {
 
         // 创建临时文件
         let temp_dir = std::env::temp_dir();
-        let input_path = temp_dir.join(format!("gifsicle_input_{}.gif", std::process::id()));
-        let output_path = temp_dir.join(format!("gifsicle_output_{}.gif", std::process::id()));
+        let unique_id = GIF_TEMP_FILE_COUNTER.fetch_add(1, Ordering::Relaxed);
+        let input_path = temp_dir.join(format!(
+            "gifsicle_input_{}_{}.gif",
+            std::process::id(),
+            unique_id
+        ));
+        let output_path = temp_dir.join(format!(
+            "gifsicle_output_{}_{}.gif",
+            std::process::id(),
+            unique_id
+        ));
 
         // 写入输入文件
         let mut input_file = std::fs::File::create(&input_path)?;
@@ -78,7 +133,7 @@ impl GifEncoder {
             .to_str()
             .ok_or_else(|| CompressError::invalid_data("输出路径包含无效字符"))?;
 
-        let result = unsafe { self.compress_gif_file(input_str, output_str) };
+        let result = self.compress_gif_file(input_str, output_str);
 
         // 清理输入文件
         let _ = std::fs::remove_file(&input_path);
@@ -98,38 +153,27 @@ impl GifEncoder {
     }
 
     /// 使用 gifsicle FFI 压缩 GIF 文件
-    unsafe fn compress_gif_file(&self, input_path: &str, output_path: &str) -> Result<()> {
+    fn compress_gif_file(&self, input_path: &str, output_path: &str) -> Result<()> {
         let input_cstr = CString::new(input_path)?;
         let output_cstr = CString::new(output_path)?;
         let read_mode = CString::new("rb")?;
         let write_mode = CString::new("wb")?;
 
-        // 打开输入文件
-        let input_file = libc::fopen(input_cstr.as_ptr(), read_mode.as_ptr());
-        if input_file.is_null() {
-            return Err(CompressError::gif_encode(format!(
-                "无法打开输入文件: {}",
-                input_path
-            )));
-        }
+        let input_file = CFile::open(&input_cstr, &read_mode).ok_or_else(|| {
+            CompressError::gif_encode(format!("无法打开输入文件: {}", input_path))
+        })?;
 
+        // SAFETY: input_file 持有有效的 FILE*，且 gifsicle 只在调用期间读取该句柄。
         // 读取 GIF 流
-        let input_stream = gifsicle::Gif_ReadFile(input_file);
-        libc::fclose(input_file);
+        let input_stream = unsafe { gifsicle::Gif_ReadFile(input_file.as_ptr()) };
+        drop(input_file);
 
-        if input_stream.is_null() {
-            return Err(CompressError::gif_decode("无法读取 GIF 文件"));
-        }
+        let input_stream = GifStream::new(input_stream)
+            .ok_or_else(|| CompressError::gif_decode("无法读取 GIF 文件"))?;
 
-        // 打开输出文件
-        let output_file = libc::fopen(output_cstr.as_ptr(), write_mode.as_ptr());
-        if output_file.is_null() {
-            gifsicle::Gif_DeleteStream(input_stream);
-            return Err(CompressError::gif_encode(format!(
-                "无法创建输出文件: {}",
-                output_path
-            )));
-        }
+        let output_file = CFile::open(&output_cstr, &write_mode).ok_or_else(|| {
+            CompressError::gif_encode(format!("无法创建输出文件: {}", output_path))
+        })?;
 
         // 设置压缩参数
         let padding: [*mut c_void; 7] = [ptr::null_mut(); 7];
@@ -153,9 +197,10 @@ impl GifEncoder {
         };
 
         // 写入压缩后的 GIF
-        let write_result = gifsicle::Gif_FullWriteFile(input_stream, &gc_info, output_file);
-        libc::fclose(output_file);
-        gifsicle::Gif_DeleteStream(input_stream);
+        // SAFETY: input_stream 与 output_file 分别持有有效的 gifsicle 流和 FILE*，gc_info 在调用期间有效。
+        let write_result = unsafe {
+            gifsicle::Gif_FullWriteFile(input_stream.as_ptr(), &gc_info, output_file.as_ptr())
+        };
 
         match write_result {
             1 => Ok(()),
@@ -257,7 +302,7 @@ impl GifEncoder {
                                 colorspace,
                                 self.supported_colorspaces(),
                             ),
-                        ))
+                        ));
                     }
                 };
 

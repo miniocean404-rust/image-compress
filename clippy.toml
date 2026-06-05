@@ -1,4 +1,4 @@
-# 控制函数认知复杂度阈值，超过后 clippy 会提示拆分逻辑。
+# 控制函数认知复杂度阈值；clippy 默认值是 25，当前值适度放宽以减少复杂流程误报。
 cognitive-complexity-threshold = 50
 # 禁止使用容易造成歧义或遮蔽基础类型含义的变量名。
 disallowed-names = [
@@ -22,9 +22,9 @@ disallowed-names = [
 msrv = "1.85.0"
 # 控制类型复杂度阈值；当前值高于 clippy 默认值，用于有意放宽复杂泛型或绑定类型的误报。
 type-complexity-threshold = 25000
-# 控制枚举变体体积阈值，超过后提示考虑 Box 等间接存储以减少枚举整体大小。
+# 控制枚举变体体积阈值；clippy 默认值是 200，超过后提示考虑 Box 等间接存储以减少枚举整体大小。
 enum-variant-size-threshold = 200
-# 控制函数实参数量阈值，超过后提示考虑配置结构体或更清晰的 API 设计。
+# 控制函数实参数量阈值；clippy 默认值是 7，超过后提示考虑配置结构体或更清晰的 API 设计。
 too-many-arguments-threshold = 7
 # 控制单个函数行数阈值，超过后提示拆分为更小、更易测试的函数。
 too-many-lines-threshold = 100

@@ -4,6 +4,7 @@ channel = "stable"
 # channel = "nightly"
 # date = "2023-11-04"
 
+# 固定安装 rustfmt 与 clippy，确保格式化和 lint 命令在项目内可直接运行。
 components = ["rustfmt", "clippy"]
 # 可用平台使用 rustup target list 查看
 # targets = ["wasm32-unknown-unknown"]
@@ -12,6 +13,6 @@ profile = "default"
 
 # 都是字节的 Rust 地址
 # 设置下载与 Rust 相关的静态资源的根 URL。
-RUSTUP_DIST_SERVER="https://rsproxy.cn"
+RUSTUP_DIST_SERVER = "https://rsproxy.cn"
 # 设置下载自我更新的根 URL。
-RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
+RUSTUP_UPDATE_ROOT = "https://rsproxy.cn/rustup"

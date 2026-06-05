@@ -1,18 +1,39 @@
-edition = "2021"
+# 使用项目当前 Rust edition，确保 rustfmt 按 2021 语法规则格式化。
+edition = "2024"
+# 使用 2024 风格规则，保持新版 rustfmt 的格式化行为。
 style_edition = "2024"
 
+# 每行最大宽度，100 是 Rust 社区常用的可读性折中值。
 max_width = 100
+# 使用 4 个空格缩进，符合 Rust 官方默认风格。
 tab_spaces = 4
+# 禁止使用制表符缩进，避免不同编辑器显示不一致。
 hard_tabs = false
+# 自动使用当前系统换行符，跨平台协作时由 rustfmt 统一处理。
+newline_style = "Auto"
+# 使用默认启发式控制多行换行，避免过度展开或压缩代码。
+use_small_heuristics = "Default"
 
-
-format_strings = true
+# 自动移除多余的嵌套括号，让表达式更简洁。
+remove_nested_parens = true
+# 合并相邻的 derive 属性，保持类型声明紧凑。
+merge_derives = true
+# 为 extern 项显式补全 ABI，避免 FFI 边界含义不清。
+force_explicit_abi = true
+# 对模块声明排序，减少手工维护顺序造成的噪音 diff。
+reorder_modules = true
+# 对 use 导入排序，保持导入区稳定一致。
+reorder_imports = true
+# 使用字段初始化简写，例如 Foo { bar }，减少重复名称。
 use_field_init_shorthand = true
-wrap_comments = true
-
-imports_granularity = "Crate"
-group_imports = "StdExternalCrate"
+# 将 try! 宏格式化为 ? 运算符风格，符合现代 Rust 习惯。
+use_try_shorthand = true
 
 # swc
-reorder_impl_items = true
-hex_literal_case = "Lower"
+# 下面这些选项属于 nightly rustfmt 扩展；当前 rust-toolchain 使用 stable，因此保留说明但不启用。
+# format_strings = true
+# wrap_comments = true
+# imports_granularity = "Crate"
+# group_imports = "StdExternalCrate"
+# reorder_impl_items = true
+# hex_literal_case = "Lower"

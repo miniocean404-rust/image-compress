@@ -1,4 +1,6 @@
+# 控制函数认知复杂度阈值，超过后 clippy 会提示拆分逻辑。
 cognitive-complexity-threshold = 50
+# 禁止使用容易造成歧义或遮蔽基础类型含义的变量名。
 disallowed-names = [
   "bool",
   "char",
@@ -16,6 +18,15 @@ disallowed-names = [
   "isize",
   "usize",
 ]
-# 处理 current MSRV (Minimum Supported Rust Version) is 1.58.0 but this item is stable since 1.64.0 for further information 问题
-msrv = "1.74.0"
+# 告诉 clippy 项目的最低 Rust 版本，避免建议使用超过 MSRV 的标准库 API。
+msrv = "1.85.0"
+# 控制类型复杂度阈值，保留较高值以避免复杂泛型或绑定类型产生过多误报。
 type-complexity-threshold = 25000
+# 控制枚举变体体积阈值，超过后提示考虑 Box 等间接存储以减少枚举整体大小。
+enum-variant-size-threshold = 200
+# 控制函数实参数量阈值，超过后提示考虑配置结构体或更清晰的 API 设计。
+too-many-arguments-threshold = 7
+# 控制单个函数行数阈值，超过后提示拆分为更小、更易测试的函数。
+too-many-lines-threshold = 100
+# 控制 Vec 在栈上初始化数组再转换时的元素数量阈值，超过后提示更高效的构造方式。
+vec-box-size-threshold = 4096

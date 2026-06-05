@@ -15,6 +15,7 @@ $ARGUMENTS
 ### 1. Analyze Project Type
 
 Determine the project type from user requirements:
+
 - **Binary**: CLI tools, applications, services
 - **Library**: Reusable crates, shared utilities
 - **Workspace**: Multi-crate projects, monorepos
@@ -64,12 +65,13 @@ binary-project/
 ```
 
 **Cargo.toml**:
+
 ```toml
 [package]
 name = "project-name"
 version = "0.1.0"
-edition = "2021"
-rust-version = "1.75"
+edition = "2024"
+rust-version = "1.85"
 authors = ["Your Name <email@example.com>"]
 description = "Project description"
 license = "MIT OR Apache-2.0"
@@ -96,6 +98,7 @@ codegen-units = 1
 ```
 
 **src/main.rs**:
+
 ```rust
 use anyhow::Result;
 use clap::Parser;
@@ -121,6 +124,7 @@ async fn main() -> Result<()> {
 ```
 
 **src/cli.rs**:
+
 ```rust
 use clap::{Parser, Subcommand};
 
@@ -156,6 +160,7 @@ pub struct RunArgs {
 ```
 
 **src/error.rs**:
+
 ```rust
 use std::fmt;
 
@@ -199,12 +204,13 @@ library-name/
 ```
 
 **Cargo.toml for Library**:
+
 ```toml
 [package]
 name = "library-name"
 version = "0.1.0"
-edition = "2021"
-rust-version = "1.75"
+edition = "2024"
+rust-version = "1.85"
 
 [dependencies]
 # Keep minimal for libraries
@@ -218,7 +224,8 @@ path = "src/lib.rs"
 ```
 
 **src/lib.rs**:
-```rust
+
+````rust
 //! Library documentation
 //!
 //! # Examples
@@ -245,7 +252,7 @@ mod tests {
         assert_eq!(2 + 2, 4);
     }
 }
-```
+````
 
 ### 5. Generate Workspace Structure
 
@@ -271,6 +278,7 @@ workspace/
 ```
 
 **Cargo.toml (workspace root)**:
+
 ```toml
 [workspace]
 members = [
@@ -278,12 +286,12 @@ members = [
     "crates/core",
     "crates/cli",
 ]
-resolver = "2"
+resolver = "3"
 
 [workspace.package]
 version = "0.1.0"
-edition = "2021"
-rust-version = "1.75"
+edition = "2024"
+rust-version = "1.85"
 authors = ["Your Name <email@example.com>"]
 license = "MIT OR Apache-2.0"
 
@@ -325,11 +333,12 @@ web-api/
 ```
 
 **Cargo.toml for Web API**:
+
 ```toml
 [package]
 name = "web-api"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 axum = "0.7"
@@ -344,6 +353,7 @@ tracing-subscriber = "0.3"
 ```
 
 **src/main.rs (Axum)**:
+
 ```rust
 use axum::{Router, routing::get};
 use tower_http::cors::CorsLayer;
@@ -375,6 +385,7 @@ async fn main() {
 ### 7. Configure Development Tools
 
 **Makefile**:
+
 ```makefile
 .PHONY: build test lint fmt run clean bench
 
@@ -401,14 +412,16 @@ bench:
 ```
 
 **rustfmt.toml**:
+
 ```toml
-edition = "2021"
+edition = "2024"
 max_width = 100
 tab_spaces = 4
 use_small_heuristics = "Max"
 ```
 
 **clippy.toml**:
+
 ```toml
 cognitive-complexity-threshold = 30
 ```

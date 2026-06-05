@@ -1,6 +1,6 @@
 [workspace]
 
-resolver = "2"
+resolver = "3"
 # 设置默认执行的 workspace
 default-members = ["crates/image-compress"]
 members = [
@@ -11,7 +11,7 @@ exclude = []
 
 [workspace.package]
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 repository = "https://github.com/miniocean404-rust/image-compress"
 
 # [[bin]]
